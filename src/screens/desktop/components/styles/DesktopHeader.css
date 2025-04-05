@@ -8,7 +8,7 @@
   user-select: none; /* Prevent text selection during drag */
   z-index: 1000;
   width: inherit;
-  padding-top: 0.5rem;
+  height: 2.5rem;
 }
 
 .header:active {
