@@ -1,13 +1,18 @@
 .header {
   display: flex;
-  height: 5vh;
   background-color: var(--header-dark);
   align-items: center;
   border-bottom: 1px solid var(--primary-color-medium);
-  cursor: move; /* Add move cursor to indicate draggable */
+  cursor: grab; /* Add move cursor to indicate draggable */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   user-select: none; /* Prevent text selection during drag */
   z-index: 1000;
+  width: inherit;
+  padding-top: 0.5rem;
+}
+
+.header:active {
+  cursor: grabbing; /* Change cursor when actively dragging */
 }
 
 .header__icon {
@@ -15,6 +20,7 @@
   width: 30px;
   height: 30px;
   transition: 0.15s;
+  border-radius: 50%;;
 }
 .header__icon svg {
   width: 100%;
@@ -49,7 +55,6 @@
   color: var(--primary-color-text);
   margin-left: 10px;
   font-size: var(--font-size-medium);
-  font-weight: bold;
   display: flex;
   align-items: center;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);

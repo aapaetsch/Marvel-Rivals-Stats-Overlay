@@ -2,6 +2,7 @@
   "components": {
     "desktop": {
       "header": "English-Header-Text",
+      "title": "Marvel Rivals Stats Overlay",
       "main": {
         "title": "Game Events"
       },
@@ -63,10 +64,10 @@
         "player-name": "Name",
         "character": "Character",
         "team": "Team",
-        "kills": "K",
-        "deaths": "D",
-        "assists": "A",
-        "final-blows": "FB",
+        "kills": "Kills",
+        "deaths": "Deaths",
+        "assists": "Assists",
+        "final-hits": "Final Hits",
         "healing": "Heal",
         "damage": "Damage",
         "block": "Block",

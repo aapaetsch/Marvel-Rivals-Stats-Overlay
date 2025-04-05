@@ -58,11 +58,6 @@ const Screen = () => {
     <div className='desktop'>
       <DesktopHeader />
       <div className={`desktop__container ${collapsed ? 'menu-collapsed' : ''}`}>
-        <header className={"desktop__header desktop__fit"}>
-          <Title color='white'>
-            {t("components.desktop.header")}
-          </Title>
-        </header>
         <nav className={"desktop__nav"}>
           <Menu />
         </nav>

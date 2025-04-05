@@ -17,7 +17,6 @@ body {
   flex-direction: column;
   height: 100%;
   justify-content: flex-start;
-  padding: 2rem;
   width: 100%;
 }
 
@@ -45,8 +44,9 @@ body {
   grid-area: header;
   align-items: center;
   display: flex;
-  height: 60px;
+  height: 35px;
   padding: 1rem;
+  width: 100%;;
 }
 
 .desktop__nav {

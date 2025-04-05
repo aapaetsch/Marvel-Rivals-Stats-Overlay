@@ -1,4 +1,4 @@
-import "./styles/screen.css"; // Import your CSS styles here
+import "./styles/Screen.css"; // Import your CSS styles here
 // components/YellowLightning.tsx
 const YellowLightning = () => (
   <svg

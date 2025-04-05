@@ -7,6 +7,7 @@ import { useWindow, useDrag } from "overwolf-hooks";
 import { classNames, isDev } from "lib/utils";
 import { SVGComponent } from "./DesktopHeaderSVG";
 import "./styles/DesktopHeader.css";
+import { useTranslation } from "react-i18next";
 
 const { DESKTOP, BACKGROUND } = WINDOW_NAMES;
 
@@ -23,6 +24,7 @@ export const DesktopHeader = () => {
     null,
     DISPLAY_OVERWOLF_HOOKS_LOGS,
   );
+  const { t } = useTranslation();
 
   const toggleIcon = useCallback(() => {
     if (!desktopWindow) return;
@@ -48,13 +50,13 @@ export const DesktopHeader = () => {
         <img 
           src={"/heroheadshots/regular/Jeff_the_Land_Shark_Icon.png"} 
           alt="App Icon" 
-          style={{ width: '20px', height: '20px', marginRight: '8px' }} 
+          style={{ width: '20px', height: '20px', marginRight: '8px', borderRadius: '50%' }} 
         />
-        Marvel Rivals Overlay
+        {t("components.desktop.title")}
       </h1>
       <div className={"header__controls__group"}>
         <button
-          className={classNames("header__icon header__control header__discord")}
+          className={classNames("header__icon header__control header__discord is-hidden")}
           onClick={handleDiscordClick}
         >
           <svg>
@@ -67,11 +69,6 @@ export const DesktopHeader = () => {
         >
           <svg>
             <use xlinkHref="#window-control_settings" />
-          </svg>
-        </button>
-        <button className="header__icon header__control">
-          <svg>
-            <use xlinkHref="#window-control_support" />
           </svg>
         </button>
         <button
