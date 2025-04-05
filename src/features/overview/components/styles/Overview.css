@@ -1,0 +1,19 @@
+.overview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+.event-row {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 5px;
+  background-color: var(--neutral-3);
+  border-radius: 4px;
+  word-break: break-word;
+}

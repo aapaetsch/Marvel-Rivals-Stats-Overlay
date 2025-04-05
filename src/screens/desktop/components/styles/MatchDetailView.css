@@ -1,0 +1,112 @@
+/* MatchDetailView.css - Styles for the expanded match detail view */
+
+.match-detail-container {
+  padding: 0;
+  width: 100%;
+}
+
+.match-info-card {
+  margin-bottom: 16px;
+  background-color: var(--neutral-1) !important;
+  border: 1px solid var(--neutral-0) !important;
+  border-radius: var(--border-radius-small) !important;
+}
+
+.match-stat .ant-statistic-title {
+  color: var(--primary-color-medium);
+  font-size: 12px;
+}
+
+.match-stat .ant-statistic-content {
+  color: var(--primary-color-text);
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Table styles */
+.players-table {
+  background-color: var(--neutral-1);
+  border-radius: var(--border-radius-small);
+  overflow: hidden;
+}
+
+.players-table .ant-table-thead > tr > th {
+  background-color: var(--header-dark);
+  color: var(--primary-color-text);
+  font-size: 12px;
+  padding: 8px;
+  border-bottom: 1px solid var(--neutral-0);
+}
+
+.players-table .ant-table-tbody > tr > td {
+  background-color: var(--neutral-1);
+  color: var(--primary-color-text);
+  font-size: 12px;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--neutral-0);
+}
+
+.players-table .ant-table-tbody > tr:hover > td {
+  background-color: var(--neutral-2);
+}
+
+.players-table .local-player-row {
+  background-color: rgba(63, 88, 146, 0.15);
+}
+
+.players-table .local-player-row:hover > td {
+  background-color: rgba(63, 88, 146, 0.25);
+}
+
+.player-cell {
+  display: flex;
+  align-items: center;
+}
+
+.character-icon-small {
+  margin-right: 8px;
+  border: 1px solid var(--neutral-0);
+}
+
+.local-player-name {
+  color: var(--primary-color-text);
+  font-weight: bold;
+}
+
+.column-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-wrapper {
+  margin-right: 4px;
+  display: flex;
+  align-items: center;
+}
+
+/* Tab styles */
+.ant-tabs-nav .ant-tabs-tab {
+  color: var(--primary-color-medium);
+}
+
+.ant-tabs-nav .ant-tabs-tab-active {
+  color: var(--primary-color-text);
+}
+
+.ant-tabs-ink-bar {
+  background-color: var(--primary-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .match-stat .ant-statistic-content {
+    font-size: 12px;
+  }
+  
+  .match-stat .ant-statistic-title {
+    font-size: 10px;
+  }
+}

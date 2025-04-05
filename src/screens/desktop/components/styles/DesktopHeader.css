@@ -1,0 +1,89 @@
+.header {
+  display: flex;
+  height: 5vh;
+  background-color: var(--header-dark);
+  align-items: center;
+  border-bottom: 1px solid var(--primary-color-medium);
+  cursor: move; /* Add move cursor to indicate draggable */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  user-select: none; /* Prevent text selection during drag */
+  z-index: 1000;
+}
+
+.header__icon {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  transition: 0.15s;
+}
+.header__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.header__icon__discord {
+  --social-color: var(--discord-color);
+}
+
+.header__toggle__icons svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+}
+.header__toggle__icons svg:nth-of-type(1) {
+  opacity: 1;
+}
+.header__toggle__icons svg:nth-of-type(2) {
+  opacity: 0;
+}
+
+.header__toggled svg:nth-of-type(1) {
+  opacity: 0;
+}
+.header__toggled svg:nth-of-type(2) {
+  opacity: 1;
+}
+
+.header__title {
+  color: var(--primary-color-text);
+  margin-left: 10px;
+  font-size: var(--font-size-medium);
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.header__controls__group {
+  margin-left: auto;
+  display: flex;
+  --color: var(--primary-color-text);
+  --color-hover: var(--primary-color-light);
+  --bg-color-hover: var(--primary-color-dark);
+}
+
+.header__control {
+  color: var(--color);
+  background-color: transparent;
+  border-radius: 4px;
+  margin: 0 2px;
+  transition: all 0.2s ease;
+  cursor: pointer; /* Add pointer cursor for buttons */
+}
+
+.header__control:hover,
+.header__control:active {
+  color: var(--color-hover);
+  background-color: var(--bg-color-hover);
+  transform: translateY(-1px);
+}
+
+.header__control__close {
+  --color-hover: var(--secondary-color-light);
+  --bg-color-hover: var(--secondary-color-dark);
+}
+
+.header__discord {
+  color: var(--discord-color);
+}

@@ -1,0 +1,118 @@
+.match-table-wrapper {
+  width: 100%;
+  margin-bottom: 20px;
+  overflow-x: auto;
+}
+
+/* Styling for different player types */
+.local-player-row {
+  background-color: rgba(63, 88, 146, 0.9) !important;
+}
+
+.local-player-row:hover > td {
+  background-color: rgba(63, 88, 146, 0.7) !important;
+}
+
+.teammate-row {
+  background-color: rgba(74, 105, 157, 0.9) !important;
+}
+
+.teammate-row:hover > td {
+  background-color: rgba(74, 105, 157, 0.7) !important;
+}
+
+.opponent-row {
+  background-color: rgba(63, 13, 13, 0.9) !important;
+}
+
+.opponent-row:hover > td {
+  background-color: rgba(63, 13, 13, 0.7) !important;
+}
+
+/* Team separator styling */
+.team-separator {
+  height: 15px !important;
+}
+
+.team-separator td {
+  padding: 0 !important;
+  border-bottom: none !important;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.1), transparent) !important;
+}
+
+.team-separator:hover td {
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.1), transparent) !important;
+}
+
+/* Table header styling */
+.ant-table-thead > tr > th {
+  background-color: var(--header-dark) !important;
+  color: var(--primary-color-text) !important;
+  border-bottom: 1px solid var(--neutral-0) !important;
+}
+
+/* Icon header styling */
+.icon-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-icon {
+  font-size: 16px;
+  margin-right: 4px;
+}
+
+.icon-label {
+  display: none; /* Hide text label on smaller screens */
+}
+
+@media (min-width: 768px) {
+  .icon-label {
+    display: inline; /* Show text label on larger screens */
+  }
+}
+
+/* Table cell styling */
+.ant-table-tbody > tr > td {
+  border-bottom: 1px solid var(--neutral-0) !important;
+  color: var(--primary-color-text) !important;
+}
+
+/* Numeric columns alignment */
+.column-number {
+  text-align: center !important;
+}
+
+/* Local player highlighting */
+.player-name.local-player {
+  font-weight: bold;
+}
+
+/* Player tag styling */
+.player-tag {
+  margin-left: 8px;
+  padding: 0 5px;
+  border-radius: 2px;
+}
+
+/* Make sure the table fits within its container */
+.ant-table-container {
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+/* Empty data message */
+.ant-empty-description {
+  color: var(--primary-color-text) !important;
+}
+
+/* Sort arrows */
+.ant-table-column-sorter {
+  color: var(--primary-color-text) !important;
+}
+
+/* Hover state for column headers */
+.ant-table-thead th.ant-table-column-has-sorters:hover {
+  background-color: var(--neutral-0) !important;
+}

@@ -1,0 +1,46 @@
+.match-info-card {
+  width: 100%;
+  margin-bottom: 20px;
+  background-color: var(--neutral-2) !important;
+  border: 1px solid var(--primary-color-medium) !important;
+  border-radius: var(--border-radius) !important;
+}
+
+.match-info-card .ant-card-head {
+  background-color: var(--header-dark);
+  border-bottom: 1px solid var(--primary-color-medium);
+  padding: 0 16px;
+}
+
+.match-info-card .ant-card-head-title {
+  color: var(--primary-color-text);
+  font-size: var(--font-size-large);
+  padding: 8px 0;
+}
+
+.match-info-card .ant-card-body {
+  padding: 12px;
+}
+
+/* Descriptions component styling */
+.match-info-card .ant-descriptions-bordered .ant-descriptions-item-label,
+.match-info-card .ant-descriptions-bordered .ant-descriptions-item-content {
+  background-color: var(--neutral-1);
+  color: var(--primary-color-text);
+  border-color: var(--neutral-0);
+}
+
+.match-info-card .ant-descriptions-bordered .ant-descriptions-item-label {
+  font-weight: bold;
+  background-color: var(--neutral-0);
+}
+
+/* Empty card styling */
+.empty-card .no-data-message {
+  color: var(--secondary-color-light);
+  padding: 10px;
+  background-color: var(--neutral-1);
+  border-radius: var(--border-radius-small);
+  margin-bottom: 0;
+  text-align: center;
+}

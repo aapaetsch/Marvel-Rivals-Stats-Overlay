@@ -1,0 +1,114 @@
+/* filepath: c:\Users\aapae\Documents\Overwolf Projects\rivalsreactoverlay\src\screens\desktop\components\styles\Settings.css */
+.settings-container {
+  width: 100%;
+  margin: 20px 0;
+}
+
+.settings-collapse {
+  background-color: transparent !important;
+  border: none !important;
+}
+
+/* Collapse panel styling */
+.settings-collapse .ant-collapse-item {
+  margin-bottom: 12px;
+  border: 1px solid var(--primary-color-medium) !important;
+  border-radius: var(--border-radius) !important;
+  overflow: hidden;
+  background-color: var(--neutral-2);
+}
+
+/* Panel header styling */
+.settings-collapse .ant-collapse-header {
+  background-color: var(--header-dark) !important;
+  color: var(--primary-color-text) !important;
+  font-size: var(--font-size-large) !important;
+  padding: 8px 16px !important;
+  transition: background-color 0.2s;
+}
+
+.settings-collapse .ant-collapse-header:hover {
+  background-color: var(--primary-color-medium) !important;
+}
+
+/* Panel content styling */
+.settings-collapse .ant-collapse-content {
+  background-color: transparent !important;
+  border-top: none !important;
+}
+
+.settings-collapse .ant-collapse-content-box {
+  padding: 16px !important;
+}
+
+/* Arrow icon styling */
+.settings-collapse .ant-collapse-arrow {
+  color: var(--primary-color-text) !important;
+}
+
+/* Form styling */
+.settings-form {
+  width: 100%;
+  max-width: 600px;
+}
+
+.settings-form .ant-form-item-label > label {
+  color: var(--primary-color-text);
+}
+
+.settings-form .ant-select-selector,
+.settings-form .ant-input,
+.settings-form .ant-input-number,
+.settings-form .ant-radio-wrapper,
+.settings-form .ant-checkbox-wrapper {
+  background-color: var(--neutral-0) !important;
+  color: var(--primary-color-text) !important;
+  border-color: var(--neutral-0) !important;
+}
+
+.settings-form .ant-select-arrow,
+.settings-form .ant-input-number-handler {
+  color: var(--primary-color-text) !important;
+}
+
+/* About section styling */
+.about-content {
+  text-align: center;
+  padding: 20px;
+  color: var(--primary-color-text);
+}
+
+.about-content h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+/* Actions bar */
+.settings-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  justify-content: flex-end;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .settings-form {
+    max-width: 100%;
+  }
+  
+  .button-group {
+    flex-direction: column;
+  }
+  
+  .button-group .ant-btn {
+    width: 100%;
+  }
+}

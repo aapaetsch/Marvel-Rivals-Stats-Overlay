@@ -1,0 +1,199 @@
+/* RecentPlayers.css - Styles for the Recent Players tab */
+
+.recent-players-container {
+  width: 100%;
+  padding: 16px 0;
+}
+
+.recent-players-card {
+  background-color: var(--neutral-2) !important;
+  border: 1px solid var(--primary-color-medium) !important;
+  border-radius: var(--border-radius) !important;
+}
+
+.recent-players-card .ant-card-head {
+  background-color: var(--header-dark);
+  border-bottom: 1px solid var(--primary-color-medium);
+}
+
+.recent-players-card .ant-card-head-title {
+  color: var(--primary-color-text);
+}
+
+.recent-players-list {
+  margin-top: 8px;
+}
+
+/* Player item styling */
+.recent-player-item {
+  padding: 12px !important;
+  border-radius: var(--border-radius-small);
+  background-color: var(--neutral-1);
+  margin-bottom: 8px;
+  transition: background-color 0.3s;
+}
+
+.recent-player-item:hover {
+  background-color: var(--neutral-0);
+}
+
+/* Player row structure */
+.player-row {
+  width: 100%;
+}
+
+/* Player info section */
+.player-info {
+  display: flex;
+  align-items: center;
+}
+
+.player-avatar {
+  margin-right: 12px;
+}
+
+.player-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.player-name {
+  font-weight: bold;
+  color: var(--primary-color-text);
+  font-size: 16px;
+}
+
+.character-name {
+  color: var(--primary-color-medium);
+  font-size: 14px;
+}
+
+/* Encounter stats section */
+.encounter-stats {
+  display: flex;
+  justify-content: center;
+}
+
+.stat-container {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 8px;
+}
+
+.stat-label {
+  color: var(--primary-color-text);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.encounter-badge .ant-badge-count {
+  background-color: var(--primary-color-medium);
+}
+
+/* Character tags section */
+.recent-characters {
+  text-align: center;
+}
+
+.character-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.character-tag {
+  margin: 2px;
+  background-color: var(--primary-color-dark);
+  color: var(--primary-color-text);
+  border: 1px solid var(--primary-color-medium);
+}
+
+/* Last seen section */
+.last-seen {
+  text-align: right;
+}
+
+.last-seen-text {
+  color: var(--primary-color-medium);
+  font-size: 12px;
+}
+
+.time-icon {
+  margin-right: 4px;
+}
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+.empty-icon {
+  font-size: 48px;
+  color: var(--primary-color-medium);
+  margin-bottom: 16px;
+}
+
+.empty-text {
+  color: var(--primary-color-text);
+  font-size: 16px;
+  text-align: center;
+}
+
+/* Filter controls */
+.search-input {
+  width: 240px;
+  margin-right: 8px;
+}
+
+/* Pagination styles */
+.recent-players-list .ant-pagination {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.recent-players-list .ant-pagination-item-link {
+  color: var(--primary-color-text);
+}
+
+.recent-players-list .ant-pagination-item {
+  background-color: var(--neutral-2);
+  border-color: var(--primary-color-medium);
+}
+
+.recent-players-list .ant-pagination-item-active {
+  background-color: var(--primary-color-medium);
+  border-color: var(--primary-color-light);
+}
+
+.recent-players-list .ant-pagination-item a {
+  color: var(--primary-color-text);
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .encounter-stats {
+    order: 3;
+    width: 100%;
+    margin-top: 8px;
+  }
+  
+  .recent-characters {
+    order: 2;
+  }
+  
+  .last-seen {
+    order: 1;
+    text-align: left;
+  }
+}

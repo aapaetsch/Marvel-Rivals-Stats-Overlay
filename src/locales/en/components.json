@@ -1,0 +1,116 @@
+{
+  "components": {
+    "desktop": {
+      "header": "English-Header-Text",
+      "main": {
+        "title": "Game Events"
+      },
+      "aside":  {
+        "title": "Info Events"
+      },
+      "footer": "English-Footer-Text",
+      "menu": {
+        "home": "Home",
+        "match": "Match",
+        "current_match": "Current Match",
+        "match_history": "Match History",
+        "stats": "Stats",
+        "player_stats": "Player Stats",
+        "squad_stats": "Squad Stats",
+        "players": "Players",
+        "favourites": "Favourites",
+        "recent": "Recent",
+        "heros": "Heros",
+        "heros_tierlist": "Heros Tierlist",
+        "settings": "Settings"
+      },
+      "settings": {
+        "general": "General Settings",
+        "language": "Language",
+        "startup": "Start with Windows",
+        "notifications": "Enable Notifications",
+        "theme": "Application Theme",
+        "dark": "Dark",
+        "light": "Light",
+        "overlay": "Overlay Settings",
+        "team-stats": "Show Team Stats",
+        "kill-feed": "Show Kill Feed",
+        "opacity": "Overlay Opacity",
+        "position": "Overlay Position",
+        "top-left": "Top Left",
+        "top-right": "Top Right",
+        "bottom-left": "Bottom Left",
+        "bottom-right": "Bottom Right",
+        "about": "About",
+        "check-updates": "Check for Updates",
+        "support": "Get Support",
+        "feedback": "Send Feedback",
+        "save": "Save Settings",
+        "reset": "Reset to Default"
+      },
+      "match-info": {
+        "title": "Match Information",
+        "no-data": "No match data available. Start a game to see match statistics.",
+        "id": "Match ID",
+        "map": "Map",
+        "game-type": "Game Type",
+        "game-mode": "Game Mode",
+        "outcome": "Outcome",
+        "start-time": "Start Time",
+        "end-time": "End Time",
+        "time": "Time",
+        "players": "Players",
+        "player-name": "Name",
+        "character": "Character",
+        "team": "Team",
+        "kills": "K",
+        "deaths": "D",
+        "assists": "A",
+        "final-blows": "FB",
+        "healing": "Heal",
+        "damage": "Damage",
+        "block": "Block",
+        "no-players": "No player data available.",
+        "you": "You",
+        "inProgress": "In Progress"
+      },
+      "match-history": {
+        "title": "Match History",
+        "loading": "Loading more matches...",
+        "end": "No more matches to load",
+        "no-matches": "No matches found",
+        "filtersLabel": "Filters",
+        "ad": "Advertisement",
+        "filters": {
+          "game-type": "Game Type",
+          "select-game-type": "Select game type",
+          "game-mode": "Game Mode",
+          "select-game-mode": "Select game mode",
+          "date-range": "Date Range",
+          "start-date": "Start date",
+          "end-date": "End date",
+          "hero": "Hero",
+          "select-hero": "Select hero",
+          "reset": "Reset Filters"
+        }
+      },
+      "match-detail": {
+        "match-id": "Match ID",
+        "match-time": "Match Time",
+        "map": "Map",
+        "outcome": "Outcome",
+        "player": "Player",
+        "character": "Character",
+        "kills": "K",
+        "deaths": "D",
+        "assists": "A",
+        "final-hits": "FB",
+        "damage": "Damage",
+        "healing": "Healing",
+        "blocked": "Blocked",
+        "teammates": "Teammates",
+        "opponents": "Opponents"
+      }
+    }
+  }
+}

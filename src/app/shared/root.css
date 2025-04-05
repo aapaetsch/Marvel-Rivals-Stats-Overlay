@@ -1,0 +1,62 @@
+:root {
+  --neutral-0: #282931;
+  --neutral-1: #595F82;
+  --neutral-2: #313161;
+  --neutral-3: #B6BEE3;
+  --neutral-4: #DEE3F0;
+  --neutral-5: #B5BDDE;
+
+  --primary-color: #88A7FE;
+  --primary-lighter: #B4BBDF;
+  --primary-color-light: #AEC4FF;
+  --primary-color-medium:#3F5892;
+  --primary-color-dark: #4A699D;
+  --primary-color-text: #ffffff;
+  --secondary-color: #FD8358;
+  --secondary-color-medium: #8A4433;
+  --secondary-color-light: #FF8459;
+  --secondary-color-dark: #3F0D0D;
+  --secondary-color-text: #ffffff;
+  --victory-light: #FFFD3E;
+  --victory-secondary: #FADC2E;
+  --victory-color: #FFD74A;
+  --header-dark: #1D2029;
+  --header: #1D2029;
+  --disabled-color: #666666;
+  --error-color: #b00020;
+  --background-color: #171717;
+  --font-family: "Roboto", sans-serif;
+  --font-size: 16px;
+  --font-weight: 400;
+  --font-size-small: 14px;
+  --font-size-medium: 16px;
+  --font-size-large: 18px;
+  --discord-color: #7289da;
+
+  --success-color: #4caf50;
+  
+  --border-radius-small: 4px;
+  --border-radius: 6px;
+  --border-radius-large: 8px;
+}
+
+button {
+  padding: 0;
+  border: none;
+}
+
+button:focus {
+  outline: none;
+}
+
+.is-hidden {
+  display: none;
+}
+
+.has-text-default-color {
+  color: var(--primary-color-text);
+}
+
+.has-font-family-default {
+  font-family: 'Big Noodle Titling', sans-serif;
+}

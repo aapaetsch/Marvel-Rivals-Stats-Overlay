@@ -1,0 +1,222 @@
+.player-stats-wrapper div span {
+  font-size: 1rem;
+  font-weight: bolder;
+  text-align: center;
+  color: var(--primary-color-text);
+}
+
+.teamate-title {
+  font-size: 1.25rem;
+  font-weight: bolder;
+  text-align: center;
+  color: var(--primary-color-text);
+  margin-bottom: 0.25rem;
+}
+
+.player-character-avatar {
+  margin-right: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.player-character-avatar .character-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--border-radius-small);
+  object-fit: contain;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* Player Stats Table Styles */
+.player-stats-table {
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.player-stats-table .ant-table {
+  background-color: transparent;
+  color: white;
+}
+
+.player-stats-table .ant-table-thead > tr > th {
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  font-weight: bold;
+  text-align: center;
+  padding: 8px 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.player-stats-table .ant-table-tbody > tr > td {
+  color: #fff;
+  text-align: center;
+  padding: 6px 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.player-stats-table .ant-table-tbody > tr:hover > td {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.player-stats-table .ant-table-tbody > tr.ultimate-charging > td {
+  background-color: rgba(255, 215, 0, 0.2);
+}
+
+.character-icon {
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Teammates grid layout */
+.teammates-container {
+  width: 100%;
+  max-width: 250px; /* Reduced from 300px */
+  margin: 0 auto;
+  overflow: hidden; /* Prevent overflow */
+}
+
+.teammates-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* Reduced from 12px */
+  overflow: hidden;;
+}
+
+/* Individual teammate card styling */
+.teammate-card {
+  position: relative;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 6px; /* Slightly reduced */
+  overflow: hidden;
+  padding: 0; /* Removed padding - will be handled by the content */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  pointer-events: auto;
+}
+
+.teammate-card.is-closed {
+  min-width: 175px;
+  width: 60%;
+}
+
+.ultimate-border {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  /* Using a transparent background with a solid border instead of a full background */
+  background-color: transparent;
+  border: 3px solid var(--victory-color); /* Yellow border for ultimate */
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+.teammate-card-content {
+  position: relative;
+  z-index: 2;
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 4px; /* Reduced from 6px */
+  padding: 6px; /* Reduced from 8px */
+  margin: 3px; /* Add margin to create space for the border */
+}
+
+/* Player name styling */
+.teammate-name {
+  font-size: 14px; /* Reduced from 16px */
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 4px; /* Reduced from 8px */
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.local-player-indicator {
+  margin-left: 4px;
+  color: var(--victory-secondary);
+}
+
+/* Main stats container with avatar and KDA */
+.teammate-stats-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px; /* Reduced from 8px */
+}
+
+.teammate-avatar {
+  width: 50px; /* Reduced from 64px */
+  height: 50px; /* Reduced from 64px */
+  margin-right: 6px; /* Reduced from 8px */
+  flex-shrink: 0;
+}
+
+.teammate-avatar .character-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Stats styling */
+.teammate-stats {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 50px; /* Reduced from 64px to match avatar size */
+}
+
+.stat-row {
+  display: flex;
+  justify-content: flex-start; /* Changed from space-between to bring numbers closer to labels */
+  align-items: center;
+}
+
+.stat-icon {
+  color: var(--primary-color);
+  font-size: 14px;
+  margin-right: 5px;
+  width: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-label {
+  font-weight: bold;
+  color: #aaa;
+  margin-right: 2px; /* Add small margin to separate from colon */
+}
+
+.stat-value {
+  font-size: 14px; /* Reduced from 16px */
+  font-weight: bold;
+  color: #fff;
+  margin-left: 2px; /* Add small margin after icon */
+}
+
+/* Footer with final blows, KD ratio and KDA ratio */
+.teammate-footer {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 4px; /* Reduced from 6px */
+  font-size: 11px; /* Reduced from 12px */
+  color: #ddd;
+}
+
+.final-hits, .kd-ratio, .kda-ratio {
+  font-weight: bold;
+}
+
+.kda-ratio {
+  color: var(--victory-color); /* Highlight KDA with a special color */
+}
+

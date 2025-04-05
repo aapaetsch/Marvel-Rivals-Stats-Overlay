@@ -1,0 +1,306 @@
+html,
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family);
+  font-size: var(--font-size);
+  font-weight: var(--font-weight);
+  color: var(--primary-color-text);
+  background-color: var(--background-color);
+}
+
+.desktop {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: flex-start;
+  padding: 2rem;
+  width: 100%;
+}
+
+.desktop__container {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto 1fr auto;
+  grid-template-areas:
+    "header"
+    "nav"
+    "main"
+    "footer";
+  height: 100%;
+  max-width: 1200px;
+  width: 100%;
+  gap: 1rem;
+  overflow: hidden; /* Prevent container overflow */
+}
+
+.desktop__fit {
+  grid-column: 1 / -1;
+}
+
+.desktop__header {
+  grid-area: header;
+  align-items: center;
+  display: flex;
+  height: 60px;
+  padding: 1rem;
+}
+
+.desktop__nav {
+  grid-area: nav;
+  background-color: var(--neutral-2);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  min-height: 46px;
+  width: 100%;
+}
+
+.desktop__footer {
+  grid-area: footer;
+  align-items: center;
+  display: flex;
+  height: 60px;
+  padding: 1rem;
+}
+
+.desktop__main {
+  background-color: var(--neutral-1);
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  color: var(--primary-color-text);
+  overflow-y: auto;
+  grid-area: main;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: stretch;
+  min-height: 0; /* Allow container to shrink */
+  max-height: 100%; /* Don't exceed parent height */
+  will-change: transform;
+  transform: translateZ(0);
+  z-index: 1; /* Match z-index with aside */
+}
+
+/* When menu is collapsed, adjust grid to give more space to the main content */
+.menu-collapsed .desktop__container {
+  grid-template-columns: 80px 1fr;
+}
+
+.is-hidden {
+  display: none;
+}
+
+/* Match Info Styles */
+.match-info {
+  margin-top: 10px;
+  padding: 16px;
+  background-color: var(--neutral-1);
+  border-radius: var(--border-radius);
+  max-width:100%;
+  overflow: hidden;
+}
+
+.match-info h3 {
+  color: var(--primary-color-text);
+  margin-bottom: 10px;
+  font-size: var(--font-size-large);
+  border-bottom: 1px solid var(--neutral-0);
+  padding-bottom: 3px;
+  padding-top: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+}
+
+.match-info h3:hover {
+  background-color: var(--neutral-1);
+  padding-left: 8px;
+  cursor: pointer;
+}
+
+.match-info h3::after {
+  content: '▼';
+  font-size: 0.8em;
+  margin-left: 8px;
+  transition: transform 0.3s ease;
+}
+
+.match-info h3.collapsed::after {
+  transform: rotate(-90deg);
+}
+
+.collapsible-content {
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.match-info p {
+  color: var(--primary-color-text);
+  margin-bottom: 15px;
+  font-style: italic;
+}
+
+.no-data-message {
+  color: var(--secondary-color-light);
+  padding: 10px;
+  background-color: var(--neutral-1);
+  border-radius: var(--border-radius-small);
+  margin-bottom: 15px;
+}
+
+/* Responsive match info layout */
+.match-info-table {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  color: var(--primary-color-text);
+  border: 1px solid var(--header-dark);
+  border-radius: var(--border-radius-large);
+  background-color: var(--neutral-0);
+}
+
+.match-info-table tbody {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.match-info-table tr {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.match-info-table .info-item {
+  display: flex;
+  width: fit-content;
+  flex: 1 0 50%;
+  min-width: 250px;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.match-info-table .info-label {
+  font-weight: bold;
+  min-width: 120px;
+  padding-right: 8px;
+}
+
+.match-info-table .info-value {
+  flex-grow: 1;
+}
+
+/* Responsive players table */
+.players-table-container,
+.players-table {
+  border-radius: var(--border-radius-large);
+}
+
+.players-table-container {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: 20px;
+  
+}
+
+.players-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--primary-color-text);
+  min-width: 600px;
+  border: 3px solid var(--neutral-0);
+}
+
+.players-table th:first-child {
+  border-top-left-radius: var(--border-radius);
+}
+
+.players-table th:last-child {
+  border-top-right-radius: var(--border-radius);
+}
+
+.players-table td,
+.players-table th {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid var(--neutral-0);
+}
+
+.players-table th {
+  background-color: var(--header-dark);
+  font-weight: bold;
+  padding: 10px 8px;
+}
+
+.players-table tbody {
+  background-color: var(--neutral-0);
+}
+
+.no-data-cell {
+  text-align: center;
+  font-style: italic;
+  color: var(--neutral-3);
+  padding: 20px !important;
+}
+
+/* Team styles with space between team groups */
+.players-table tr.local-player {
+  background-color: rgba(63, 88, 146, 0.9); /* Using RGB values from primary-color-medium */
+}
+
+.players-table tr.teammate {
+  background-color: rgba(74, 105, 157, 0.9); /* Using RGB values from primary-color-dark */
+}
+
+.players-table tr.opponent {
+  background-color: rgba(63, 13, 13, 0.9); /* Using RGB values from secondary-color-dark */
+}
+
+/* Add space between teams */
+.players-table tr.team-separator {
+  height: 10px;
+  background-color: transparent;
+  border: none;
+}
+
+.players-table tr.team-separator td {
+  padding: 0;
+  border: none;
+}
+
+.players-table tr:hover:not(.team-separator) {
+  background-color: var(--neutral-2);
+  transition: background-color 0.2s;
+}
+
+/* Stat columns */
+.players-table .stat-col {
+  text-align: center;
+  width: 50px;
+}
+
+.players-table .player-col {
+  min-width: 120px;
+}
+
+.players-table .character-col {
+  min-width: 100px;
+}
+
+.players-table .team-col {
+  min-width: 80px;
+  max-width: 80px;
+  display: none;
+}
+
+.players-table .damage-col {
+  min-width: 80px;
+  text-align: center;
+}
