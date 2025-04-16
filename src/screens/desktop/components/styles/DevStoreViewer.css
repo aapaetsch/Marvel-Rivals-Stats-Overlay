@@ -1,0 +1,115 @@
+.dev-store-viewer {
+  background-color: var(--neutral-2);
+  border: 1px solid var(--primary-color-medium);
+  border-radius: var(--border-radius);
+  margin-top: 20px;
+  padding: 15px;
+  max-height: 400px;
+  overflow: auto;
+}
+
+.dev-store-viewer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.dev-store-viewer-header h2 {
+  margin: 0;
+  color: var(--primary-color-text);
+  font-size: var(--font-size-medium);
+}
+
+.dev-store-viewer-controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.dev-store-viewer-content {
+  border-top: 1px solid var(--neutral-0);
+  padding-top: 15px;
+}
+
+/* Make collapse panel headers white */
+.dev-store-viewer .ant-collapse-header {
+  color: white !important;
+}
+
+.dev-store-viewer .ant-collapse-header-text {
+  color: white !important;
+}
+
+.dev-store-viewer .ant-collapse-expand-icon {
+  color: white !important;
+}
+
+/* Improve visibility of collapse content */
+.dev-store-viewer .ant-collapse-content {
+  background-color: rgba(0, 0, 0, 0.3) !important;
+  color: white !important;
+}
+
+/* JSON Viewer styles */
+.json-property {
+  margin: 2px 0;
+  padding-left: 20px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.json-property-key {
+  color: #3498db; /* Bright blue */
+  margin-right: 6px;
+  flex-shrink: 0;
+  font-weight: bold;
+}
+
+.json-toggle {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: white;
+  font-weight: 500;
+}
+
+.json-children {
+  margin-left: 10px;
+  border-left: 1px dashed rgba(255, 255, 255, 0.3);
+  padding-left: 10px;
+}
+
+.json-string {
+  color: #2ecc71; /* Bright green */
+  word-break: break-word;
+  font-weight: 500;
+}
+
+.json-number {
+  color: #f39c12; /* Bright orange */
+  font-weight: 500;
+}
+
+.json-boolean {
+  color: #9b59b6; /* Bright purple */
+  font-weight: 500;
+}
+
+.json-null {
+  color: #e74c3c; /* Red */
+  font-style: italic;
+  font-weight: 500;
+}
+
+.json-undefined {
+  color: #e74c3c; /* Red */
+  font-style: italic;
+  font-weight: 500;
+}
+
+.json-array, .json-object {
+  color: white;
+  font-weight: 500;
+}
