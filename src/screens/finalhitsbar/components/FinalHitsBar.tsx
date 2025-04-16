@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { Avatar } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
@@ -16,27 +16,25 @@ const FinalHitsPlayer = (props: FinalHitsPlayerProps) => {
     <div className="final-hits-player" data-uid={props.uid}>
       <div className="final-hits-on-wrapper">
         <div className="final-hits-on-player">
-          {/* number of final hits on */}
           <span>{finalHitsOnPlayer}</span>
           <div className="final-hits-background"></div>
         </div>
       </div>
       <div className="final-hits-player-avatar">
-        {/* Character avatar */}
         {characterIconPath ? (
           <img 
             src={characterIconPath} 
             alt={props.characterName || props.name} 
             className="character-avatar"
+            style={{ width: 48, height: 48 }}
           />
         ) : (
-          <Avatar size={64} shape={"square"} icon={<UserOutlined />} />
+          <Avatar size={48} shape={"square"} icon={<UserOutlined />} />
         )}
-        <span className="player-name is-hidden" title={props.name}>{props.name}</span>
+        <span className="player-name" title={props.name}>{props.name}</span>
       </div>
       <div className="final-hits-on-wrapper">
         <div className="final-hits-on-user">  
-          {/* Final hits on you */}
           <span>{finalHitsOnYou}</span>
           <div className="final-hits-background"></div>
         </div>
@@ -48,7 +46,7 @@ const FinalHitsPlayer = (props: FinalHitsPlayerProps) => {
 const FinalHitsBar = (props: FinalHitsBarProps) => {
   return (
     <div className="final-hits-bar">
-    {props.players != null ? props.players.map((player) => (
+    {props.players != null && props.players.length > 0 ? props.players.map((player) => (
         <FinalHitsPlayer key={player.uid} {...player} />
       ))
       : (
@@ -80,10 +78,14 @@ const Screen = () => {
   const finalHitsPlayers: FinalHitsPlayerProps[] = useMemo(() => {
     if (!localPlayer) return [];
 
-    // Convert the players object to an array, ignoring the local player itself
-    return Object.values(currentMatch.players)
-      .filter((p) => !p.isLocal && !p.isTeammate)
+    // Convert the players object to an array, ignoring the local player itself and teammates
+    const opponents = Object.values(currentMatch.players)
+      .filter((p) => !p.isLocal && !p.isTeammate);
+    
+    // Only return players that actually have some kill interaction (either direction)
+    return opponents
       .map((p) => {
+        // Get the kill counts in both directionss
         const finalHitsOnPlayer = localPlayer.killedPlayers[p.uid] ?? 0;
         const finalHitsOnYou = p.killedPlayers[localPlayer.uid] ?? 0;
 
@@ -91,28 +93,38 @@ const Screen = () => {
           uid: p.uid,
           name: p.name,
           characterName: p.characterName,
-          avatarUrl: null, // or wherever you store the avatar
+          avatarUrl: null,
           finalHitsOnPlayer, 
           finalHitsOnYou,
         };
-      });
+      })
+      // Only include players with kills in either direction to avoid cluttering the UI
+      .filter(p => p.finalHitsOnPlayer > 0 || p.finalHitsOnYou > 0);
   }, [currentMatch.players, localPlayer]);
 
   // 4) If you want a dummy list when there are no players:
   const pdummy: FinalHitsPlayerProps[] = [
-    { uid: '1', name: 'Player 1', characterName: 'Iron Man', avatarUrl: null, finalHitsOnPlayer: 0, finalHitsOnYou: 0 },
-    { uid: '2', name: 'Player 2', characterName: 'Spider-Man', avatarUrl: null, finalHitsOnPlayer: 0, finalHitsOnYou: 0 },
-    { uid: '3', name: 'Player 3', characterName: 'Doctor Strange', avatarUrl: null, finalHitsOnPlayer: 0, finalHitsOnYou: 0 },
-    { uid: '4', name: 'Player 4', characterName: 'Black Panther', avatarUrl: null, finalHitsOnPlayer: 0, finalHitsOnYou: 0 },
-    { uid: '5', name: 'Player 5', characterName: 'Storm', avatarUrl: null, finalHitsOnPlayer: 0, finalHitsOnYou: 0 },
+    { uid: '1', name: 'Player 1', characterName: 'CLOAK & DAGGER', avatarUrl: null, finalHitsOnPlayer: 0, finalHitsOnYou: 0 },
+    { uid: '2', name: 'Player 2', characterName: 'JEFF THE LAND SHARK', avatarUrl: null, finalHitsOnPlayer: 0, finalHitsOnYou: 0 },
+    { uid: '3', name: 'Player 3', characterName: 'JEFF THE LAND SHARK', avatarUrl: null, finalHitsOnPlayer: 0, finalHitsOnYou: 0 },
+    { uid: '4', name: 'Player 4', characterName: 'JEFF THE LAND SHARK', avatarUrl: null, finalHitsOnPlayer: 0, finalHitsOnYou: 0 },
+    { uid: '5', name: 'Player 5', characterName: 'JEFF THE LAND SHARK', avatarUrl: null, finalHitsOnPlayer: 0, finalHitsOnYou: 0 },
+    { uid: '6', name: 'Player 6', characterName: 'JEFF THE LAND SHARK', avatarUrl: null, finalHitsOnPlayer: 0, finalHitsOnYou: 0 },
   ];
+    // Get app settings to check if this overlay should be shown
+  const { showFinalHitsOverlay, finalHitsOpacity } = useSelector((state: RootReducer) => state.appSettingsReducer.settings);
   
-
+  // Apply opacity from settings
+  const opacityStyle = {
+    opacity: finalHitsOpacity / 100
+  };
+  
   return (
-    <div className={`final-hits-bar-screen ${isMatchInProgress ? '' : 'is-hidden'}`}>
-      <FinalHitsBar players={finalHitsPlayers.length ? finalHitsPlayers : pdummy} />
+    <div className={`final-hits-bar-screen ${(isMatchInProgress && showFinalHitsOverlay) ? '' : 'is-hidden'}`} style={opacityStyle}>
+      <FinalHitsBar players={finalHitsPlayers.length ? finalHitsPlayers : pdummy}/>
     </div>
-  );
+  )
 }
+
 
 export default Screen;
