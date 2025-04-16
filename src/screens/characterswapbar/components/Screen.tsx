@@ -281,11 +281,12 @@ const Screen: React.FC = () => {
     }
     // Only re-run when swapQueue changes
   }, [swapQueue, activeSwaps]);
-
   // 3) Pass local state to <SwapBar>. The bar shows items in activeSwaps, which vanish after 5s
+  const { showPlayerSwapNotification } = useSelector((state: RootReducer) => state.appSettingsReducer.settings);
+  
   const barProps: SwapBarProps = {
     characters: activeSwaps,
-    show: activeSwaps.length > 0 || shouldShowMatchInfo,
+    show: (activeSwaps.length > 0 || shouldShowMatchInfo) && showPlayerSwapNotification,
     showMatchInfo: shouldShowMatchInfo,
     matchInfo: {
       map: currentMatch.map,
@@ -295,7 +296,7 @@ const Screen: React.FC = () => {
   };
 
   return (
-    <div className="swap-bar-container">
+    <div className={`swap-bar-container ${showPlayerSwapNotification ? '' : 'is-hidden'}`}>
       <SwapBar {...barProps} />
     </div>
   );

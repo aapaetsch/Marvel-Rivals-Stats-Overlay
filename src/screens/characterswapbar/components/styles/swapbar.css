@@ -22,6 +22,10 @@
   overflow: hidden;
 }
 
+.swap-bar-container.is-hidden {
+  display: none;
+}
+
 .swap-bar__player-row {
   display: flex;
   flex-direction: row;
