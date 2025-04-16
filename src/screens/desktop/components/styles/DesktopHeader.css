@@ -9,6 +9,7 @@
   z-index: 1000;
   width: inherit;
   height: 2.5rem;
+  padding: 0.25rem;
 }
 
 .header:active {
@@ -54,6 +55,7 @@
 .header__title {
   color: var(--primary-color-text);
   margin-left: 10px;
+  margin-bottom: 0.25rem;;
   font-size: var(--font-size-medium);
   display: flex;
   align-items: center;
