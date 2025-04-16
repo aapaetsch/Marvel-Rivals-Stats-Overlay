@@ -1,8 +1,6 @@
 import { configureStore, Middleware, Action } from "@reduxjs/toolkit";
-import backgroundReducer from "../../screens/background/stores/background";
-import appSettingsReducer from "../../features/appSettings/appSettingsSlice";
-import matchStatsReducer, { completeMatch } from "../../screens/background/stores/matchStatsSlice";
-import recentPlayersReducer, { addRecentPlayersFromMatch } from "../../screens/background/stores/recentPlayersSlice";
+import { completeMatch } from "../../screens/background/stores/matchStatsSlice";
+import { addRecentPlayersFromMatch } from "../../screens/background/stores/recentPlayersSlice";
 import rootReducer, { RootReducer } from "./rootReducer";
 import { isDev } from "lib/utils";
 

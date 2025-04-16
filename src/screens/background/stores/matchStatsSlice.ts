@@ -4,8 +4,8 @@ import {
   MatchOutcome,
   MatchStatsState,
   MatchStoreState,
-  // PlayerStats,  // If you use the typed interface
-  // TeamStats
+  PlayerStats,  // Uncommented this line
+  TeamStats
 } from "../types/matchStatsTypes";
 // We'll initialize the logger when the slice is first imported
 logger.init().catch(err => console.error("Failed to initialize logger:", err));
@@ -28,6 +28,103 @@ const initialState: MatchStoreState = {
   currentMatch: initialMatchStatsState,
   matchHistory: [],
 };
+
+const completeMatchHandler = (state: MatchStoreState) => {
+  const match = state.currentMatch;
+
+  // Log match completion event
+  logger.logInfo(
+    {
+      event: "complete_match",
+      matchId: match.matchId,
+      map: match.map,
+      gameMode: match.gameMode,
+      gameType: match.gameType,
+      outcome: match.outcome,
+      duration: match.timestamps.matchStart && match.timestamps.matchEnd
+        ? match.timestamps.matchEnd - match.timestamps.matchStart
+        : null,
+      timestamp: Date.now()
+    },
+    "matchStatsSlice.ts",
+    "completeMatch"
+  );
+
+  // Compute team stats
+  for (const player of Object.values(match.players) as PlayerStats[]) {
+    const team = match.teamStats[player.team] || {
+      finalHits: 0,
+      totalDamage: 0,
+      totalBlocked: 0,
+      totalHealing: 0,
+    };
+
+    team.finalHits += player.finalHits;
+    team.totalDamage += player.damageDealt;
+    team.totalBlocked += player.damageBlocked;
+    team.totalHealing += player.totalHeal;
+
+    match.teamStats[player.team] = team;
+  }
+
+  // Calculate each player's percentage contribution
+  for (const player of Object.values(match.players) as PlayerStats[]) {
+    const team = match.teamStats[player.team];
+    player.pctTeamDamage =
+      team.totalDamage > 0
+        ? +((player.damageDealt / team.totalDamage) * 100).toFixed(1)
+        : 0;
+    player.pctTeamBlocked =
+      team.totalBlocked > 0
+        ? +((player.damageBlocked / team.totalBlocked) * 100).toFixed(1)
+        : 0;
+    player.pctTeamHealing =
+      team.totalHealing > 0
+        ? +((player.totalHeal / team.totalHealing) * 100).toFixed(1)
+        : 0;
+  }
+
+  // Log final match stats
+  logger.logMatchStats(
+    {
+      event: "final_match_stats",
+      matchId: match.matchId,
+      map: match.map,
+      gameMode: match.gameMode,
+      gameType: match.gameType,
+      outcome: match.outcome,
+      players: Object.values(match.players).map(player => ({
+        uid: player.uid,
+        name: player.name,
+        team: player.team,
+        character: player.characterName,
+        isLocal: player.isLocal,
+        isTeammate: player.isTeammate,
+        stats: {
+          kills: player.kills,
+          deaths: player.deaths,
+          assists: player.assists,
+          finalHits: player.finalHits,
+          damageDealt: player.damageDealt,
+          damageBlocked: player.damageBlocked,
+          totalHeal: player.totalHeal,
+          pctTeamDamage: player.pctTeamDamage,
+          pctTeamBlocked: player.pctTeamBlocked,
+          pctTeamHealing: player.pctTeamHealing,
+        },
+      })),
+      teamStats: match.teamStats,
+      timestamp: Date.now()
+    },
+    "matchStatsSlice.ts",
+    "completeMatch"
+  );
+
+  // Preserve final match data and reset
+  state.matchHistory.push(JSON.parse(JSON.stringify(state.currentMatch)));
+  state.currentMatch = { ...initialMatchStatsState };
+};
+
 
 const matchStatsSlice = createSlice({
   name: "matchStats",
@@ -223,12 +320,10 @@ const matchStatsSlice = createSlice({
               );
               console.log("Kill feed event:", data, attacker, victim);
             
-              // finalHits (teammates only), plus tracking "who killed who"
+              // finalHits, plus tracking "who killed who"
               if (attacker && victim) {
-                // If final hits are for teammates only:
-                if (attacker.isTeammate) {
-                  attacker.finalHits += 1;
-                }
+                // Track final hits for ALL players, not just teammates
+                attacker.finalHits += 1;
             
                 // Increment how many times the attacker has killed the victim
                 if (!attacker.killedPlayers[victim.uid]) {
@@ -304,20 +399,7 @@ const matchStatsSlice = createSlice({
               "matchStatsSlice.ts",
               "processEvents"
             );
-            
-            // Automatically call completeMatch when match ends
-            // This ensures match data is saved to history and current match is reset
-            setTimeout(() => {
-              // We need to use the setTimeout to ensure this runs after
-              // all other match_end related events have been processed
-              if (state.currentMatch.timestamps.matchEnd) {
-                // We use the thunk pattern here since we can't directly call another reducer
-                // This will be handled by a middleware that listens for this specific action
-                const completeAction = { type: 'matchStats/completeMatchThunk' };
-                //@ts-ignore - We know this is handled by middleware
-                store.dispatch(completeAction);
-              }
-            }, 500);
+            completeMatchHandler(state);
             break;
 
           default:
@@ -335,102 +417,9 @@ const matchStatsSlice = createSlice({
         }
       }
     },
+    completeMatch: completeMatchHandler
 
-    completeMatch(state) {
-      const match = state.currentMatch;
-
-      // Log match completion event
-      logger.logInfo(
-        {
-          event: "complete_match",
-          matchId: match.matchId,
-          map: match.map,
-          gameMode: match.gameMode,
-          gameType: match.gameType,
-          outcome: match.outcome,
-          duration: match.timestamps.matchStart && match.timestamps.matchEnd
-            ? match.timestamps.matchEnd - match.timestamps.matchStart
-            : null,
-          timestamp: Date.now()
-        },
-        "matchStatsSlice.ts",
-        "completeMatch"
-      );
-
-      // Compute team stats
-      for (const player of Object.values(match.players)) {
-        const team = match.teamStats[player.team] || {
-          finalHits: 0,
-          totalDamage: 0,
-          totalBlocked: 0,
-          totalHealing: 0,
-        };
-
-        team.finalHits += player.finalHits;
-        team.totalDamage += player.damageDealt;
-        team.totalBlocked += player.damageBlocked;
-        team.totalHealing += player.totalHeal;
-
-        match.teamStats[player.team] = team;
-      }
-
-      // Calculate each player's percentage contribution
-      for (const player of Object.values(match.players)) {
-        const team = match.teamStats[player.team];
-        player.pctTeamDamage =
-          team.totalDamage > 0
-            ? +((player.damageDealt / team.totalDamage) * 100).toFixed(1)
-            : 0;
-        player.pctTeamBlocked =
-          team.totalBlocked > 0
-            ? +((player.damageBlocked / team.totalBlocked) * 100).toFixed(1)
-            : 0;
-        player.pctTeamHealing =
-          team.totalHealing > 0
-            ? +((player.totalHeal / team.totalHealing) * 100).toFixed(1)
-            : 0;
-      }
-
-      // Log final match stats
-      logger.logMatchStats(
-        {
-          event: "final_match_stats",
-          matchId: match.matchId,
-          map: match.map,
-          gameMode: match.gameMode,
-          gameType: match.gameType,
-          outcome: match.outcome,
-          players: Object.values(match.players).map(player => ({
-            uid: player.uid,
-            name: player.name,
-            team: player.team,
-            character: player.characterName,
-            isLocal: player.isLocal,
-            isTeammate: player.isTeammate,
-            stats: {
-              kills: player.kills,
-              deaths: player.deaths,
-              assists: player.assists,
-              finalHits: player.finalHits,
-              damageDealt: player.damageDealt,
-              damageBlocked: player.damageBlocked,
-              totalHeal: player.totalHeal,
-              pctTeamDamage: player.pctTeamDamage,
-              pctTeamBlocked: player.pctTeamBlocked,
-              pctTeamHealing: player.pctTeamHealing,
-            },
-          })),
-          teamStats: match.teamStats,
-          timestamp: Date.now()
-        },
-        "matchStatsSlice.ts",
-        "completeMatch"
-      );
-
-      // Preserve final match data and reset
-      state.matchHistory.push(JSON.parse(JSON.stringify(state.currentMatch)));
-      state.currentMatch = { ...initialMatchStatsState };
-    },
+    
   },
 });
 
@@ -438,7 +427,7 @@ export const {
   resetCurrentMatch,
   processInfoUpdate,
   processEvents,
-  completeMatch,
+  completeMatch
 } = matchStatsSlice.actions;
 
 export default matchStatsSlice.reducer;
