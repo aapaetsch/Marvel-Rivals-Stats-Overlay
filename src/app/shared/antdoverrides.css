@@ -1,0 +1,81 @@
+.ant-switch {
+  border: 0.05em solid var(--ant-border-color-base) !important;
+}
+.ant-switch-checked {
+  background-color: var(--primary-color) !important;
+}
+
+.ant-switch-checked .ant-switch-handle::before {
+  background-color: var(--ant-switch-handle-checked) !important;
+}
+
+.ant-segmented {
+  border: 0.05em solid var(--primary-color);
+}
+
+/* Button Section */
+.ant-btn-variant-outlined.ant-btn-background-ghost:hover {
+  background-color: var(--primary-color) !important;
+  color: var(--primary-color-text) !important;
+}
+
+.ant-btn-color-primary.ant-btn-background-ghost {
+  color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+/* AntD Collapse Overrides */
+.ant-collapse-item {
+  border: 1px solid var(--ant-border-color-base) !important;
+  /* border-radius: var(--border-radius-large) !important; */
+  overflow: hidden;
+  background-color: var(--neutral-2);
+}
+
+:first-child.ant-collapse-item.ant-collapse-item-active {
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  border-top-left-radius: var(--border-radius-large) !important;
+  border-top-right-radius: var(--border-radius-large) !important;
+}
+
+.ant-collapse-item.ant-collapse-item-active .ant-collapse-header {
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+.ant-collapse-header {
+  background-color: var(--header-dark) !important;
+  color: var(--primary-color-text) !important;
+  font-size: var(--font-size-large) !important;
+  padding: 8px 16px !important;
+  transition: background-color 0.2s;
+}
+
+.ant-collapse-header:hover {
+  background-color: var(--primary-color-medium) !important;
+  color: var(--text-on-primary) !important
+}
+
+.ant-collapse-content {
+  background-color: transparent !important;
+  border-top: none !important;
+}
+
+.ant-form-item-label > label {
+  color: var(--primary-color-text) !important
+}
+
+.ant-collapse-content-box {
+  padding: 16px !important;
+}
+
+.ant-collapse-arrow {
+  color: var(--primary-color-text) !important;
+}
+
+/* Table Overrides */
+.ant-table {
+  border-radius: var(--border-radius-large) !important;
+  background: transparent !important;
+}
