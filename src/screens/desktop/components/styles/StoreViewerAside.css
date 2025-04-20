@@ -1,6 +1,6 @@
 .store-viewer-aside {
   position: fixed;
-  top: 40px; /* Account for header height */
+  top: 85px; /* Account for header height */
   right: 0;
   width: 400px;
   height: calc(100vh - 60px);
@@ -12,6 +12,10 @@
   flex-direction: column;
   transform: translateX(0);
   transition: transform 0.3s ease;
+}
+
+.store-viewer-aside.collapsed {
+  height:fit-content;
 }
 
 .store-viewer-aside.hidden {
