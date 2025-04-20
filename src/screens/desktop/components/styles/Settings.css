@@ -1,7 +1,12 @@
-/* filepath: c:\Users\aapae\Documents\Overwolf Projects\rivalsreactoverlay\src\screens\desktop\components\styles\Settings.css */
+/* Settings General */
 .settings-container {
   width: 100%;
-  margin: 20px 0;
+  /* Removed min/max height, using flexbox now */
+  display: flex; /* Use flexbox */
+  flex-direction: column; /* Stack children vertically */
+  height: calc(100vh - 100px); /* Adjust height based on header/other elements, example value */
+  padding: 20px; /* Add padding if needed */
+  box-sizing: border-box;
 }
 
 .settings-collapse {
@@ -9,51 +14,13 @@
   border: none !important;
 }
 
-/* Collapse panel styling */
-.settings-collapse .ant-collapse-item {
-  margin-bottom: 12px;
-  border: 1px solid var(--primary-color-medium) !important;
-  border-radius: var(--border-radius) !important;
-  overflow: hidden;
-  background-color: var(--neutral-2);
-}
-
-/* Panel header styling */
-.settings-collapse .ant-collapse-header {
-  background-color: var(--header-dark) !important;
-  color: var(--primary-color-text) !important;
-  font-size: var(--font-size-large) !important;
-  padding: 8px 16px !important;
-  transition: background-color 0.2s;
-}
-
-.settings-collapse .ant-collapse-header:hover {
-  background-color: var(--primary-color-medium) !important;
-}
-
-/* Panel content styling */
-.settings-collapse .ant-collapse-content {
-  background-color: transparent !important;
-  border-top: none !important;
-}
-
-.settings-collapse .ant-collapse-content-box {
-  padding: 16px !important;
-}
-
-/* Arrow icon styling */
-.settings-collapse .ant-collapse-arrow {
-  color: var(--primary-color-text) !important;
-}
-
 /* Form styling */
 .settings-form {
   width: 100%;
-  max-width: 600px;
-}
-
-.settings-form .ant-form-item-label > label {
-  color: var(--primary-color-text);
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Allow form to grow */
+  min-height: 0; /* Prevent form from overflowing container */
 }
 
 .settings-form .ant-select-selector,
@@ -69,6 +36,14 @@
 .settings-form .ant-select-arrow,
 .settings-form .ant-input-number-handler {
   color: var(--primary-color-text) !important;
+}
+
+/* New class for the scrollable content area */
+.settings-content-scrollable {
+  flex-grow: 1; /* Allow this area to take up available space */
+  overflow-y: auto; /* Enable vertical scrolling */
+  padding-right: 10px; /* Add some padding so scrollbar doesn't overlap content */
+  margin-bottom: 20px; /* Space between content and actions */
 }
 
 /* About section styling */
@@ -94,21 +69,259 @@
 .settings-actions {
   display: flex;
   gap: 10px;
-  margin-top: 20px;
+  margin-top: auto; /* Pushes actions to the bottom in flex column */
+  padding-top: 20px; /* Add space above the buttons */
+  border-top: 1px solid var(--neutral-4); /* Optional separator line */
   justify-content: flex-end;
+  flex-shrink: 0; /* Prevent actions area from shrinking */
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .settings-form {
-    max-width: 100%;
-  }
-  
-  .button-group {
-    flex-direction: column;
-  }
-  
-  .button-group .ant-btn {
-    width: 100%;
-  }
+/* Settings sections layout */
+.settings-subsection {
+  margin-bottom: 20px;
+}
+
+.settings-subsection h4 {
+  margin-bottom: 12px;
+  color: var(--primary-color-text);
+  font-weight: 500;
+}
+
+.settings-columns {
+  display: flex;
+  gap: 24px;
+  margin-top: 20px;
+}
+
+.settings-column {
+  flex: 1;
+  min-width: 0;
+}
+
+.settings-column-title {
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: var(--primary-color-text);
+  font-size: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--neutral-4);
+}
+
+/* Appearance column styling */
+.settings-column.appearance-column {
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+}
+
+/* Apply to all toggle section */
+.apply-all-toggle {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  padding-left: 12px; /* Add left padding for indentation */
+  border-bottom: 1px solid var(--neutral-4);
+  justify-content: space-between;
+}
+
+.apply-all-toggle span {
+  color: var(--primary-color-text);
+  font-weight: 500;
+}
+
+/* Card settings rows */
+.card-settings-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--neutral-3);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.card-settings-row:hover {
+  background-color: var(--neutral-3);
+}
+
+.card-settings-row:last-child {
+  border-bottom: none;
+}
+
+/* Base card label style */
+.card-settings-label {
+  color: var(--primary-color-text);
+  flex: 1;
+  padding-left: 12px;
+}
+
+/* Card label for color picker specifically - takes up 80% of the row */
+.card-settings-row:has(.settings-color-picker-trigger) .card-settings-label {
+  flex: 0 0 80%; /* 80% fixed width */
+  padding-right: 10px; /* Add some spacing */
+}
+
+.card-settings-label.is-indented {
+  padding-left: 12px;
+  position: relative;
+}
+
+.card-settings-label.is-indented::before {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+
+.card-settings-toggles {
+  display: flex;
+  align-items: center;
+}
+
+/* Slider row styling */
+.card-settings-row.slider-row {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+}
+
+.card-settings-row.slider-row.stacked-label {
+  display: block;
+  padding: 16px 16px 20px;
+}
+
+.card-settings-stacked-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.card-settings-stacked-label {
+  color: var(--primary-color-text);
+  text-align: left;
+  font-weight: 500;
+}
+
+/* Base control style */
+.card-settings-control {
+  flex: 3;  /* Take up 3/4 of the space (3:1 ratio) for most controls */
+  min-width: 250px;
+  margin-left: 20px;
+  margin-right: 25px; /* Add space on the right side */
+}
+
+/* Card control for color picker specifically - takes up 20% of the row */
+.card-settings-row:has(.settings-color-picker-trigger) .card-settings-control {
+  flex: 0 0 20%; /* 20% fixed width */
+  min-width: auto; /* Override min-width */
+  margin-left: 0; /* Remove left margin */
+  margin-right: 0; /* Remove right margin */
+  display: flex;
+  justify-content: flex-end; /* Right-align the color picker */
+}
+
+/* Make color picker larger */
+.settings-color-picker-trigger .ant-color-picker-trigger {
+  transform: scale(1.8); /* Increased from 1.5 to 1.8 */
+  margin: 5px; /* Slightly increased margin for better spacing */
+  border: 1px solid var(--neutral-4); /* Add slight border for better visibility */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add subtle shadow for better depth */
+}
+
+/* Add hover effect for better UX */
+.settings-color-picker-trigger .ant-color-picker-trigger:hover {
+  transform: scale(2); /* Scale up more on hover */
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+}
+
+.settings-slider {
+  width: 100%;
+}
+
+/* Segmented control customization */
+.ant-segmented {
+  background-color: var(--neutral-3) !important;
+}
+
+.ant-segmented-item-selected {
+  background-color: var(--primary-color) !important;
+  color: var(--neutral-3) !important;
+}
+
+.ant-segmented-thumb {
+  background-color: var(--primary-color) !important;
+}
+
+.ant-segmented-item:not(.ant-segmented-item-selected) {
+  color: var(--primary-color-text) !important;
+}
+
+/* Positioning mode styling */
+.positioning-mode-notice {
+  margin: 15px 0;
+}
+
+.position-overlay-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+/* Disabled Panel Style */
+.settings-panel.disabled-panel {
+  opacity: 0.6;
+  pointer-events: none; /* Prevent interaction */
+}
+
+.settings-panel.disabled-panel .ant-collapse-header {
+  color: var(--neutral-4) !important; /* Gray out header text */
+  cursor: not-allowed;
+}
+
+/* Overlay Position Editor Styles */
+.edit-position-row {
+  margin-bottom: 15px;
+}
+
+.edit-position-button {
+  min-width: 80px; /* Make buttons larger */
+  height: 36px; /* Make buttons larger */
+  font-size: 14px;
+}
+
+.toggle-settings-label {
+  width: 8.5rem;
+  color: var(--primary-color-text);
+  padding-left: 12px;
+}
+
+.toggle-settings-content {
+  display: flex;
+  justify-content: flex-end; 
+  margin-top: 5px;
+}
+
+.game-mode-position-row {
+  margin-bottom: 8px;
+}
+
+.game-mode-position-row .ant-typography {
+  color: var(--primary-color-text);
+}
+
+.sub-title {
+  font-size: 14px;
+  font-weight: normal;
+  color: var(--primary-color-medium);
+  margin-bottom: 2px;
+  border-bottom: none;
+}
+
+.coordinate-input-wrapper {
+  width: 6rem !important;
+  margin-left: 8px;
 }

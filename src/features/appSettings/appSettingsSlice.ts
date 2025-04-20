@@ -1,10 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-
-
-
 // Define the types for app settings
-
 
 export interface GeneralSettings {
   language: string;
@@ -21,13 +17,19 @@ export interface OverlaySettings {
   position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
   showPlayerStats: boolean;
   playerStatsOpacity: number;
+  playerStatsFontColor: string; // Font color property
+  teammateBorderColor: string; // Teammate border color property
   playerStatsBackgroundColor: string; // Background color property
   overlayTheme: 'default' | 'minimal-black' | 'neon-blue' | 'jungle-green'; // Theme options
-  // Custom overlay positions
+  // Custom overlay positions with game mode specifics
   customPositions: {
-    ingameOverlay: { x: number, y: number },
-    finalHitsBar: { x: number, y: number },
-    charSwapBar: { x: number, y: number }
+    [overlayKey in 'playerStats' | 'finalHitsBar' | 'charSwapBar']: {
+      _base: { x: number, y: number }; // Position set by drag-and-drop
+      Domination?: { x: number, y: number };
+      Convoy?: { x: number, y: number };
+      'Doom Match'?: { x: number, y: number }; // Use quotes for keys with spaces
+      Conquest?: { x: number, y: number };
+    }
   };
   lockOverlayPositions: boolean;
   showOwnPlayerCard: boolean;
@@ -76,12 +78,29 @@ const initialState: AppSettingsState = {
     playerStatsOpacity: 100,
     playerStatsBackgroundColor: '#000000', // Default background color
     overlayTheme: 'default', // Default theme
-
-    // Custom overlay positions (these will be updated when user saves positions)
+    // Default custom overlay positions including game modes
     customPositions: {
-      ingameOverlay: { x: 15, y: -175 },
-      finalHitsBar: { x: 1000, y: 50 },
-      charSwapBar: { x: 0, y: 300 }
+      playerStats: {
+        _base: { x: 15, y: -175 },
+        Domination: { x: 15, y: -175 },
+        Convoy: { x: 15, y: -175 },
+        'Doom Match': { x: 15, y: -175 },
+        Conquest: { x: 15, y: -175 },
+      },
+      finalHitsBar: {
+        _base: { x: 1000, y: 50 },
+        Domination: { x: 1000, y: 50 },
+        Convoy: { x: 1000, y: 50 },
+        'Doom Match': { x: 1000, y: 50 },
+        Conquest: { x: 1000, y: 50 },
+      },
+      charSwapBar: {
+        _base: { x: 0, y: 300 },
+        Domination: { x: 0, y: 300 },
+        Convoy: { x: 0, y: 300 },
+        'Doom Match': { x: 0, y: 300 },
+        Conquest: { x: 0, y: 300 },
+      }
     },
     lockOverlayPositions: false,
     showOwnPlayerCard: true,
@@ -107,7 +126,9 @@ const initialState: AppSettingsState = {
     swapScreenBackgroundColor: "",
     yourFinalHitsColor: "",
     opponentFinalHitsColor: "",
-    finalHitsBackgroundColor: ""
+    finalHitsBackgroundColor: "",
+    playerStatsFontColor: "",
+    teammateBorderColor: ""
   },
   loaded: false,
 };

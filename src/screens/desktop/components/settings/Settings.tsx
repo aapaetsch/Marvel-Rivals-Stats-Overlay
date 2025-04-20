@@ -1,11 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Collapse, Switch, Form, Select, Button, Divider } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from 'app/shared/store';
-import { updateSettings, resetSettings, GeneralSettings } from 'features/appSettings/appSettingsSlice';
 import { isDev } from 'lib/utils';
-import OverlaySettingsComponent from './OverlaySettings';
 import '../styles/Settings.css';
 
 const { Panel } = Collapse;
@@ -14,41 +10,7 @@ const { Option } = Select;
 // General Settings Component
 export const GeneralSettingsComponent: React.FC = () => {
   const { t, i18n } = useTranslation();
-  const dispatch = useDispatch();
-  const appSettings = useSelector((state: RootState) => state.appSettingsReducer.settings);
   
-  const [generalForm] = Form.useForm();
-  
-  useEffect(() => {
-    generalForm.setFieldsValue({
-      language: appSettings.language,
-      startWithWindows: appSettings.startWithWindows,
-      notifications: appSettings.notifications,
-      theme: appSettings.theme,
-      showStoreViewer: appSettings.showStoreViewer
-    });
-  }, [appSettings, generalForm]);
-  
-  const handleGeneralFormSubmit = (values: any) => {
-    dispatch(updateSettings(values));
-    if (values.language !== appSettings.language) {
-      i18n.changeLanguage(values.language);
-    }
-  };
-
-  const handleResetGeneral = () => {
-    const defaultGeneralSettings: GeneralSettings = {
-      language: 'en',
-      theme: 'dark',
-      startWithWindows: true,
-      notifications: true,
-      showStoreViewer: false,
-    };
-    generalForm.setFieldsValue(defaultGeneralSettings);
-    dispatch(updateSettings(defaultGeneralSettings));
-    i18n.changeLanguage('en');
-  };
-
   const languages = [
     { value: 'en', label: 'English' },
     { value: 'es', label: 'Español' },
@@ -77,18 +39,8 @@ export const GeneralSettingsComponent: React.FC = () => {
           key="1"
           className="settings-panel"
         >
-          <Form
-            form={generalForm}
-            layout="vertical"
-            initialValues={{ 
-              language: appSettings.language,
-              startWithWindows: appSettings.startWithWindows,
-              notifications: appSettings.notifications,
-              theme: appSettings.theme
-            }}
-            onFinish={handleGeneralFormSubmit}
-            className="settings-form"
-          >
+          {/* Remove the Form component wrapper but keep its contents */}
+          <div className="settings-form">
             <Form.Item 
               name="language" 
               label={t("components.desktop.settings.language", "Language")}
@@ -102,40 +54,46 @@ export const GeneralSettingsComponent: React.FC = () => {
                 ))}
               </Select>
             </Form.Item>
+
+            {/* Keep other form items as they were */}
             <Form.Item 
               name="startWithWindows" 
-              label={t("components.desktop.settings.startup", "Start with Windows")}
+              label={t("components.desktop.settings.start-with-windows", "Start with Windows")}
               valuePropName="checked"
             >
               <Switch />
             </Form.Item>
+
             <Form.Item 
               name="notifications" 
-              label={t("components.desktop.settings.notifications", "Enable Notifications")}
+              label={t("components.desktop.settings.notifications", "Enable notifications")}
               valuePropName="checked"
             >
               <Switch />
-            </Form.Item>              
+            </Form.Item>
+
             <Form.Item 
               name="theme" 
-              label={t("components.desktop.settings.theme", "Application Theme")}
+              label={t("components.desktop.settings.theme", "Theme")}
             >
-              <Select>
+              <Select className="settings-select">
                 <Option value="dark">{t("components.desktop.settings.dark", "Dark")}</Option>
                 <Option value="light">{t("components.desktop.settings.light", "Light")}</Option>
                 <Option value="minimalistic-black">{t("components.desktop.settings.minimalistic-black", "Minimalistic Black")}</Option>
               </Select>
             </Form.Item>
-            <Form.Item 
+            {true && (
+              <Form.Item 
                 name="showStoreViewer" 
-                label="Show Redux Store Viewer"
+                label={t("components.desktop.settings.show-store-viewer", "Show Store Viewer (Dev)")}
                 valuePropName="checked"
               >
                 <Switch />
               </Form.Item>
-          </Form>
+            )}
+          </div>
         </Panel>
-        
+
         <Panel 
           header={t("components.desktop.settings.about", "About")} 
           key="3"
@@ -160,26 +118,6 @@ export const GeneralSettingsComponent: React.FC = () => {
           </div>
         </Panel>
       </Collapse>
-      
-      <div className="settings-actions">
-        <Button type="primary" onClick={() => generalForm.submit()}>
-          {t("components.desktop.settings.save", "Save Settings")}
-        </Button>
-        <Button onClick={handleResetGeneral}>
-          {t("components.desktop.settings.reset", "Reset to Default")}
-        </Button>
-      </div>
     </div>
   );
 };
-
-// Overlay Settings Component is now imported from './OverlaySettings'
-
-// Main Settings component (for backward compatibility)
-const Settings: React.FC<{ defaultActiveTab?: string }> = ({ defaultActiveTab = 'general' }) => {
-  return defaultActiveTab === 'general' 
-    ? <GeneralSettingsComponent /> 
-    : <OverlaySettingsComponent />;
-};
-
-export default Settings;

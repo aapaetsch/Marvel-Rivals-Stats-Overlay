@@ -24,8 +24,8 @@ const OverlayToggleSettings: React.FC<OverlayToggleSettingsProps> = ({ form, isP
           {t("components.desktop.settings.overlay-visibility", "Overlay Visibility")}
         </div>
         <CardSettingsRowToggle
-          label={t("components.desktop.settings.team-stats", "Team Stats")}
-          formName="showTeamStats"
+          label={t("components.desktop.settings.player-stats-overlay", "Show Player Stats Overlay")} // Renamed label
+          formName="showTeamStats" // Keep formName as it likely maps to the state key
           dynamicLabel={false}
         />
         <CardSettingsRowToggle
@@ -38,36 +38,6 @@ const OverlayToggleSettings: React.FC<OverlayToggleSettingsProps> = ({ form, isP
           formName="showFinalHitsOverlay"
           dynamicLabel={false}
         />
-      </div>
-      
-      <div className="settings-column">
-        <div className="settings-column-title">
-          {t("components.desktop.settings.overlay-positioning", "Overlay Positioning Settings")}
-        </div>
-        <div className="card-settings-row">
-          <div className="card-settings-label">
-            {t("components.desktop.settings.edit-overlay-positions", "Edit Overlay Positions")}
-          </div>
-          <div className="card-settings-toggles">
-            {!isPositioningMode ? (
-              <Button 
-                type="primary"
-                onClick={() => onEditPositions(true)}
-                size="small"
-              >
-                {t("components.desktop.settings.edit", "Edit")}
-              </Button>
-            ) : (
-              <Button 
-                type="primary"
-                onClick={() => onSavePositions()}
-                size="small"
-              >
-                {t("components.desktop.settings.save", "Save")}
-              </Button>
-            )}
-          </div>
-        </div>
       </div>
   </div>
   );

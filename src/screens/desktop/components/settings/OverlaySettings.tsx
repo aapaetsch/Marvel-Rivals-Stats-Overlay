@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Switch, Form, Select, Button, Input, Divider, Slider, Radio, Segmented, Alert, Collapse } from 'antd';
+import { Switch, Alert, Collapse, FormInstance } from 'antd'; 
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from 'app/shared/store';
-import { updateSettings, OverlaySettings } from 'features/appSettings/appSettingsSlice';
+import { updateSettings } from 'features/appSettings/appSettingsSlice'; 
 import { WINDOW_NAMES } from 'app/shared/constants';
 import PlayerStatsSettings from './PlayerStatsSettings';
 import OverlayToggleSettings from './OverlayToggleSettings';
+import OverlayPositionEditor from './OverlayPositionEditor'; // Import the new component
+import PlayerStatsAppearanceSettings from './PlayerStatsAppearanceSettings'; // Import the new appearance component
 import CardSettingsRowSlider from './CardSettingsRowSlider';
 import CardSettingsRowColorPicker from './CardSettingsRowColorPicker';
 import '../styles/Settings.css';
@@ -14,29 +16,50 @@ import CardSettingsRowToggle from './CardSettingsRowToggle';
 
 const { Panel } = Collapse;
 
-const defaultOverlayWindowPositions = {
+// Export the constant
+export const defaultOverlayWindowPositions = {
+  playerStats: { // Renamed from ingameOverlay for clarity
+    _base: { x: 15, y: -175 }, // Base position from drag/drop
+    // Default game mode positions (can be adjusted)
+    Domination: { x: 15, y: -175 },
+    Convoy: { x: 15, y: -175 },
+    'Doom Match': { x: 15, y: -175 },
+    Conquest: { x: 15, y: -175 },
+  },
+  finalHitsBar: {
+    _base: { x: 1000, y: 50 },
+    Domination: { x: 1000, y: 50 },
+    Convoy: { x: 1000, y: 50 },
+    'Doom Match': { x: 1000, y: 50 },
+    Conquest: { x: 1000, y: 50 },
+  },
+  charSwapBar: {
+    _base: { x: 0, y: 300 },
+    Domination: { x: 0, y: 300 },
+    Convoy: { x: 0, y: 300 },
+    'Doom Match': { x: 0, y: 300 },
+    Conquest: { x: 0, y: 300 },
+  }
+};
 
+// Define props interface to accept the form instance
+interface OverlaySettingsComponentProps {
+  form: FormInstance<any>;
+  // Add props for reset handler if needed, or handle reset logic in parent
 }
 
 // Overlay Settings Component
-const OverlaySettingsComponent: React.FC = () => {
+const OverlaySettingsComponent: React.FC<OverlaySettingsComponentProps> = ({ form }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const appSettings = useSelector((state: RootState) => state.appSettingsReducer.settings);
   
-  // State for overlay position editing mode
-  const [isPositioningMode, setIsPositioningMode] = useState(false);
-  // State to store temporary positions during editing
-  const [tempPositions, setTempPositions] = useState({
-    ingameOverlay: appSettings.customPositions?.ingameOverlay || { x: 15, y: -175 },
-    finalHitsBar: appSettings.customPositions?.finalHitsBar || { x: 1000, y: 50 },
-    charSwapBar: appSettings.customPositions?.charSwapBar || { x: 0, y: 300 }
-  });
-  
-  const [overlayForm] = Form.useForm();
+  // State for overlay position editing mode (now tracks which overlay is being edited)
+  const [positioningModeOverlay, setPositioningModeOverlay] = useState<string | null>(null);
   
   useEffect(() => {
-    overlayForm.setFieldsValue({
+    // Use the passed-in form instance
+    form.setFieldsValue({
       showTeamStats: appSettings.showTeamStats,
       showKillFeed: appSettings.showKillFeed,
       opacity: appSettings.opacity,
@@ -61,95 +84,80 @@ const OverlaySettingsComponent: React.FC = () => {
       finalHitsOpacity: appSettings.finalHitsOpacity,
       yourFinalHitsColor: appSettings.yourFinalHitsColor || '#1890FF',
       opponentFinalHitsColor: appSettings.opponentFinalHitsColor || '#FF4D4F',
-      finalHitsBackgroundColor: appSettings.finalHitsBackgroundColor || '#000000'
+      finalHitsBackgroundColor: appSettings.finalHitsBackgroundColor || '#000000',
+      // Ensure customPositions includes game modes, merging with defaults if necessary
+      customPositions: deepMergePositions(defaultOverlayWindowPositions, appSettings.customPositions || {}),
     });
-  }, [appSettings, overlayForm]);
+  }, [appSettings, form]); // Add form to dependency array
 
-  const handleOverlayFormSubmit = (values: any) => {
-    dispatch(updateSettings(values));
+  // Helper function for deep merging position objects
+  const deepMergePositions = (defaults: any, current: any): any => {
+    const merged = { ...defaults };
+    for (const overlayKey in defaults) {
+      if (current[overlayKey]) {
+        merged[overlayKey] = { ...defaults[overlayKey], ...current[overlayKey] };
+        // Ensure _base and all game modes exist
+        merged[overlayKey]._base = current[overlayKey]._base || defaults[overlayKey]._base;
+        for (const mode in defaults[overlayKey]) {
+          if (mode !== '_base') {
+             merged[overlayKey][mode] = current[overlayKey][mode] || defaults[overlayKey][mode];
+          }
+        }
+      } else {
+        merged[overlayKey] = { ...defaults[overlayKey] };
+      }
+    }
+    return merged;
   };
-  
-  const handleResetOverlay = () => {
-    const defaultOverlaySettings: OverlaySettings = {
-      showTeamStats: true,
-      showKillFeed: true,
-      opacity: 80,
-      position: 'top-left',
-      overlayTheme: 'default',
-      showPlayerStats: true,
-      playerStatsOpacity: 100,
-      playerStatsBackgroundColor: '#000000',
-      showOwnPlayerCard: true,
-      compactOwnPlayerCard: false,
-      showTeammate1: true,
-      compactTeammate1: false,
-      showTeammate2: true,
-      compactTeammate2: false,
-      showTeammate3: true,
-      compactTeammate3: false,
-      showTeammate4: true,
-      compactTeammate4: false,
-      showTeammate5: true,
-      compactTeammate5: false,
-      showPlayerSwapNotification: true, playerSwapNotificationDuration: 5,
-      showFinalHitsOverlay: true,
-      finalHitsOpacity: 80,
-      yourFinalHitsColor: '#1890FF',
-      opponentFinalHitsColor: '#FF4D4F',
-      finalHitsBackgroundColor: '#000000',
-      customPositions: {
-        ingameOverlay: { x: 15, y: -175 },
-        finalHitsBar: { x: 1000, y: 50 },
-        charSwapBar: { x: 0, y: 300 }
-      },
-      lockOverlayPositions: false,
-      allySwapColor: '',
-      enemySwapColor: '',
-      swapScreenBackgroundColor: ''
-    };
-    overlayForm.setFieldsValue(defaultOverlaySettings);
-    dispatch(updateSettings(defaultOverlaySettings));
-  };
-  
-  // Handler for toggling positioning mode
-  const handleEditOverlayPositions = (enable: boolean) => {
-    setIsPositioningMode(enable);
+
+  // Handler for toggling positioning mode for a specific overlay
+  const handleEditOverlayPositions = (enable: boolean, overlayWindowName?: string) => {
+    const targetOverlay = overlayWindowName || null;
+    setPositioningModeOverlay(enable ? targetOverlay : null);
     
-    if (enable) {
-      // Enable drag mode for each overlay window
-      enableDragMode(WINDOW_NAMES.INGAME);
-      enableDragMode(WINDOW_NAMES.FINALHITSBAR);
-      enableDragMode(WINDOW_NAMES.CHARSWAPBAR);
-      
-      // Store the current position in case user cancels
-      setTempPositions({
-        ingameOverlay: { ...appSettings.customPositions.ingameOverlay },
-        finalHitsBar: { ...appSettings.customPositions.finalHitsBar },
-        charSwapBar: { ...appSettings.customPositions.charSwapBar }
-      });
+    if (enable && targetOverlay) {
+      // Enable drag mode for the specific overlay window
+      enableDragMode(targetOverlay);
     } else {
-      // Disable drag mode for each overlay window
       disableDragMode(WINDOW_NAMES.INGAME);
       disableDragMode(WINDOW_NAMES.FINALHITSBAR);
       disableDragMode(WINDOW_NAMES.CHARSWAPBAR);
     }
   };
 
-  // Handler for saving custom overlay positions
-  const handleSaveOverlayPositions = async () => {
+  // Handler for saving custom overlay positions (now saves the base position)
+  const handleSaveOverlayPositions = async (overlayWindowName?: string) => {
+    if (!overlayWindowName) return; // Should have the window name
+
+    // Determine the overlay key ('playerStats', 'finalHitsBar', 'charSwapBar') from the window name
+    let overlayKey: 'playerStats' | 'finalHitsBar' | 'charSwapBar' | null = null;
+    if (overlayWindowName === WINDOW_NAMES.INGAME) overlayKey = 'playerStats';
+    else if (overlayWindowName === WINDOW_NAMES.FINALHITSBAR) overlayKey = 'finalHitsBar';
+    else if (overlayWindowName === WINDOW_NAMES.CHARSWAPBAR) overlayKey = 'charSwapBar';
+
+    if (!overlayKey) {
+      console.error("Could not map window name to overlay key:", overlayWindowName);
+      return;
+    }
+
     try {
-      // Get current window positions
-      const ingamePosition = await getWindowPosition(WINDOW_NAMES.INGAME);
-      const finalHitsPosition = await getWindowPosition(WINDOW_NAMES.FINALHITSBAR);
-      const charSwapPosition = await getWindowPosition(WINDOW_NAMES.CHARSWAPBAR);
+      // Get current window position for the specific overlay
+      const position = await getWindowPosition(overlayWindowName);
       
-      // Update settings with new positions
+      // Get the current full customPositions state from the form
+      const currentFormPositions = form.getFieldValue('customPositions'); // Use passed-in form
+
+      // Update the _base position for the specific overlay
       const updatedCustomPositions = {
-        ingameOverlay: { x: ingamePosition.x, y: ingamePosition.y },
-        finalHitsBar: { x: finalHitsPosition.x, y: finalHitsPosition.y },
-        charSwapBar: { x: charSwapPosition.x, y: charSwapPosition.y }
+        ...currentFormPositions,
+        [overlayKey]: {
+          ...currentFormPositions[overlayKey],
+          _base: { x: position.x, y: position.y },
+        },
       };
       
+      // Update the form state and dispatch the update
+      form.setFieldsValue({ customPositions: updatedCustomPositions }); // Use passed-in form
       dispatch(updateSettings({ customPositions: updatedCustomPositions }));
       
       // Disable positioning mode
@@ -183,7 +191,9 @@ const OverlaySettingsComponent: React.FC = () => {
   const enableDragMode = (windowName: string) => {
     overwolf.windows.obtainDeclaredWindow(windowName, (result) => {
       if (result.success) {
-        overwolf.windows.dragMove(result.window.id);
+        overwolf.windows.dragMove(result.window.id, (dragResult) => {
+          console.log(dragResult);
+        });
       }
     });
   };
@@ -216,166 +226,164 @@ const OverlaySettingsComponent: React.FC = () => {
   };
   
   return (
-    <div className="settings-container">      <Form
-        form={overlayForm}
-        layout="vertical"
-        initialValues={{ 
-          showTeamStats: appSettings.showTeamStats,
-          showKillFeed: appSettings.showKillFeed,
-          opacity: appSettings.opacity,
-          position: appSettings.position,
-          showPlayerStats: appSettings.showPlayerStats,
-          playerStatsOpacity: appSettings.playerStatsOpacity,
-          playerStatsBackgroundColor: appSettings.playerStatsBackgroundColor || '#000000',
-          // Player card visibility and layout
-          showOwnPlayerCard: appSettings.showOwnPlayerCard,
-          compactOwnPlayerCard: appSettings.compactOwnPlayerCard,
-          showTeammate1: appSettings.showTeammate1,
-          compactTeammate1: appSettings.compactTeammate1,
-          showTeammate2: appSettings.showTeammate2,
-          compactTeammate2: appSettings.compactTeammate2,
-          showTeammate3: appSettings.showTeammate3,
-          compactTeammate3: appSettings.compactTeammate3,
-          showTeammate4: appSettings.showTeammate4,
-          compactTeammate4: appSettings.compactTeammate4,
-          showTeammate5: appSettings.showTeammate5,
-          compactTeammate5: appSettings.compactTeammate5,
-          // Player swap notifications
-          showPlayerSwapNotification: appSettings.showPlayerSwapNotification,
-          playerSwapNotificationDuration: appSettings.playerSwapNotificationDuration,
-          // Final hits overlay
-          showFinalHitsOverlay: appSettings.showFinalHitsOverlay,
-          finalHitsOpacity: appSettings.finalHitsOpacity,
-          // New color settings for final hits overlay
-          yourFinalHitsColor: appSettings.yourFinalHitsColor || '#1890FF',
-          opponentFinalHitsColor: appSettings.opponentFinalHitsColor || '#FF4D4F',
-          finalHitsBackgroundColor: appSettings.finalHitsBackgroundColor || '#000000'
-        }}
-        onFinish={handleOverlayFormSubmit}
-        className="settings-form"
+    <div className="settings-content-scrollable"> {/* Keep scrollable container */} 
+      <Collapse 
+        defaultActiveKey={['1']}
+        accordion
+        className="settings-collapse"
+        ghost // Added ghost prop for cleaner look
       >
-        <Collapse 
-          defaultActiveKey={['1']}
-          accordion
-          className="settings-collapse"
-        >          
+        {/* Panel 1: Overlay Visibility & Positioning */}
         <Collapse.Panel 
-            header={t("components.desktop.settings.overlay", "Overlay")} 
-            key="1"
-            className="settings-panel"
-          >
-            {/* General Overlay Settings */}
-            <OverlayToggleSettings 
-              form={overlayForm} 
-              isPositioningMode={isPositioningMode}
-              onEditPositions={handleEditOverlayPositions}
-              onSavePositions={handleSaveOverlayPositions}
-            />
-            
-            {isPositioningMode && (
-              <div className="positioning-mode-notice">
-                <Alert
-                  message={t("components.desktop.settings.positioning-mode-active", "Positioning Mode Active")}
-                  description={t("components.desktop.settings.positioning-mode-description", "You can now drag and position each overlay element. Click Save when finished.")}
-                  type="info"
-                  showIcon
-                />
+          header={t("components.desktop.settings.overlay-visibility", "Overlay Visibility & Positioning")} 
+          key="1"
+          className="settings-panel"
+        >
+          <OverlayToggleSettings 
+            form={form} // Pass down the form instance
+            isPositioningMode={positioningModeOverlay !== null} 
+            onEditPositions={handleEditOverlayPositions}
+            onSavePositions={handleSaveOverlayPositions}
+          />
+          
+          {positioningModeOverlay !== null && ( 
+            <div className="positioning-mode-notice">
+              <Alert
+                message={t("components.desktop.settings.positioning-mode-active", "Positioning Mode Active")}
+                description={t("components.desktop.settings.positioning-mode-description", `Drag the ${positioningModeOverlay} overlay to position it. Click Save when finished.`)}
+                type="info"
+                showIcon
+              />
+            </div>
+          )}
+        </Collapse.Panel>
+        
+        {/* Panel 2: Player Stats Overlay */}
+        <Collapse.Panel 
+          header={t("components.desktop.settings.player-stats-overlay", "Player Stats Overlay")} 
+          key="2"
+          className={`settings-panel ${!appSettings.showTeamStats ? 'disabled-panel' : ''}`}
+          collapsible={!appSettings.showTeamStats ? "disabled" : undefined}
+        >
+          <div className="settings-columns">
+            <div className="settings-column">
+              <PlayerStatsAppearanceSettings form={form} /> {/* Pass down form */} 
+            </div>
+            <div className="settings-column">
+              <OverlayPositionEditor 
+                overlayKey="playerStats" 
+                form={form} // Pass down form
+                isPositioningMode={positioningModeOverlay === WINDOW_NAMES.INGAME}
+                onEditPositions={handleEditOverlayPositions}
+                onSavePositions={handleSaveOverlayPositions}
+              />
+            </div>
+          </div>
+          <PlayerStatsSettings form={form} /> {/* Pass down form */} 
+        </Collapse.Panel>
+        
+        {/* Panel 3: Player Swap Notification */}
+        <Collapse.Panel 
+          header={t("components.desktop.settings.player-swap", "Player Swap Notification")} 
+          key="3"
+          className={`settings-panel ${!appSettings.showPlayerSwapNotification ? 'disabled-panel' : ''}`}
+          collapsible={!appSettings.showPlayerSwapNotification ? "disabled" : undefined}
+        > 
+          <div className="settings-columns">
+            <div className="settings-column">
+              <div className="settings-column-title">
+                {t("components.desktop.settings.appearance", "Appearance Settings")}
               </div>
-            )}
-          </Collapse.Panel>            
-          <Collapse.Panel 
-            header={t("components.desktop.settings.player-stats-overlay", "Player Stats Overlay")} 
-            key="2"
-            className="settings-panel"
-            collapsible={!appSettings.showTeamStats ? "disabled" : undefined}
-          >
-            <PlayerStatsSettings form={overlayForm} />
-          </Collapse.Panel>
-          <Collapse.Panel 
-            header={t("components.desktop.settings.player-swap", "Player Swap Notification")} 
-            key="3"
-            className="settings-panel"
-            collapsible={!appSettings.showPlayerSwapNotification ? "disabled" : undefined}
-          > 
-            <CardSettingsRowSlider
-              label={t("components.desktop.settings.notification-duration", "Notification Duration (seconds)")}
-              formName="playerSwapNotificationDuration"
-              min={1}
-              max={10}
-              marks={{
-                1: '1s',
-                5: '5s',
-                10: '10s'
-              }}
-              showPercentage={false}
-            />
-            <CardSettingsRowColorPicker
-              label={t("components.desktop.settings.ally-swap-color", "Ally Swap Color")}
-              formName="allySwapColor"
-              tooltip={t("components.desktop.settings.ally-swap-color-tooltip", "Color for ally player character swaps")}
-              initialValue="#1890FF"
-            />
-            <CardSettingsRowColorPicker
-              label={t("components.desktop.settings.enemy-swap-color", "Enemy Swap Color")}
-              formName="enemySwapColor"
-              tooltip={t("components.desktop.settings.enemy-swap-color-tooltip", "Color for enemy player character swaps")}
-              initialValue="#FF4D4F"
-            />
-            <CardSettingsRowColorPicker
-              label={t("components.desktop.settings.swap-screen-background-color", "Background Color")}
-              formName="swapScreenBackgroundColor"
-              tooltip={t("components.desktop.settings.swap-screen-background-tooltip", "Background color for the character swap notification")}
-              initialValue="#000000"
-            />
-          </Collapse.Panel>
-          <Collapse.Panel 
-            header={t("components.desktop.settings.final-hits", "Final Hits Overlay")} 
-            key="4"
-            className="settings-panel"
-            collapsible={!appSettings.showFinalHitsOverlay ? "disabled" : undefined}
-          >
-            <CardSettingsRowSlider
-              label={t("components.desktop.settings.final-hits-opacity", "Final Hits Overlay Opacity")}
-              formName="finalHitsOpacity"
-              min={20}
-              max={100}
-              marks={{
-                20: '20%',
-                50: '50%',
-                80: '80%',
-                100: '100%'
-              }}
-            />
-            <CardSettingsRowColorPicker
-              label={t("components.desktop.settings.your-final-hits-color", "Your Final Hits Color")}
-              formName="yourFinalHitsColor"
-              tooltip={t("components.desktop.settings.your-final-hits-color-tooltip", "Color for final hits you've made on opponents")}
-              initialValue="#1890FF"
-            />
-            <CardSettingsRowColorPicker
-              label={t("components.desktop.settings.opponent-final-hits-color", "Opponent Final Hits Color")}
-              formName="opponentFinalHitsColor"
-              tooltip={t("components.desktop.settings.opponent-final-hits-color-tooltip", "Color for final hits opponents have made on you")}
-              initialValue="#FF4D4F"
-            />
-            <CardSettingsRowColorPicker
-              label={t("components.desktop.settings.final-hits-background-color", "Background Mask Color")}
-              formName="finalHitsBackgroundColor"
-              tooltip={t("components.desktop.settings.final-hits-background-color-tooltip", "Background color for the final hits display")}
-              initialValue="#000000"
-            />
-          </Collapse.Panel>
-        </Collapse>
-        <div className="settings-actions">
-          <Button type="primary" onClick={() => overlayForm.submit()}>
-            {t("components.desktop.settings.save", "Save Settings")}
-          </Button>
-          <Button onClick={handleResetOverlay}>
-            {t("components.desktop.settings.reset", "Reset to Default")}
-          </Button>
-        </div>
-      </Form>
-    </div>
+              <CardSettingsRowSlider
+                label={t("components.desktop.settings.player-swap-duration", "Notification Duration (seconds)")}
+                formName="playerSwapNotificationDuration"
+                min={1}
+                max={10}
+                marks={{ 1: '1s', 5: '5s', 10: '10s' }}
+                stackedLabel={true}
+              />
+              <CardSettingsRowColorPicker
+                label={t("components.desktop.settings.ally-swap-color", "Ally Swap Color")}
+                formName="allySwapColor"
+                tooltip={t("components.desktop.settings.ally-swap-color-tooltip", "Highlight color when an ally swaps character")}
+                initialValue="#1890FF"
+              />
+              <CardSettingsRowColorPicker
+                label={t("components.desktop.settings.enemy-swap-color", "Enemy Swap Color")}
+                formName="enemySwapColor"
+                tooltip={t("components.desktop.settings.enemy-swap-color-tooltip", "Highlight color when an enemy swaps character")}
+                initialValue="#FF4D4F"
+              />
+              <CardSettingsRowColorPicker
+                label={t("components.desktop.settings.swap-screen-background-color", "Background Color")}
+                formName="swapScreenBackgroundColor"
+                tooltip={t("components.desktop.settings.swap-screen-background-tooltip", "Background color for the character swap notification")}
+                initialValue="#000000"
+              />
+            </div>
+            <div className="settings-column">
+              <OverlayPositionEditor 
+                overlayKey="charSwapBar" 
+                form={form} // Pass down form
+                isPositioningMode={positioningModeOverlay === WINDOW_NAMES.CHARSWAPBAR}
+                onEditPositions={handleEditOverlayPositions}
+                onSavePositions={handleSaveOverlayPositions}
+              />
+            </div>
+          </div>
+        </Collapse.Panel>
+        {/* Panel 4: Final Hits Overlay */}
+        <Collapse.Panel 
+          header={t("components.desktop.settings.final-hits", "Final Hits Overlay")} 
+          key="4"
+          className={`settings-panel ${!appSettings.showFinalHitsOverlay ? 'disabled-panel' : ''}`}
+          collapsible={!appSettings.showFinalHitsOverlay ? "disabled" : undefined}
+        >
+          <div className="settings-columns">
+            <div className="settings-column">
+              <div className="settings-column-title">
+                {t("components.desktop.settings.appearance", "Appearance Settings")}
+              </div>
+              <CardSettingsRowSlider
+                label={t("components.desktop.settings.final-hits-opacity", "Final Hits Opacity")}
+                formName="finalHitsOpacity"
+                min={20}
+                max={100}
+                marks={{ 20: '20%', 50: '50%', 80: '80%', 100: '100%' }}
+                stackedLabel={true}
+              />
+              <CardSettingsRowColorPicker
+                label={t("components.desktop.settings.your-final-hits-color", "Your Final Hits Color")}
+                formName="yourFinalHitsColor"
+                tooltip={t("components.desktop.settings.your-final-hits-color-tooltip", "Color for your final hits in the display")}
+                initialValue="#1890FF"
+              />
+              <CardSettingsRowColorPicker
+                label={t("components.desktop.settings.opponent-final-hits-color", "Opponent Final Hits Color")}
+                formName="opponentFinalHitsColor"
+                tooltip={t("components.desktop.settings.opponent-final-hits-color-tooltip", "Color for opponent final hits in the display")}
+                initialValue="#FF4D4F"
+              />
+              <CardSettingsRowColorPicker
+                label={t("components.desktop.settings.final-hits-background-color", "Background Color")}
+                formName="finalHitsBackgroundColor"
+                tooltip={t("components.desktop.settings.final-hits-background-color-tooltip", "Background color for the final hits display")}
+                initialValue="#000000"
+              />
+            </div>
+            <div className="settings-column">
+              <OverlayPositionEditor 
+                overlayKey="finalHitsBar" 
+                form={form} // Pass down form
+                isPositioningMode={positioningModeOverlay === WINDOW_NAMES.FINALHITSBAR}
+                onEditPositions={handleEditOverlayPositions}
+                onSavePositions={handleSaveOverlayPositions}
+              />
+            </div>
+          </div>
+        </Collapse.Panel>
+      </Collapse>
+    </div> 
   );
 };
 

@@ -9,7 +9,7 @@ const SETTINGS_FILE_NAME = 'app_settings';
  */
 export const loadAppSettings = async (): Promise<AppSettings | null> => {
   try {
-    const path = await getLocalAppData(SETTINGS_FILE_NAME);
+    const path = await getLocalAppData(overwolf, SETTINGS_FILE_NAME);
     
     return new Promise<AppSettings | null>((resolve) => {
       overwolf.io.readFileContents(
@@ -44,7 +44,7 @@ export const loadAppSettings = async (): Promise<AppSettings | null> => {
  */
 export const saveAppSettings = async (settings: AppSettings): Promise<string> => {
   try {
-    const path = await getLocalAppData(SETTINGS_FILE_NAME);
+    const path = await getLocalAppData(overwolf, SETTINGS_FILE_NAME);
     return await writeFileContents(path, settings);
   } catch (error) {
     console.error('Error saving app settings:', error);

@@ -1,11 +1,9 @@
-import React from 'react';
-import { Form, Switch, Slider, ColorPicker, Segmented } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Segmented, Form } from 'antd'; // Added Form import
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { updateSettings } from 'features/appSettings/appSettingsSlice';
 import CardSettingsRowToggle from './CardSettingsRowToggle';
-import CardSettingsRowSlider from './CardSettingsRowSlider';
-import CardSettingsRowColorPicker from './CardSettingsRowColorPicker';
 import '../styles/Settings.css';
 
 interface PlayerStatsSettingsProps {
@@ -15,9 +13,91 @@ interface PlayerStatsSettingsProps {
 /**
  * Component for Player Stats Overlay settings
  */
-const PlayerStatsSettings: React.FC<PlayerStatsSettingsProps> = ({ form }) => {
+const PlayerStatsSettings: React.FC<PlayerStatsSettingsProps> = ({ form }) => {  
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  
+  // Watch all the form fields we need to determine the toggle states
+  const showOwnPlayerCard = Form.useWatch('showOwnPlayerCard', form);
+  const showTeammate1 = Form.useWatch('showTeammate1', form);
+  const showTeammate2 = Form.useWatch('showTeammate2', form);
+  const showTeammate3 = Form.useWatch('showTeammate3', form);
+  const showTeammate4 = Form.useWatch('showTeammate4', form);
+  const showTeammate5 = Form.useWatch('showTeammate5', form);
+  
+  const compactOwnPlayerCard = Form.useWatch('compactOwnPlayerCard', form);
+  const compactTeammate1 = Form.useWatch('compactTeammate1', form);
+  const compactTeammate2 = Form.useWatch('compactTeammate2', form);
+  const compactTeammate3 = Form.useWatch('compactTeammate3', form);
+  const compactTeammate4 = Form.useWatch('compactTeammate4', form);
+  const compactTeammate5 = Form.useWatch('compactTeammate5', form);
+  
+  // Calculate the initial visibility value based on current toggle states
+  const initialVisibilityValue = (): string => {
+    const allHidden = !showOwnPlayerCard && 
+      !showTeammate1 && 
+      !showTeammate2 && 
+      !showTeammate3 && 
+      !showTeammate4 && 
+      !showTeammate5;
+    return allHidden ? 'hide' : 'show';
+  };
+  
+  // Calculate the initial compact value based on current toggle states
+  const initialCompactValue = (): string => {
+    const allCompact = compactOwnPlayerCard && 
+      compactTeammate1 && 
+      compactTeammate2 && 
+      compactTeammate3 && 
+      compactTeammate4 && 
+      compactTeammate5;
+    return allCompact ? 'compact' : 'expanded';
+  };
+    // State for the segmented controls with calculated initial values
+  const [visibilityValue, setVisibilityValue] = useState<string>(initialVisibilityValue());
+  const [compactValue, setCompactValue] = useState<string>(initialCompactValue());
+
+  // Update segmented controls whenever any relevant form field changes
+  useEffect(() => {
+    // Check if all player cards are hidden
+    const allHidden = !showOwnPlayerCard && 
+      !showTeammate1 && 
+      !showTeammate2 && 
+      !showTeammate3 && 
+      !showTeammate4 && 
+      !showTeammate5;
+      
+    // Update the visibility segmented control
+    setVisibilityValue(allHidden ? 'hide' : 'show');
+  }, [
+    showOwnPlayerCard,
+    showTeammate1,
+    showTeammate2,
+    showTeammate3,
+    showTeammate4,
+    showTeammate5
+  ]);
+  
+  // Update compact segmented control whenever any compact setting changes
+  useEffect(() => {
+    // Check if all player cards are compact
+    const allCompact = compactOwnPlayerCard && 
+      compactTeammate1 && 
+      compactTeammate2 && 
+      compactTeammate3 && 
+      compactTeammate4 && 
+      compactTeammate5;
+    
+    // Update the compact segmented control
+    setCompactValue(allCompact ? 'compact' : 'expanded');
+  }, [
+    compactOwnPlayerCard,
+    compactTeammate1,
+    compactTeammate2,
+    compactTeammate3,
+    compactTeammate4,
+    compactTeammate5
+  ]);
   
   // Handler for "Apply to All" visibility toggle
   const handleApplyAllVisibility = (value: string) => {
@@ -34,6 +114,7 @@ const PlayerStatsSettings: React.FC<PlayerStatsSettingsProps> = ({ form }) => {
     };
     form.setFieldsValue(newValues);
     dispatch(updateSettings(newValues));
+    setVisibilityValue(value);
   };
   
   // Handler for "Apply to All" compact toggle
@@ -51,52 +132,11 @@ const PlayerStatsSettings: React.FC<PlayerStatsSettingsProps> = ({ form }) => {
     };
     form.setFieldsValue(newValues);
     dispatch(updateSettings(newValues));
+    setCompactValue(value);
   };
 
   return (
     <>
-      <div className="settings-columns">        
-        <div className="settings-column appearance-column">
-          <div className="settings-column-title">
-            {t("components.desktop.settings.appearance", "Appearance Settings")}
-          </div>
-<CardSettingsRowSlider
-            label={t("components.desktop.settings.player-stats-opacity", "Player Stats Opacity")}
-            formName="playerStatsOpacity"
-            min={20}
-            max={100}
-            marks={{
-              20: '20%',
-              50: '50%',
-              80: '80%',
-              100: '100%'
-            }}
-            stackedLabel={true}
-          />
-          
-          <CardSettingsRowColorPicker
-            label={t("components.desktop.settings.player-stats-background-color", "Background Color")}
-            formName="playerStatsBackgroundColor"
-            tooltip={t("components.desktop.settings.background-color-tooltip", "Background color for player stat cards")}
-            initialValue="#000000"
-          />
-          
-          <CardSettingsRowColorPicker
-            label={t("components.desktop.settings.player-stats-font-color", "Font Color")}
-            formName="playerStatsFontColor"
-            tooltip={t("components.desktop.settings.font-color-tooltip", "Text color for player stat cards")}
-            initialValue="#FFFFFF"
-          />
-          
-          <CardSettingsRowColorPicker
-            label={t("components.desktop.settings.teammate-border-color", "Teammate Border Color")}
-            formName="teammateBorderColor"
-            tooltip={t("components.desktop.settings.border-color-tooltip", "Accent color for teammate card borders")}
-            initialValue="#1890FF"
-          />
-        </div>
-      </div>
-      
       {/* Visibility and Card Layout settings */}
       <div className="settings-columns">              
         <div className="settings-column">
@@ -111,6 +151,7 @@ const PlayerStatsSettings: React.FC<PlayerStatsSettingsProps> = ({ form }) => {
                 { label: t("components.desktop.settings.hide", "Hide"), value: 'hide' },
               ]}
               onChange={handleApplyAllVisibility}
+              value={visibilityValue}
             />
           </div>
           <CardSettingsRowToggle
@@ -146,10 +187,11 @@ const PlayerStatsSettings: React.FC<PlayerStatsSettingsProps> = ({ form }) => {
             <span>{t("components.desktop.settings.apply-all-compact", "Apply to All")}</span>
             <Segmented
               options={[
-                { label: t("components.desktop.settings.compact", "Compact"), value: 'compact' },
                 { label: t("components.desktop.settings.expanded", "Expanded"), value: 'expanded' },
+                { label: t("components.desktop.settings.compact", "Compact"), value: 'compact' },
               ]}
               onChange={handleApplyAllCompact}
+              value={compactValue}
             />
           </div>
           <CardSettingsRowToggle
