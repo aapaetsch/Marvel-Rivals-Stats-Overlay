@@ -1,28 +1,23 @@
 import React from 'react';
-import { Menu as AntMenu } from 'antd';
+import { Menu as AntMenu, Button } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootReducer } from 'app/shared/rootReducer';
 import {
   setSelectedKeys,
-  setOpenKeys
+  setOpenKeys,
+  toggleCollapsed
 } from '../stores/menuSlice';
 import {
-  BarChartOutlined,
-  SettingOutlined,
-  TeamOutlined,
-  HomeOutlined,
-  HistoryOutlined,
-  FireOutlined,
+  SettingOutlined
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import './styles/Menu.css';
 import { IoGameControllerOutline, IoStatsChartOutline, IoHomeOutline } from 'react-icons/io5';
-import { GiFloatingPlatforms, GiKing, GiStarfighter } from 'react-icons/gi';
+import { GiFloatingPlatforms, GiKing, GiStarfighter, GiOpenGate, GiClosedDoors } from 'react-icons/gi';
 import { MdOutlineWorkHistory } from 'react-icons/md';
 import { LiaUsersSolid, LiaUserTagSolid, LiaUserInjuredSolid, LiaUserGraduateSolid } from 'react-icons/lia';
 import { PiUserListBold } from 'react-icons/pi';
 import { AntMenuItem, MenuKeys } from '../types/MenuTypes';
-
 
 // Define the items for the menu
 const getMenuItems = (t: any): AntMenuItem[] => [
@@ -98,13 +93,25 @@ const getMenuItems = (t: any): AntMenuItem[] => [
     key: MenuKeys.SETTINGS,
     icon: <SettingOutlined />,
     label: t('components.desktop.menu.settings'),
+    children: [
+      {
+        key: MenuKeys.GENERAL_SETTINGS,
+        icon: <SettingOutlined />,
+        label: t('components.desktop.menu.general_settings', 'General Settings'),
+      },
+      {
+        key: MenuKeys.OVERLAY_SETTINGS,
+        icon: <SettingOutlined />,
+        label: t('components.desktop.menu.overlay_settings', 'Overlay Settings'),
+      },
+    ],
   },
 ];
 
 const Menu: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { selectedKeys } = useSelector(
+  const { selectedKeys, openKeys, collapsed } = useSelector(
     (state: RootReducer) => state.menuReducer
   );
 
@@ -113,16 +120,37 @@ const Menu: React.FC = () => {
     dispatch(setSelectedKeys(info.selectedKeys as unknown as MenuKeys[]));
   };
 
+  // Handle submenu open/close
+  const onOpenChange = (keys: string[]) => {
+    dispatch(setOpenKeys(keys as unknown as MenuKeys[]));
+  };
+
+  // Handle menu collapse/expand
+  const handleToggleCollapsed = () => {
+    dispatch(toggleCollapsed());
+  };
+
   // Menu items with translations
   const items = getMenuItems(t);
 
   return (
-    <div className="horizontal-menu">
+    <div className="side-menu">
+      {/* <div className="menu-header">
+        <Button
+          type="text"
+          onClick={handleToggleCollapsed}
+          className="toggle-button"
+          icon={collapsed ? <GiOpenGate size={16} /> : <GiClosedDoors size={16} />}
+        />
+      </div> */}
       <AntMenu
-        mode="horizontal"
+        mode="inline"
         selectedKeys={selectedKeys}
+        openKeys={collapsed ? [] : openKeys}
         onSelect={onSelect}
+        onOpenChange={onOpenChange}
         items={items}
+        // inlineCollapsed={collapsed}
         className="desktop-menu"
       />
     </div>
