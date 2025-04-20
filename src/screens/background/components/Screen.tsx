@@ -10,7 +10,6 @@ import { MARVELRIVALS_CLASS_ID, getHearthstoneGame } from "lib/games";
 import store from "app/shared/store";
 import { log } from "lib/log";
 import { throttle } from "lib/utils";
-import { positionWindowRelativeToGame } from "lib/overwolf-essentials";
 
 // Import matchStats actions
 import { processInfoUpdate, processEvents } from "../stores/matchStatsSlice";
@@ -19,12 +18,8 @@ const { DESKTOP, INGAME, FINALHITSBAR, CHARSWAPBAR } = WINDOW_NAMES;
 
 const g_interestedInFeatures = ["game_info", "match_info", "gep_internal"];
 
-// Window positioning constants
-const WINDOW_POSITIONS = {
-  CHAR_SWAP: { position: 'topCenter' as const, offsetX: 0, offsetY: 180 },
-  FINAL_HITS: { position: 'topRight' as const, offsetX: 20, offsetY: 100 },
-  INGAME_OVERLAY: { position: 'left' as const, offsetX: 25, offsetY: 0 }
-};
+// Removed old WINDOW_POSITIONS constant as positions are now managed in settings
+// const WINDOW_POSITIONS = { ... };
 
 const BackgroundWindow = () => {
   const [desktop] = useWindow(DESKTOP, DISPLAY_OVERWOLF_HOOKS_LOGS);
@@ -33,24 +28,54 @@ const BackgroundWindow = () => {
   const [changeswapbar] = useWindow(CHARSWAPBAR, DISPLAY_OVERWOLF_HOOKS_LOGS);
   const [gameResolutionChanged, setGameResolutionChanged] = useState(false);
 
-  // Throttle event dispatches to avoid overwhelming the Redux store
-  const throttledInfoDispatch = useMemo(() => 
-    (info: any) => 
-      store.dispatch(
-        processInfoUpdate({
-          info,
-          timestamp: Date.now(),
-        })
-      ), []);
+  // Throttle event dispatches to avoid overwhelming the Redux store with duplicate data
+  const throttledInfoDispatch = useMemo(() => {
+    // Store the last dispatched info to compare for duplicates
+    let lastInfo: string = '';
+    let lastInfoTime: number = 0;
+    
+    return (info: any) => {
+      const now = Date.now();
+      // Convert current info to string for comparison
+      const infoString = JSON.stringify(info);
+      
+      // Only dispatch if info is different or more than 1 second has passed
+      if (infoString !== lastInfo || now - lastInfoTime >= 1000) {
+        lastInfo = infoString;
+        lastInfoTime = now;
+        store.dispatch(
+          processInfoUpdate({
+            info,
+            timestamp: now,
+          })
+        );
+      }
+    };
+  }, []);
 
-  const eventsDispatch = useMemo(() => 
-    (events: any) => 
-      store.dispatch(
-        processEvents({
-          events,
-          timestamp: Date.now(),
-        })
-      ), []);
+  const eventsDispatch = useMemo(() => {
+    // Store the last dispatched events to compare for duplicates
+    let lastEvents: string = '';
+    let lastEventsTime: number = 0;
+    
+    return (events: any) => {
+      const now = Date.now();
+      // Convert current events to string for comparison
+      const eventsString = JSON.stringify(events);
+      
+      // Only dispatch if events are different or more than 1 second has passed
+      if (eventsString !== lastEvents || now - lastEventsTime >= 1000) {
+        lastEvents = eventsString;
+        lastEventsTime = now;
+        store.dispatch(
+          processEvents({
+            events,
+            timestamp: now,
+          })
+        );
+      }
+    };
+  }, []);
 
   // Pass Overwolf events to matchStats slice
   const { start, stop } = useGameEventProvider(
@@ -69,30 +94,53 @@ const BackgroundWindow = () => {
       console.log("Not all windows are available yet");
       return;
     }
+    
+    // Get current app settings and match state
+    const state = store.getState();
+    const appSettings = state.appSettingsReducer.settings;
+    const currentMatch = state.matchStatsReducer.currentMatch;
+    const currentGameMode = currentMatch.gameMode; // Get current game mode
 
-    // Position in-game player stats on the left side
-    positionWindowRelativeToGame(
-      ingame.id,
-      WINDOW_POSITIONS.INGAME_OVERLAY.position,
-      WINDOW_POSITIONS.INGAME_OVERLAY.offsetX,
-      WINDOW_POSITIONS.INGAME_OVERLAY.offsetY
-    );
+    // Helper function to get the correct position based on game mode
+    const getPositionForMode = (overlayKey: 'playerStats' | 'finalHitsBar' | 'charSwapBar') => {
+      const positions = appSettings.customPositions?.[overlayKey];
+      const defaultPos = { x: 0, y: 0 }; // A very basic default
 
-    // Position final hits bar on the top right
-    positionWindowRelativeToGame(
-      finalhitsbar.id,
-      WINDOW_POSITIONS.FINAL_HITS.position,
-      WINDOW_POSITIONS.FINAL_HITS.offsetX,
-      WINDOW_POSITIONS.FINAL_HITS.offsetY
-    );
+      if (!positions) {
+        console.warn(`Custom positions structure for ${overlayKey} not found, using basic default {0,0}.`);
+        return defaultPos;
+      }
 
-    // Position character swap bar in the center
-    positionWindowRelativeToGame(
-      changeswapbar.id,
-      WINDOW_POSITIONS.CHAR_SWAP.position,
-      WINDOW_POSITIONS.CHAR_SWAP.offsetX,
-      WINDOW_POSITIONS.CHAR_SWAP.offsetY
-    );
+      // Use game mode specific position if available and valid
+      const modePosition = currentGameMode ? positions[currentGameMode as keyof typeof positions] : undefined;
+
+      if (modePosition && typeof modePosition.x === 'number' && typeof modePosition.y === 'number') {
+         // console.log(`Using position for mode '${currentGameMode}' for ${overlayKey}:`, modePosition);
+         return modePosition;
+      }
+
+      // Fallback to base position if mode-specific is not available or invalid
+      if (positions._base && typeof positions._base.x === 'number' && typeof positions._base.y === 'number') {
+        // console.log(`Falling back to base position for ${overlayKey}:`, positions._base);
+        return positions._base;
+      }
+
+      // Final fallback if even base position is missing/invalid
+      console.warn(`Base position for ${overlayKey} not found or invalid, using basic default {0,0}.`);
+      return defaultPos;
+    };
+
+    // Position in-game player stats (using 'playerStats' key)
+    const playerStatsPos = getPositionForMode('playerStats');
+    overwolf.windows.changePosition(ingame.id, playerStatsPos.x, playerStatsPos.y);
+
+    // Position final hits bar
+    const finalHitsPos = getPositionForMode('finalHitsBar');
+    overwolf.windows.changePosition(finalhitsbar.id, finalHitsPos.x, finalHitsPos.y);
+
+    // Position character swap bar
+    const charSwapPos = getPositionForMode('charSwapBar');
+    overwolf.windows.changePosition(changeswapbar.id, charSwapPos.x, charSwapPos.y);
 
   }, [ingame?.id, finalhitsbar?.id, changeswapbar?.id]);
 
