@@ -13,6 +13,59 @@
   border: 0.05em solid var(--primary-color);
 }
 
+/* Layout Content Background */
+.ant-layout-content {
+  background-color: var(--background-color) !important;
+  color: var(--primary-color-text) !important;
+}
+
+/* Layout Components Theme Overrides */
+.ant-layout {
+  background-color: var(--background-color) !important;
+}
+
+.ant-layout-header {
+  background-color: var(--primary-color-dark) !important;
+  color: var(--primary-color-text) !important;
+}
+
+.ant-layout-footer {
+  background-color: var(--neutral-2) !important;
+  color: var(--primary-color-text) !important;
+}
+
+.ant-layout-sider {
+  background-color: var(--neutral-2) !important;
+}
+
+/* Ensure sider trigger button matches theme */
+.ant-layout-sider-trigger {
+  background-color: var(--neutral-2) !important;
+  color: var(--primary-color-text) !important;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid var(--primary-color-medium) !important;
+}
+
+.ant-layout-sider-trigger:hover {
+  background-color: var(--primary-color-medium) !important;
+  color: var(--text-on-primary, #ffffff) !important;
+}
+
+.ant-layout-sider-zero-width-trigger {
+  background-color: var(--primary-color-dark) !important;
+  color: var(--primary-color-text) !important;
+  border: 1px solid var(--primary-color-medium) !important;
+  transition: all 0.3s ease;
+}
+
+.ant-layout-sider-zero-width-trigger:hover {
+  background-color: var(--primary-color-medium) !important;
+  color: var(--text-on-primary, #ffffff) !important;
+}
+
 /* Button Section */
 .ant-btn-variant-outlined.ant-btn-background-ghost:hover {
   background-color: var(--primary-color) !important;
@@ -62,6 +115,10 @@
   border-top: none !important;
 }
 
+.store-viewer-scrollable .ant-collapse .ant-collapse-item {
+  overflow-x: auto;
+}
+
 .ant-form-item-label > label {
   color: var(--primary-color-text) !important
 }
@@ -78,4 +135,13 @@
 .ant-table {
   border-radius: var(--border-radius-large) !important;
   background: transparent !important;
+}
+
+/* Slider overrides */
+.ant-slider-mark .ant-slider-mark-text {
+  color: var(--primary-color-text) !important;
+}
+
+.ant-menu-item-selected {
+  color: var(--primary-color) !important;
 }
