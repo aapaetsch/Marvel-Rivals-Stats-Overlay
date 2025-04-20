@@ -22,10 +22,50 @@ const MatchTable: React.FC = () => {
     totalHeal: player.totalHeal || 0,
     damageBlocked: player.damageBlocked || 0
   }));
+
+  // Generate dummy players using a lambda function
+  const generateDummyPlayers = () => {
+    // Create 6 teammates (isTeammate = true)
+    const teammates = Array.from({ length: 6 }, (_, i) => ({
+      key: `teammate${i}`,
+      name: `Teammate ${i+1}`,
+      characterName: `Character ${i+1}`,
+      team: 1,
+      isLocal: i === 0,
+      isTeammate: true,
+      kills: 0,
+      deaths: 0,
+      assists: 0,
+      finalHits: 0,
+      damageDealt: 0,
+      totalHeal: 0,
+      damageBlocked: 0
+    }));
+
+    // Create 6 opponents (isTeammate = false)
+    const opponents = Array.from({ length: 6 }, (_, i) => ({
+      key: `opponent${i}`,
+      name: `Opponent ${i+1}`,
+      characterName: `Character ${i+6}`,
+      team: 2,
+      isLocal: false,
+      isTeammate: false,
+      kills: 0,
+      deaths: 0,
+      assists: 0,
+      finalHits: 0,
+      damageDealt: 0,
+      totalHeal: 0,
+      damageBlocked: 0
+    }));
+
+    return [...teammates, ...opponents];
+  };
+  const tableData = players.length > 0 ? players : generateDummyPlayers();
   
   return (
     <MatchTableComponent 
-      players={players}
+      players={tableData}
       showTeams={true}
       showAvatar={false}
       translationPrefix="match-info"

@@ -25,14 +25,16 @@
 /* Descriptions component styling */
 .match-info-card .ant-descriptions-bordered .ant-descriptions-item-label,
 .match-info-card .ant-descriptions-bordered .ant-descriptions-item-content {
-  background-color: var(--neutral-1);
-  color: var(--primary-color-text);
+  color: var(--primary-color-text) !important;
   border-color: var(--neutral-0);
 }
 
 .match-info-card .ant-descriptions-bordered .ant-descriptions-item-label {
   font-weight: bold;
-  background-color: var(--neutral-0);
+  background-color: var(--neutral-2) !important;
+}
+.match-info-card .ant-descriptions-bordered .ant-descriptions-item-content {
+  background-color: var(--neutral-0) !important;
 }
 
 /* Empty card styling */

@@ -17,49 +17,45 @@ const MatchInfoCard: React.FC = () => {
     if (!timestamp) return "N/A";
     return new Date(timestamp).toLocaleTimeString();
   };
-  
-  if (!hasMatchData) {
-    return (
-      <Card className="match-info-card empty-card">
-        <p className="no-data-message">
-          {t("components.desktop.match-info.no-data")}
-        </p>
-      </Card>
-    );
-  }
+
+  const defaultMatchInfo = {
+    matchId: "N/A",
+    map: "Unknown",
+    gameType: "Unknown",
+    gameMode: "Unknown",
+    outcome: t("components.desktop.match-info.inProgress"),
+    timestamps: { matchStart: null, matchEnd: null },
+  };
+
+  const matchData = hasMatchData ? currentMatch : defaultMatchInfo;
   
   return (
-    <Card 
-      className="match-info-card"
-      title={t("components.desktop.match-info.title")}
-    >
+    <Card className="match-info-card">
       <Descriptions 
         bordered
         size="small"
         column={{ xxl: 4, xl: 3, lg: 2, md: 2, sm: 1, xs: 1 }}
       >
-        <Descriptions.Item label={t("components.desktop.match-info.id")}>
-          {currentMatch.matchId || "N/A"}
-        </Descriptions.Item>
-        
-        <Descriptions.Item label={t("components.desktop.match-info.map")}>
-          {currentMatch.map || "N/A"}
-        </Descriptions.Item>
-        
         <Descriptions.Item label={t("components.desktop.match-info.game-type")}>
-          {currentMatch.gameType || "N/A"}
+          {matchData.gameType}
         </Descriptions.Item>
-        
         <Descriptions.Item label={t("components.desktop.match-info.game-mode")}>
-          {currentMatch.gameMode || "N/A"}
+          {matchData.gameMode}
         </Descriptions.Item>
-        
+        <Descriptions.Item label={t("components.desktop.match-info.map")}>
+          {matchData.map}
+        </Descriptions.Item>
         <Descriptions.Item label={t("components.desktop.match-info.outcome")}>
-          {currentMatch.outcome !== MatchOutcome.Unknown ? currentMatch.outcome : t("components.desktop.match-info.inProgress")}
+          {matchData.outcome}
         </Descriptions.Item>
-        
         <Descriptions.Item label={t("components.desktop.match-info.time")}>
-          {formatTimestamp(currentMatch.timestamps.matchStart)}&nbsp;-&nbsp;{formatTimestamp(currentMatch.timestamps.matchEnd)}
+          {formatTimestamp(matchData.timestamps.matchStart)}&nbsp;-&nbsp;{formatTimestamp(matchData.timestamps.matchEnd)}
+        </Descriptions.Item>
+        <Descriptions.Item label={t("components.desktop.match-info.duration")}>
+          {matchData.timestamps.matchEnd ? Math.floor((matchData.timestamps.matchEnd - (matchData.timestamps?.matchStart ?? 0)) / 60) : "N/A"} minutes
+        </Descriptions.Item>
+        <Descriptions.Item label={t("components.desktop.match-info.id")}>
+          {matchData.matchId}
         </Descriptions.Item>
       </Descriptions>
     </Card>

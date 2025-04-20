@@ -8,43 +8,6 @@
   border: none !important;
 }
 
-/* Collapse panel styling */
-.match-info-collapse .ant-collapse-item {
-  margin-bottom: 12px;
-  border: 1px solid var(--primary-color-medium) !important;
-  border-radius: var(--border-radius) !important;
-  overflow: hidden;
-  background-color: var(--neutral-2);
-}
-
-/* Panel header styling */
-.match-info-collapse .ant-collapse-header {
-  background-color: var(--header-dark) !important;
-  color: var(--primary-color-text) !important;
-  font-size: var(--font-size-large) !important;
-  padding: 8px 16px !important;
-  transition: background-color 0.2s;
-}
-
-.match-info-collapse .ant-collapse-header:hover {
-  background-color: var(--primary-color-medium) !important;
-}
-
-/* Panel content styling */
-.match-info-collapse .ant-collapse-content {
-  background-color: transparent !important;
-  border-top: none !important;
-}
-
-.match-info-collapse .ant-collapse-content-box {
-  padding: 0 !important;
-}
-
-/* Arrow icon styling */
-.match-info-collapse .ant-collapse-arrow {
-  color: var(--primary-color-text) !important;
-}
-
 /* Remove inner card margins when inside collapse */
 .match-info-panel .match-info-card {
   margin-bottom: 0;

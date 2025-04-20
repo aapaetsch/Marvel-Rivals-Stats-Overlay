@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { logger } from "lib/log";
+import { isDev } from "lib/utils";
 import {
   MatchOutcome,
   MatchStatsState,
@@ -7,8 +8,15 @@ import {
   PlayerStats,  // Uncommented this line
   TeamStats
 } from "../types/matchStatsTypes";
-// We'll initialize the logger when the slice is first imported
-logger.init().catch(err => console.error("Failed to initialize logger:", err));
+
+// Only try to initialize the logger with overwolf in production environment
+// In development, the logger will work without initialization or use console
+if (typeof overwolf !== 'undefined') {
+  logger.init(overwolf).catch(err => console.error("Failed to initialize logger:", err));
+} else if (isDev) {
+  // In dev mode, just log to console without using overwolf
+  console.log("Running in development mode, logger will use console only");
+}
 
 const initialMatchStatsState: MatchStatsState = {
   matchId: null,

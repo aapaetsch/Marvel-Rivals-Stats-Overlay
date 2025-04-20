@@ -107,7 +107,9 @@
 .character-avatar {
   margin-bottom: 4px;
   background-color: var(--neutral-0);
+  border-radius: var(--border-radius);
 }
+
 
 .character-name {
   font-size: 12px;
