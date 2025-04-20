@@ -1,6 +1,6 @@
 // filepath: c:\Users\aapae\Documents\Overwolf Projects\rivalsreactoverlay\src\screens\desktop\components\settings\OverlayPositionEditor.tsx
 import React, { useState } from 'react';
-import { Form, Button, InputNumber, Row, Col, Switch, Space } from 'antd';
+import { Form, Button, InputNumber, Switch, Space } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { WINDOW_NAMES } from 'app/shared/constants';
 import '../styles/Settings.css';
@@ -113,35 +113,32 @@ const OverlayPositionEditor: React.FC<OverlayPositionEditorProps> = ({
               />
             </Form.Item>
           </div>
-        </div>
-        <div className="is-flex is-justify-content-flex-end mb-2 is-full-width">          
-          {!isPositioningMode ? (
+        </div>        <div className="is-flex is-justify-content-flex-end mb-2 is-full-width">            
+          <Space>
+            <Button
+              variant="text"
+              color="primary"
+              onClick={() => {
+                // Call the original handler which will update the Redux state
+                onEditPositions(!isPositioningMode, windowName);
+              }}
+              className="edit-position-button"
+            >
+              {isPositioningMode 
+                ? t('components.desktop.settings.disable-drag-mode', 'Disable Drag Mode') 
+                : t('components.desktop.settings.enable-drag-move', 'Enable Drag to Move')}
+            </Button>
+            {isPositioningMode && (
               <Button
                 type="default"
                 ghost
-                onClick={() => onEditPositions(true, windowName)}
+                onClick={() => onSavePositions(windowName)}
                 className="edit-position-button"
               >
-                {t('components.desktop.settings.enable-drag-move', 'Enable Drag to Move')}
+                {t('components.desktop.settings.save-position', 'Save Position')}
               </Button>
-            ) : (
-              <Space>
-                <Button
-                  type="default"
-                  ghost
-                  onClick={() => onSavePositions(windowName)}
-                  className="edit-position-button"
-                >
-                  {t('components.desktop.settings.save', 'Save')}
-                </Button>
-                <Button
-                  onClick={() => onEditPositions(false, windowName)}
-                  className="edit-position-button"
-                >
-                  {t('components.desktop.settings.cancel', 'Cancel')}
-                </Button>
-              </Space>
             )}
+          </Space>
         </div>
       </div>
       <div className="sub-title">
@@ -150,7 +147,8 @@ const OverlayPositionEditor: React.FC<OverlayPositionEditorProps> = ({
       {/* Game Mode Specific Positions */}
       {gameModes.map((mode) => (
         <div key={mode} className="game-mode-position-container">
-          {/* Game Mode Toggle Row */}          <div className="card-settings-row is-wrap">
+          {/* Game Mode Toggle Row */}          
+          <div className="card-settings-row is-wrap">
             <div 
               className="toggle-settings-label" 
               onClick={() => toggleCustomMode(mode, !customEnabledModes[mode])}

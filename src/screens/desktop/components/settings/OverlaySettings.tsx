@@ -18,27 +18,26 @@ const { Panel } = Collapse;
 
 // Export the constant
 export const defaultOverlayWindowPositions = {
-  playerStats: { // Renamed from ingameOverlay for clarity
-    _base: { x: 15, y: -175 }, // Base position from drag/drop
-    // Default game mode positions (can be adjusted)
-    Domination: { x: 15, y: -175 },
-    Convoy: { x: 15, y: -175 },
-    'Doom Match': { x: 15, y: -175 },
-    Conquest: { x: 15, y: -175 },
+  playerStats: {
+    _base: { x: 10, y: 200 },
+    Domination: { x: 10, y: 200 },
+    Convoy: { x: 10, y: 200 },
+    'Doom Match': { x: 10, y: 200 },
+    Conquest: { x: 10, y: 200 },
   },
   finalHitsBar: {
-    _base: { x: 1000, y: 50 },
-    Domination: { x: 1000, y: 50 },
-    Convoy: { x: 1000, y: 50 },
-    'Doom Match': { x: 1000, y: 50 },
-    Conquest: { x: 1000, y: 50 },
+    _base: { x: 2455, y: 20 },
+    Domination: { x: 2455, y: 20 },
+    Convoy: { x: 2455, y: 20 },
+    'Doom Match': { x: 2455, y: 20 },
+    Conquest: { x: 2455, y: 20 },
   },
   charSwapBar: {
-    _base: { x: 0, y: 300 },
-    Domination: { x: 0, y: 300 },
-    Convoy: { x: 0, y: 300 },
-    'Doom Match': { x: 0, y: 300 },
-    Conquest: { x: 0, y: 300 },
+    _base: { x: 1668, y: 330 },
+    Domination: { x: 1668, y: 330 },
+    Convoy: { x: 1668, y: 330 },
+    'Doom Match': { x: 1668, y: 330 },
+    Conquest: { x: 1668, y: 330 },
   }
 };
 
