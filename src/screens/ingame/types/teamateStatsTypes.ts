@@ -7,7 +7,7 @@ export interface PlayerStatsProps {
   kills?: number;
   deaths?: number;
   assists?: number;
-  finalBlows?: number;
+  finalHits?: number;
   damageBlocked?: number;
   isTeammate?: boolean;
   isUser?: boolean;
