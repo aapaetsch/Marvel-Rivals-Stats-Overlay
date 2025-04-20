@@ -23,9 +23,16 @@ const CardSettingsRowColorPicker: React.FC<CardSettingsRowColorPickerProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  // Format color string to show as label
-  const formatColorLabel = (colorValue: string) => {
-    return colorValue.toUpperCase();
+  // Format color value to show as label
+  const formatColorLabel = (colorValue: string | Color) => {
+    // Check if colorValue is an object (Color instance) or a string
+    if (typeof colorValue === 'object' && colorValue !== null) {
+      // If it's a Color object, convert to hex string
+      return colorValue.toHexString().toUpperCase();
+    }
+    
+    // If it's already a string, just uppercase it
+    return typeof colorValue === 'string' ? colorValue.toUpperCase() : '#000000';
   };
 
   return (
@@ -58,7 +65,8 @@ const CardSettingsRowColorPicker: React.FC<CardSettingsRowColorPickerProps> = ({
       </div>
       <div className="card-settings-control">
         <Form.Item name={formName} noStyle>
-          <ColorPicker size="small" />
+          {/* Increased size to medium and kept the custom styling class */}
+          <ColorPicker size="middle" className="settings-color-picker-trigger" />
         </Form.Item>
       </div>
     </div>
