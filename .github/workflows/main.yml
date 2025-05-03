@@ -8,6 +8,9 @@ on:
         type: choice
         options:
           - gemma3:4b-it-qat
+          - gemma3:4b
+          - gemma3:1b 
+          - gemma3:1b-it-qat
           - deepseek-r1
           - llama3.3
           - phi4
