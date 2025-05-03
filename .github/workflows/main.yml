@@ -4,9 +4,10 @@ on:
     inputs:
       model:
         description: Model (ollama.com/library)
-        default: deepseek-coder-v2
+        default: gemma3:4b-it-qat
         type: choice
         options:
+          - gemma3:4b-it-qat
           - deepseek-r1
           - llama3.3
           - phi4
