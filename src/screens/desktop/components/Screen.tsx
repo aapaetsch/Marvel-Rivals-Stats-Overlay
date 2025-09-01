@@ -6,6 +6,7 @@ import { InfoPanel } from "features/overview/components/InfoPanel";
 import { useAdRemoval } from "features/monetization";
 import Menu from "./Menu";
 import MatchInfo from "./matchTab/MatchInfo"; // Import our new component
+import CardView from "./cardViewTab/CardView"; // Import the CardView component
 import { GeneralSettingsComponent as Settings } from "./settings/Settings"; // Import the Settings component
 import MatchHistory from "./matchHistoryTab/MatchHistory"; // Import the Match History component
 import RecentPlayers from "./recentPlayersTab/RecentPlayers"; // Import the Recent Players component
@@ -33,6 +34,11 @@ const Screen = () => {
     // Current Match option
     if (selectedKeys.includes(MenuKeys.CURRENT_MATCH)) {
       return <MatchInfo />;
+    }
+    
+    // Card View option
+    if (selectedKeys.includes(MenuKeys.CARD_VIEW)) {
+      return <CardView />;
     }
     
     // Match History option

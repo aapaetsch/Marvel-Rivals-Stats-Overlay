@@ -37,6 +37,11 @@ const getMenuItems = (t: any): AntMenuItem[] => [
         label: t('components.desktop.menu.current_match'),
       },
       {
+        key: MenuKeys.CARD_VIEW,
+        icon: <GiFloatingPlatforms />,
+        label: t('components.desktop.menu.card_view', 'Card View'),
+      },
+      {
         key: MenuKeys.MATCH_HISTORY,
         icon: <MdOutlineWorkHistory />,
         label: t('components.desktop.menu.match_history'),

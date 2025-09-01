@@ -5,6 +5,7 @@ export enum MenuKeys {
   SQUAD_STATS = 'Stats-Squad',
   MATCH = 'Match-Sub',
   CURRENT_MATCH = 'Match-Current',
+  CARD_VIEW = 'Match-CardView',
   MATCH_HISTORY = 'Match-History',
   PLAYERS = 'Players-Sub',
   FAVORITES = 'Players-Favorites',
@@ -12,6 +13,8 @@ export enum MenuKeys {
   HEROS = 'Heros-Sub',
   HEROS_TIERLIST = 'Heros-Tierlist',
   SETTINGS = 'Settings',
+  GENERAL_SETTINGS = 'Settings-General',
+  OVERLAY_SETTINGS = 'Settings-Overlay',
 }
 
 export interface AntMenuItem {

@@ -1,0 +1,94 @@
+.card-view-container {
+  width: 100%;
+  padding: 20px;
+  background-color: var(--neutral-2);
+}
+
+.card-view-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.team-row {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.team-header {
+  color: var(--primary-color-text);
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+  text-align: center;
+  padding: 10px;
+  background-color: var(--header-dark);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--primary-color-medium);
+}
+
+.teammates-row .team-header {
+  color: var(--victory-color);
+}
+
+.opponents-row .team-header {
+  color: var(--defeat-color);
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  justify-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.no-data-card {
+  background-color: var(--neutral-2) !important;
+  border: 1px solid var(--primary-color-medium) !important;
+  border-radius: var(--border-radius) !important;
+  text-align: center;
+  margin-top: 50px;
+}
+
+.no-data-card .ant-card-body {
+  padding: 40px;
+}
+
+.no-data-message {
+  color: var(--secondary-color-light);
+  font-size: 1.2rem;
+  background-color: var(--neutral-1);
+  border-radius: var(--border-radius-small);
+  padding: 20px;
+}
+
+/* Responsive design */
+@media (max-width: 1200px) {
+  .cards-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .card-view-container {
+    padding: 10px;
+  }
+  
+  .card-view-grid {
+    gap: 20px;
+  }
+  
+  .cards-grid {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 10px;
+  }
+  
+  .team-header {
+    font-size: 1.2rem;
+    padding: 8px;
+  }
+}

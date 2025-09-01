@@ -1,0 +1,264 @@
+.player-card {
+  width: 200px;
+  height: 320px;
+  perspective: 1000px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.player-card:hover {
+  transform: scale(1.02);
+}
+
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s ease;
+  transform-style: preserve-3d;
+}
+
+.player-card.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 12px;
+  background: linear-gradient(145deg, var(--neutral-1), var(--neutral-2));
+  border: 2px solid var(--primary-color-medium);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.card-back {
+  transform: rotateY(180deg);
+}
+
+/* Front card styles */
+.player-name {
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--primary-color-text);
+  text-align: center;
+  margin-bottom: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-bottom: 1px solid var(--primary-color-medium);
+  padding-bottom: 8px;
+}
+
+.character-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.character-icon {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--primary-color-medium);
+  margin-bottom: 8px;
+  background-color: var(--neutral-0);
+}
+
+.character-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.character-fallback {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--primary-color-text);
+  background: linear-gradient(45deg, var(--primary-color-medium), var(--secondary-color-medium));
+}
+
+.character-name {
+  font-size: 0.85rem;
+  color: var(--secondary-color-light);
+  text-align: center;
+  font-weight: 500;
+}
+
+.kda-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding: 12px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 1px solid var(--primary-color-medium);
+}
+
+.stat-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--secondary-color-light);
+  font-weight: bold;
+}
+
+.stat-value {
+  font-size: 1.2rem;
+  color: var(--primary-color-text);
+  font-weight: bold;
+}
+
+.ratio-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.ratio-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ratio-label {
+  font-size: 0.8rem;
+  color: var(--secondary-color-light);
+  font-weight: 500;
+}
+
+.ratio-value {
+  font-size: 0.9rem;
+  color: var(--primary-color-text);
+  font-weight: bold;
+}
+
+.kda-highlight {
+  color: var(--victory-color) !important;
+}
+
+/* Back card styles */
+.additional-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-item .stat-label {
+  font-size: 0.75rem;
+  color: var(--secondary-color-light);
+}
+
+.stat-item .stat-value {
+  font-size: 0.8rem;
+  color: var(--primary-color-text);
+  font-weight: bold;
+}
+
+.percentage-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: auto;
+}
+
+.percentage-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 8px;
+  background-color: rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+}
+
+.percentage-label {
+  font-size: 0.7rem;
+  color: var(--secondary-color-light);
+}
+
+.percentage-value {
+  font-size: 0.75rem;
+  color: var(--victory-color);
+  font-weight: bold;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .player-card {
+    width: 180px;
+    height: 290px;
+  }
+  
+  .card-front,
+  .card-back {
+    padding: 12px;
+  }
+  
+  .player-name {
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+  }
+  
+  .character-icon {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .character-fallback {
+    font-size: 1.2rem;
+  }
+  
+  .stat-value {
+    font-size: 1rem;
+  }
+}
+
+/* Animation enhancements */
+@keyframes cardGlow {
+  0% { box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4); }
+  50% { box-shadow: 0 8px 20px rgba(135, 206, 235, 0.3); }
+  100% { box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4); }
+}
+
+.player-card:hover .card-front,
+.player-card:hover .card-back {
+  animation: cardGlow 2s ease-in-out infinite;
+}
