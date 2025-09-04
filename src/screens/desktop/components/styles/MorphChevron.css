@@ -12,7 +12,7 @@
   width: 16px;
   height: 16px;
   transform-origin: center;
-  /* No transition animation */
+  /* Uses CSS transform for instant flip animation (no transition) */
 }
 
 /* Use static positioning for expanded state */
