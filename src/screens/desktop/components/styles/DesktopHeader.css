@@ -7,9 +7,12 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   user-select: none; /* Prevent text selection during drag */
   z-index: 1000;
-  width: inherit;
+  width: 100%;
   height: 2.5rem;
   padding: 0.25rem;
+  position: fixed;
+  top: 0;
+  left: 0;
 }
 
 .header:active {

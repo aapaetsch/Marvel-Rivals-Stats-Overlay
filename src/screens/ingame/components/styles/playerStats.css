@@ -220,6 +220,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Color is applied dynamically through playerStatsFontColor */
 }
 
 .stat-label {
