@@ -1,0 +1,21 @@
+.morph-chevron {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  width: 24px;
+  height: 24px;
+  padding: 8px;
+  color: var(--primary-color-text);
+}
+
+.morph-chevron .chevron-single {
+  width: 16px;
+  height: 16px;
+  transform-origin: center;
+  /* No transition animation */
+}
+
+/* Use static positioning for expanded state */
+.morph-chevron.expanded .chevron-single {
+  transform: rotate(180deg);
+}
