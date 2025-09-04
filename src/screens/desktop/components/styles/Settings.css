@@ -5,8 +5,35 @@
   display: flex; /* Use flexbox */
   flex-direction: column; /* Stack children vertically */
   height: calc(100vh - 100px); /* Adjust height based on header/other elements, example value */
-  padding: 20px; /* Add padding if needed */
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
   box-sizing: border-box;
+}
+
+/* Advanced Settings */
+.advanced-settings {
+  padding: 20px;
+}
+
+.export-import-section,
+.app-info {
+  margin-bottom: 20px;
+}
+
+.export-import-section .ant-btn {
+  margin-right: 10px;
+}
+
+/* Settings Tabs */
+.settings-tabs {
+  width: 100%;
+}
+
+.settings-tabs .ant-tabs-content {
+  height: calc(100vh - 180px);
+  overflow-y: auto;
 }
 
 .settings-collapse {
@@ -71,7 +98,6 @@
   gap: 10px;
   margin-top: auto; /* Pushes actions to the bottom in flex column */
   padding-top: 20px; /* Add space above the buttons */
-  border-top: 1px solid var(--neutral-4); /* Optional separator line */
   justify-content: flex-end;
   flex-shrink: 0; /* Prevent actions area from shrinking */
 }

@@ -84,6 +84,9 @@
 /* Numeric columns alignment */
 .column-number {
   text-align: center !important;
+  font-size: 18px !important;
+  margin-right: 0.5rem;
+  font-weight: bold;
 }
 
 /* Local player highlighting */
@@ -96,6 +99,21 @@
   margin-left: 8px;
   padding: 0 5px;
   border-radius: 2px;
+}
+
+/* Character icon styling */
+.character-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--border-radius);
+  vertical-align: middle;
+  object-fit: contain;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.player-cell {
+  display: flex;
+  align-items: center;
 }
 
 /* Make sure the table fits within its container */
@@ -117,4 +135,76 @@
 /* Hover state for column headers */
 .ant-table-thead th.ant-table-column-has-sorters:hover {
   background-color: var(--neutral-0) !important;
+}
+
+.ant-table-cell {
+  font-size: 18px !important;
+  padding: 3px 3px !important;
+}
+
+.ant-table-tbody .ant-table-row .ant-table-cell.column-number {
+  padding-right: 1.5rem !important;
+}
+
+/* Custom Expand Icon (Chevron) Styling */
+.custom-expand-icon {
+  font-size: 14px;
+  color: var(--primary-color-text);
+  cursor: pointer;
+  padding: 8px;
+  display: inline-block;
+}
+
+/* Avatar placeholder styling */
+.character-avatar-placeholder {
+  background-color: var(--primary-color-dark);
+  color: var(--primary-color-text);
+}
+
+/* Final Hits Expanded Row Styles */
+.final-hits-details {
+  background-color: var(--primary-color-medium);
+  padding: 12px;
+  border-radius: var(--border-radius-small);
+}
+
+.final-hits-grid {
+  display: table;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.final-hits-row {
+  display: table-row;
+}
+
+.final-hits-label-cell {
+  display: table-cell;
+  font-weight: 700;
+  font-size: 16px;
+  padding: 8px 10px;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  white-space: nowrap;
+  color: var(--primary-color-text);
+  vertical-align: middle;
+  width: 120px;
+}
+
+.final-hits-cell {
+  display: table-cell;
+  text-align: center;
+  padding: 8px;
+  color: var(--primary-color-text);
+  vertical-align: middle;
+  min-width: 80px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.final-hits-empty {
+  padding: 12px;
+  text-align: center;
+  color: var(--primary-color-text);
+  background-color: var(--primary-color-medium);
+  border-radius: var(--border-radius-small);
 }
