@@ -1,0 +1,359 @@
+/* Player Card Styles */
+.player-card {
+  width: 180px;
+  height: 320px;
+  perspective: 600px;
+  cursor: pointer;
+  border-radius: 8px;
+  overflow: visible;
+  position: relative;
+  transition: transform 0.2s ease;
+}
+
+.player-card:hover {
+  transform: translateY(-2px);
+}
+
+.player-card:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Team-based card styling */
+.player-card.team-friendly {
+  --card-bg-color: #1a472a;
+  --card-border-color: rgba(77, 171, 107, 0.3);
+}
+
+.player-card.team-enemy {
+  --card-bg-color: #472a1a;
+  --card-border-color: rgba(171, 77, 77, 0.3);
+}
+
+/* Card faces */
+.card-face {
+  border: 1px solid var(--card-border-color);
+  background-color: var(--card-bg-color);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Card front content */
+.player-card-front {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.card-header {
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 4px;
+}
+
+.player-name {
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--primary-color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.local-indicator {
+  margin-left: 4px;
+  color: #ffd700;
+  font-size: 12px;
+}
+
+.card-avatar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.character-avatar {
+  position: relative;
+}
+
+.character-icon {
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  object-fit: cover;
+  display: block;
+}
+
+.character-avatar-fallback {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.card-character {
+  text-align: center;
+}
+
+.character-name {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* KDA Display */
+.kda-display {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+}
+
+.kda-primary {
+  display: flex;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.kda-kills {
+  color: #4ade80;
+  font-weight: bold;
+}
+
+.kda-deaths {
+  color: #f87171;
+  font-weight: bold;
+}
+
+.kda-assists {
+  color: #60a5fa;
+  font-weight: bold;
+}
+
+.kda-secondary {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.kda-ratio, .kda-total {
+  font-weight: 600;
+}
+
+/* Player Stats */
+.player-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex-grow: 1;
+}
+
+.damage-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: center;
+}
+
+.stat-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.stat-row.damage-primary .stat-value {
+  font-weight: bold;
+  color: #fbbf24;
+}
+
+.stat-row.damage-blocked .stat-value {
+  color: #60a5fa;
+  font-weight: 600;
+}
+
+.stat-row.healing .stat-value {
+  color: #4ade80;
+  font-weight: 600;
+}
+
+.stat-label {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  font-size: 12px;
+  color: var(--primary-color-text);
+  font-weight: 500;
+}
+
+/* Card back content */
+.player-card-back {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card-back-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.back-avatar .character-icon {
+  width: 32px;
+  height: 32px;
+}
+
+.player-back-info {
+  flex-grow: 1;
+}
+
+.player-name-back {
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--primary-color-text);
+}
+
+.character-name-back {
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.card-back-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.final-hits-summary {
+  text-align: center;
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+}
+
+.final-hits-summary .stat-row {
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.total-final-hits .stat-value {
+  font-size: 16px;
+  font-weight: bold;
+  color: #fbbf24;
+}
+
+.final-hits-breakdown {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.final-hits-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.final-hits-section {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 4px;
+  padding: 6px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+  padding-bottom: 2px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.section-title {
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: bold;
+}
+
+.section-total {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.section-total.given {
+  color: #4ade80;
+}
+
+.section-total.received {
+  color: #f87171;
+}
+
+.top-interactions {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.interaction-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1px 0;
+}
+
+.player-name-short {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80px;
+}
+
+.interaction-count {
+  font-size: 12px;
+  font-weight: bold;
+  min-width: 12px;
+  text-align: right;
+}
+
+.interaction-line.given .interaction-count {
+  color: #4ade80;
+}
+
+.interaction-line.received .interaction-count {
+  color: #f87171;
+}
+
+.more-indicator {
+  font-size: 7px;
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+  font-style: italic;
+  margin-top: 2px;
+}
+
+.no-final-hits {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+  padding: 20px;
+}
+
+.no-final-hits p {
+  margin: 0;
+  font-size: 10px;
+}
