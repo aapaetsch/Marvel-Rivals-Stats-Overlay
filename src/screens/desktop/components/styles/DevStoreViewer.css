@@ -2,10 +2,11 @@
   background-color: var(--neutral-2);
   border: 1px solid var(--primary-color-medium);
   border-radius: var(--border-radius);
-  margin-top: 20px;
-  padding: 15px;
-  max-height: 400px;
-  overflow: auto;
+  margin-top: 12px;
+  padding: 12px;
+  height: calc(100% - 16px);
+  overflow: hidden;
+  color: var(--primary-color-text);
 }
 
 .dev-store-viewer-header {
@@ -29,26 +30,22 @@
 
 .dev-store-viewer-content {
   border-top: 1px solid var(--neutral-0);
-  padding-top: 15px;
+  padding-top: 12px;
+  height: calc(100% - 48px);
+  overflow: auto;
 }
 
-/* Make collapse panel headers white */
-.dev-store-viewer .ant-collapse-header {
-  color: white !important;
-}
-
-.dev-store-viewer .ant-collapse-header-text {
-  color: white !important;
-}
-
+/* Collapse panel header/text colors adapt to theme */
+.dev-store-viewer .ant-collapse-header,
+.dev-store-viewer .ant-collapse-header-text,
 .dev-store-viewer .ant-collapse-expand-icon {
-  color: white !important;
+  color: var(--primary-color-text) !important;
 }
 
 /* Improve visibility of collapse content */
 .dev-store-viewer .ant-collapse-content {
-  background-color: rgba(0, 0, 0, 0.3) !important;
-  color: white !important;
+  background-color: rgba(0, 0, 0, 0.15) !important;
+  color: var(--primary-color-text) !important;
 }
 
 /* JSON Viewer styles */
@@ -71,7 +68,7 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  color: white;
+  color: var(--primary-color-text);
   font-weight: 500;
 }
 
@@ -112,4 +109,10 @@
 .json-array, .json-object {
   color: white;
   font-weight: 500;
+}
+
+.dev-slice-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
 }

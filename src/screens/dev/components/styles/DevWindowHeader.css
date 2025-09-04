@@ -1,0 +1,25 @@
+.dev-header {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  background: var(--header-dark, #1e1e1e);
+  border-bottom: 1px solid var(--primary-color-medium, #333);
+  user-select: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+.dev-header .title-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--primary-color-text, #f0f0f0);
+  font-weight: 500;
+}
+.dev-header .app-logo { width: 18px; height: 18px; }
+
+.dev-header .window-controls { display: flex; gap: 6px; }

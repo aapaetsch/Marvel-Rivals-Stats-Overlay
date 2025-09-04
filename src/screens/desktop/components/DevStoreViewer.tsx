@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from 'app/shared/store';
-import { Collapse, Switch, Button, Tooltip } from 'antd';
-import { CopyOutlined, DownOutlined, RightOutlined } from '@ant-design/icons';
+import { Collapse, Switch, Button, Tooltip, Input, Tag, Space } from 'antd';
+import { CopyOutlined, DownOutlined, RightOutlined, SearchOutlined, ReloadOutlined } from '@ant-design/icons';
 import './styles/DevStoreViewer.css';
 
 const { Panel } = Collapse;
@@ -94,9 +94,16 @@ const JSONViewer: React.FC<JSONViewerProps> = ({ data, path = '', isExpanded = f
 
 // Main DevStoreViewer component
 const DevStoreViewer: React.FC = () => {
-  const [enabled, setEnabled] = useState(false);
+  const [enabled, setEnabled] = useState(true);
   const [expandAll, setExpandAll] = useState(false);
+  const [filter, setFilter] = useState('');
   const state = useSelector((state: RootState) => state);
+  const prevStateRef = React.useRef<RootState | null>(null);
+  const [showPrevious, setShowPrevious] = useState(false);
+
+  useEffect(() => {
+    prevStateRef.current = state;
+  }, [state]);
   
   const copyState = () => {
     navigator.clipboard.writeText(JSON.stringify(state, null, 2));
@@ -106,19 +113,50 @@ const DevStoreViewer: React.FC = () => {
   const renderStoreContent = () => {
     // Get all keys, but with proper typing
     const stateKeys = Object.keys(state) as Array<keyof typeof state>;
+    const filteredKeys = stateKeys.filter(k => !filter || k.toString().toLowerCase().includes(filter.toLowerCase()));
     
     return (
-      <Collapse>
-        {stateKeys.map((key) => (
-          <Panel header={key.toString()} key={key.toString()}>
-            <JSONViewer 
-              data={state[key]} 
-              path={key.toString()} 
-              isExpanded={expandAll} 
-              forceExpanded={expandAll} 
-            />
-          </Panel>
-        ))}
+      <Collapse activeKey={filter ? filteredKeys.map(k => k.toString()) : undefined}>
+        {filteredKeys.map((key) => {
+          const header = (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Space size={6}>
+                <Tag color="geekblue" style={{ marginRight: 4 }}>{key.toString()}</Tag>
+              </Space>
+              <Space size={6}>
+                <Tooltip title="Copy this slice">
+                  <Button size="small" icon={<CopyOutlined />} onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(JSON.stringify(state[key], null, 2)); }} />
+                </Tooltip>
+              </Space>
+            </div>
+          );
+          return (
+            <Panel header={header} key={key.toString()}>
+              <div className={showPrevious ? 'dev-slice-grid' : ''}>
+                <div>
+                  <h4 style={{ margin: '4px 0 8px 0' }}>Current</h4>
+                  <JSONViewer 
+                    data={state[key]} 
+                    path={key.toString()} 
+                    isExpanded={expandAll || !!filter} 
+                    forceExpanded={expandAll || !!filter} 
+                  />
+                </div>
+                {showPrevious && (
+                  <div>
+                    <h4 style={{ margin: '4px 0 8px 0' }}>Previous</h4>
+                    <JSONViewer 
+                      data={prevStateRef.current ? (prevStateRef.current as any)[key] : undefined} 
+                      path={`prev.${key.toString()}`} 
+                      isExpanded={expandAll || !!filter} 
+                      forceExpanded={expandAll || !!filter} 
+                    />
+                  </div>
+                )}
+              </div>
+            </Panel>
+          );
+        })}
       </Collapse>
     );
   };
@@ -128,6 +166,15 @@ const DevStoreViewer: React.FC = () => {
       <div className="dev-store-viewer-header">
         <h2>Redux Store Viewer</h2>
         <div className="dev-store-viewer-controls">
+          <Input
+            allowClear
+            prefix={<SearchOutlined />}
+            placeholder="Filter top-level keys..."
+            size="small"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            style={{ width: 220 }}
+          />
           <Switch
             checked={enabled}
             onChange={setEnabled}
@@ -138,7 +185,6 @@ const DevStoreViewer: React.FC = () => {
             <Button 
               icon={<CopyOutlined />} 
               onClick={copyState}
-              disabled={!enabled}
             >
               Copy State
             </Button>
@@ -148,7 +194,12 @@ const DevStoreViewer: React.FC = () => {
             onChange={setExpandAll}
             checkedChildren="Expand All"
             unCheckedChildren="Collapse All"
-            disabled={!enabled}
+          />
+          <Switch
+            checked={showPrevious}
+            onChange={setShowPrevious}
+            checkedChildren="Prev"
+            unCheckedChildren="Prev"
           />
         </div>
       </div>

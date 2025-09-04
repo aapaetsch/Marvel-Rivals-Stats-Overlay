@@ -1,0 +1,288 @@
+.dev-window-root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--background-color, #121212);
+  color: var(--primary-color-text, #f0f0f0);
+  padding-top: 36px; /* Space for fixed top bar */
+  overflow: hidden;
+}
+
+.dev-tabs {
+  padding: 0 8px;
+  height: calc(100vh - 36px);
+  overflow: auto; /* Make tabs area the scroll container */
+}
+.dev-window-root .ant-tabs-content-holder,
+.dev-window-root .ant-tabs-content,
+.dev-window-root .ant-tabs-tabpane {
+  height: 100%;
+}
+
+/* Fix Tab Bar under Top Bar */
+.dev-tabs .ant-tabs-nav {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background: var(--header-dark, #1e1e1e);
+  margin-left: -8px; /* extend bottom border slightly left */
+  padding-left: 8px;
+}
+.dev-tabs .ant-tabs-nav::before {
+  border-color: var(--primary-color-medium, #333);
+}
+
+/* Ensure unselected tabs are visible across themes */
+body.theme-dark .dev-tabs .ant-tabs-tab .ant-tabs-tab-btn,
+body.theme-minimalistic-black .dev-tabs .ant-tabs-tab .ant-tabs-tab-btn {
+  color: #ddd;
+}
+body.theme-light .dev-tabs .ant-tabs-tab .ant-tabs-tab-btn {
+  color: #222;
+}
+.dev-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--primary-color, #3498db) !important;
+}
+
+/* Table visibility */
+.dev-window .ant-table-thead > tr > th {
+  background-color: var(--neutral-1, #232323) !important;
+  color: var(--primary-color-text, #f0f0f0) !important;
+}
+.dev-window .ant-table-tbody > tr > td {
+  color: var(--primary-color-text, #f0f0f0) !important;
+  background: transparent !important; /* prevent white td backgrounds in dark */
+}
+body.theme-light .dev-window .ant-table-thead > tr > th,
+body.theme-light .dev-window .ant-table-tbody > tr > td {
+  color: #111 !important;
+}
+/* Table backgrounds */
+.dev-window .ant-table {
+  background: var(--neutral-2, #1a1a1a) !important;
+}
+body.theme-light .dev-window .ant-table {
+  background: #fff !important;
+}
+.dev-window .ant-table-tbody > tr.ant-table-row-selected > td {
+  background: var(--neutral-0, #2c2c2c) !important;
+}
+
+/* First column (#) background for readability */
+.dev-window .dev-col-idx {
+  background: var(--neutral-1, #232323) !important;
+}
+
+/* Make Tag contrast better */
+.dev-window .ant-tag-geekblue { color: #111 !important; }
+.dev-window .ant-tag-volcano { color: #111 !important; }
+.dev-window .ant-tag-gold { color: #111 !important; }
+
+/* Pagination visibility and hover (dark themes) */
+.dev-window .ant-pagination,
+.dev-window .ant-pagination .ant-pagination-item a,
+.dev-window .ant-pagination .ant-pagination-prev .ant-pagination-item-link,
+.dev-window .ant-pagination .ant-pagination-next .ant-pagination-item-link,
+.dev-window .ant-pagination .ant-pagination-total-text {
+  color: var(--primary-color-text, #fff) !important;
+}
+.dev-window .ant-pagination .ant-pagination-item:hover a,
+.dev-window .ant-pagination .ant-pagination-item-active a,
+.dev-window .ant-pagination .ant-pagination-prev:hover .ant-pagination-item-link,
+.dev-window .ant-pagination .ant-pagination-next:hover .ant-pagination-item-link {
+  color: #fff !important;
+}
+
+/* Start button style in dark mode: dark text when not hovered */
+.dev-window .start-btn {
+  background-color: var(--primary-color, #3498db) !important;
+  border-color: var(--primary-color, #3498db) !important;
+  color: #111 !important;
+}
+.dev-window .start-btn:hover {
+  color: #fff !important;
+}
+
+/* Force base text color inside dev window to be readable on dark themes */
+.dev-window-root,
+.dev-window-root .ant-typography,
+.dev-window-root .ant-tabs-content,
+.dev-window-root .ant-tabs-tab,
+.dev-window-root .ant-collapse,
+.dev-window-root .ant-collapse-content,
+.dev-window-root .ant-collapse-header,
+.dev-window-root .ant-input,
+.dev-window-root .ant-select-selector {
+  color: var(--primary-color-text, #f0f0f0) !important;
+}
+body.theme-light .dev-window-root,
+body.theme-light .dev-window-root .ant-typography,
+body.theme-light .dev-window-root .ant-collapse,
+body.theme-light .dev-window-root .ant-input,
+body.theme-light .dev-window-root .ant-select-selector {
+  color: #111 !important;
+}
+body.theme-light .dev-window-root .ant-collapse-content,
+body.theme-light .dev-window-root .ant-collapse-header,
+body.theme-light .dev-window-root .ant-collapse-header-text,
+body.theme-light .dev-window-root .ant-collapse-expand-icon {
+  color: #111 !important;
+}
+/* Ensure readable buttons on minimalistic-black when not primary */
+body.theme-minimalistic-black .dev-window-root .ant-btn:not(.ant-btn-primary) {
+  color: #f0f0f0 !important;
+}
+
+/* Inputs/select backgrounds/borders for dark themes */
+.dev-window-root .ant-input,
+.dev-window-root .ant-select-selector {
+  background-color: var(--neutral-1, #232323) !important;
+  border-color: var(--ant-border-color-base, #333) !important;
+}
+.dev-window-root .ant-input::placeholder {
+  color: rgba(255,255,255,0.65) !important;
+}
+body.theme-light .dev-window-root .ant-input::placeholder {
+  color: rgba(0,0,0,0.45) !important;
+}
+
+/* Buttons and switches hover/checked states for dark themes */
+.dev-window-root .ant-btn-primary {
+  background-color: var(--primary-color, #3498db) !important;
+  border-color: var(--primary-color, #3498db) !important;
+  color: #fff !important;
+}
+.dev-window-root .ant-btn:not(.ant-btn-primary) {
+  color: var(--primary-color-text, #f0f0f0) !important;
+}
+.dev-window-root .ant-btn:hover {
+  background-color: var(--neutral-0, #2c2c2c) !important;
+  border-color: var(--primary-color, #3498db) !important;
+}
+.dev-window-root .ant-switch-checked {
+  background-color: var(--primary-color, #3498db) !important;
+}
+.dev-window-root .ant-switch:hover {
+  box-shadow: 0 0 0 2px rgba(52,152,219,0.25);
+}
+
+/* Dark theme: Pagination text always visible */
+body.theme-dark .dev-window .ant-pagination,
+body.theme-dark .dev-window .ant-pagination .ant-pagination-prev .ant-pagination-item-link,
+body.theme-dark .dev-window .ant-pagination .ant-pagination-next .ant-pagination-item-link,
+body.theme-minimalistic-black .dev-window .ant-pagination,
+body.theme-minimalistic-black .dev-window .ant-pagination .ant-pagination-prev .ant-pagination-item-link,
+body.theme-minimalistic-black .dev-window .ant-pagination .ant-pagination-next .ant-pagination-item-link {
+  color: #fff;
+}
+
+body.theme-minimalistic-black .dev-window .ant-pagination .ant-pagination-item:not(:hover),
+body.theme-minimalistic-black .dev-window .ant-pagination .ant-pagination-item:not(:hover) a,
+body.theme-dark .dev-window .ant-pagination .ant-pagination-item:not(:hover) a,
+body.theme-minimalistic-black .dev-window .ant-pagination .ant-pagination-item:not(:hover) a {
+  color: #000!important;
+}
+
+/* Minimalistic black: also ensure numbers and arrows stay white */
+body.theme-minimalistic-black .dev-window .ant-pagination .anticon,
+body.theme-minimalistic-black .dev-window .ant-pagination .ant-pagination-item-link {
+  color: #fff !important;
+}
+body.theme-minimalistic-black .dev-window .ant-pagination .ant-pagination-jump-prev .ant-pagination-item-container .ant-pagination-item-ellipsis,
+body.theme-minimalistic-black .dev-window .ant-pagination .ant-pagination-jump-next .ant-pagination-item-container .ant-pagination-item-ellipsis,
+body.theme-minimalistic-black .dev-window .ant-pagination .ant-pagination-jump-prev .ant-pagination-item-container .ant-pagination-item-link-icon,
+body.theme-minimalistic-black .dev-window .ant-pagination .ant-pagination-jump-next .ant-pagination-item-container .ant-pagination-item-link-icon {
+  color: #fff !important;
+}
+body.theme-minimalistic-black .dev-window .ant-pagination .ant-pagination-item-active a {
+  color: #fff !important;
+}
+
+/* Ensure primary buttons readable in dark variants */
+body.theme-dark .dev-window .ant-btn-primary,
+body.theme-minimalistic-black .dev-window .ant-btn-primary {
+  color: #fff !important;
+}
+
+/* Ensure inner text/icon inherits the white color */
+body.theme-minimalistic-black .dev-window .ant-btn-primary > span,
+body.theme-minimalistic-black .dev-window .ant-btn-primary svg,
+body.theme-dark .dev-window .ant-btn-primary > span,
+body.theme-dark .dev-window .ant-btn-primary svg {
+  color: #fff !important;
+  fill: currentColor;
+}
+
+/* Start button: prefer readable text per theme */
+body.theme-minimalistic-black .dev-window .start-btn,
+body.theme-dark .dev-window .start-btn { 
+  color: #111 !important; 
+}
+
+/* Native input (replay interval) styling in dark */
+.log-replayer input[type="number"] {
+  background-color: var(--neutral-1, #232323);
+  color: var(--primary-color-text, #f0f0f0);
+  border: 1px solid var(--ant-border-color-base, #333);
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+.log-replayer input[type="number"]::placeholder {
+  color: rgba(255,255,255,0.65);
+}
+body.theme-light .log-replayer input[type="number"]::placeholder {
+  color: rgba(0,0,0,0.45);
+}
+
+/* Scrollbar styling for table in dark modes */
+body.theme-dark .dev-window .ant-table-body::-webkit-scrollbar,
+body.theme-minimalistic-black .dev-window .ant-table-body::-webkit-scrollbar { height: 10px; width: 10px; }
+body.theme-dark .dev-window .ant-table-body::-webkit-scrollbar-thumb,
+body.theme-minimalistic-black .dev-window .ant-table-body::-webkit-scrollbar-thumb {
+  background-color: rgba(255,255,255,0.35);
+  border-radius: 6px;
+}
+body.theme-dark .dev-window .ant-table-body::-webkit-scrollbar-track,
+body.theme-minimalistic-black .dev-window .ant-table-body::-webkit-scrollbar-track {
+  background-color: rgba(255,255,255,0.08);
+}
+
+/* Switch checked text color should be black on dark */
+body.theme-dark .dev-window-root .ant-switch-checked .ant-switch-inner,
+body.theme-minimalistic-black .dev-window-root .ant-switch-checked .ant-switch-inner {
+  color: #111 !important;
+}
+/* Minimalistic black: specifically target the inner checked label node */
+body.theme-minimalistic-black .dev-window-root .ant-switch-checked .ant-switch-inner > span,
+body.theme-minimalistic-black .dev-window-root .ant-switch-checked .ant-switch-inner .ant-switch-inner-checked {
+  color: #111 !important;
+}
+
+/* Primary buttons should have black text by default, white on hover */
+body.theme-dark .dev-window .ant-btn-primary,
+body.theme-minimalistic-black .dev-window .ant-btn-primary {
+  color: #111 !important;
+}
+body.theme-dark .dev-window .ant-btn-primary > span,
+body.theme-minimalistic-black .dev-window .ant-btn-primary > span,
+body.theme-dark .dev-window .ant-btn-primary svg,
+body.theme-minimalistic-black .dev-window .ant-btn-primary svg {
+  color: #111 !important;
+  fill: currentColor;
+}
+body.theme-dark .dev-window .ant-btn-primary:hover,
+body.theme-dark .dev-window .ant-btn-primary:focus,
+body.theme-minimalistic-black .dev-window .ant-btn-primary:hover,
+body.theme-minimalistic-black .dev-window .ant-btn-primary:focus {
+  color: #fff !important;
+}
+body.theme-dark .dev-window .ant-btn-primary:hover > span,
+body.theme-dark .dev-window .ant-btn-primary:focus > span,
+body.theme-minimalistic-black .dev-window .ant-btn-primary:hover > span,
+body.theme-minimalistic-black .dev-window .ant-btn-primary:focus > span,
+body.theme-dark .dev-window .ant-btn-primary:hover svg,
+body.theme-dark .dev-window .ant-btn-primary:focus svg,
+body.theme-minimalistic-black .dev-window .ant-btn-primary:hover svg,
+body.theme-minimalistic-black .dev-window .ant-btn-primary:focus svg {
+  color: #fff !important;
+}
