@@ -1,7 +1,6 @@
 import React from 'react';
 import { PlayerCardData } from '../types/MatchCardTypes';
 import CharacterAvatar from './CharacterAvatar';
-import StatRow from './StatRow';
 
 interface PlayerCardBackProps {
   player: PlayerCardData;
@@ -91,6 +90,19 @@ const PlayerCardBack: React.FC<PlayerCardBackProps> = ({ player, allPlayers = []
         <div className="player-back-info">
           <div className="player-name-back">{player.name}</div>
           <div className="character-name-back">{player.characterName}</div>
+        </div>
+      </div>
+      {/* Summary row: Final Hits and Deaths */}
+      <div className="final-hits-summary-row">
+        <div className="fh-grid">
+          <div className="fh-item">
+            <div className="fh-label">Final Hits</div>
+            <div className="fh-value">{player.finalHits}</div>
+          </div>
+          <div className="fh-item">
+            <div className="fh-label">Deaths</div>
+            <div className="fh-value">{player.deaths}</div>
+          </div>
         </div>
       </div>
       <div className="card-back-content">
