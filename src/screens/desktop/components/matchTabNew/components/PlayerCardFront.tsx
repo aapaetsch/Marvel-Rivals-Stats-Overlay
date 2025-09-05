@@ -2,7 +2,6 @@ import React from 'react';
 import { PlayerCardData } from '../types/MatchCardTypes';
 import CharacterAvatar from './CharacterAvatar';
 import KDADisplay from './KDADisplay';
-import PlayerStats from './PlayerStats';
 
 interface PlayerCardFrontProps {
   player: PlayerCardData;
@@ -37,12 +36,10 @@ const PlayerCardFront: React.FC<PlayerCardFrontProps> = ({ player }) => {
           kills={player.kills}
           deaths={player.deaths}
           assists={player.assists}
+          finalHits={player.finalHits}
         />
       </div>
 
-      <div className="card-stats">
-        <PlayerStats player={player} />
-      </div>
     </div>
   );
 };

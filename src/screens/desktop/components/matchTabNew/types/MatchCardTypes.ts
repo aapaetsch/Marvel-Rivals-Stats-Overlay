@@ -50,6 +50,7 @@ export interface KDADisplayProps {
   kills: number;
   deaths: number;
   assists: number;
+  finalHits?: number;
   compact?: boolean;
 }
 

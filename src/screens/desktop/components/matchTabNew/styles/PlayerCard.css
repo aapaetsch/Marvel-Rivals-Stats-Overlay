@@ -34,10 +34,10 @@
 .card-face {
   border: 1px solid var(--card-border-color);
   background-color: var(--card-bg-color);
-  padding: 12px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
 
 /* Card front content */
@@ -45,13 +45,13 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
 
 .card-header {
   text-align: center;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding-bottom: 4px;
+  padding-bottom: 3px;
 }
 
 .player-name {
@@ -107,24 +107,47 @@
 .kda-display {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 5px;
+}
+
+/* Section wrapper: darker, semi-transparent with border and rounded corners */
+.kda-section {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 5px;
+}
+
+/* Top row: K D A FH in 4 columns with labels above values */
+.kda-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
+
+.kda-item {
+  display: flex;
+  flex-direction: column;
   align-items: center;
 }
 
-.kda-primary {
-  display: flex;
-  gap: 8px;
+.kda-label {
   font-size: 12px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.kda-kills {
-  color: #4ade80;
-  font-weight: bold;
+.kda-value {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--primary-color-text);
 }
 
-.kda-deaths {
-  color: #f87171;
-  font-weight: bold;
+/* Ensure all K/D/A/FH numbers share the same color */
+.kda-kills, .kda-deaths, .kda-assists, .kda-finalhits {
+  color: var(--primary-color-text) !important;
 }
 
 .kda-assists {
@@ -132,15 +155,35 @@
   font-weight: bold;
 }
 
-.kda-secondary {
-  display: flex;
-  gap: 12px;
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.7);
+.kda-ratios {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
 }
 
-.kda-ratio, .kda-total {
+.ratio-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
+.ratio-label {
+  font-size: 16px;
   font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.ratio-label::after {
+  content: ':';
+  margin-left: 2px;
+}
+
+.ratio-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
 }
 
 /* Player Stats */
@@ -198,14 +241,14 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .card-back-header {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding-bottom: 6px;
+  padding-bottom: 5px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -233,7 +276,41 @@
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
+}
+
+/* Back: Final Hits + Deaths summary row */
+.final-hits-summary-row {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 5px;
+}
+
+.fh-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+}
+
+.fh-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.fh-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.fh-value {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--primary-color-text);
 }
 
 .final-hits-summary {
