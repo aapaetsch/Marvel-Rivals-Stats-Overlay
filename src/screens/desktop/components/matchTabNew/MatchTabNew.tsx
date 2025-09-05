@@ -109,7 +109,7 @@ const MatchTabNew: React.FC = () => {
       teams[player.team].push(player);
     });
 
-    return Object.entries(teams).map(([teamNumber, players]) => ({
+    const grouped: TeamData[] = Object.entries(teams).map(([teamNumber, players]) => ({
       teamNumber: parseInt(teamNumber),
       players: players.sort((a, b) => {
         // Put local player first, then sort by name
@@ -119,6 +119,17 @@ const MatchTabNew: React.FC = () => {
       }),
       isPlayerTeam: players.some(p => p.isTeammate)
     }));
+
+    // Ensure player's team is first (top), enemy team second (bottom)
+    grouped.sort((a, b) => {
+      if (a.isPlayerTeam === b.isPlayerTeam) {
+        // If both are same type, keep stable order by team number
+        return a.teamNumber - b.teamNumber;
+      }
+      return a.isPlayerTeam ? -1 : 1;
+    });
+
+    return grouped;
   }, [playerData]);
 
   // Calculate match summary stats
