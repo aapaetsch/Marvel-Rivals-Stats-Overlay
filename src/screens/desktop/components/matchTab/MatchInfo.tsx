@@ -24,18 +24,18 @@ const MatchInfo = () => {
         className="match-info-collapse"
       >
         <Panel 
-          header={t("components.desktop.match-info.title", "Match Information")} 
-          key="1"
-          className="match-info-panel"
-        >
-          <MatchInfoCard />
-        </Panel>
-        <Panel 
           header={t("components.desktop.match-info.players", "Players")} 
           key="2"
           className="match-players-panel"
         >
           <MatchTable />
+        </Panel>
+        <Panel 
+          header={t("components.desktop.match-info.title", "Match Information")} 
+          key="1"
+          className="match-info-panel"
+        >
+          <MatchInfoCard />
         </Panel>
       </Collapse>
     </div>

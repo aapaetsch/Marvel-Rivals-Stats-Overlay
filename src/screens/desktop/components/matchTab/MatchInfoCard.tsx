@@ -32,7 +32,6 @@ const MatchInfoCard: React.FC = () => {
   return (
     <Card className="match-info-card">
       <Descriptions 
-        bordered
         size="small"
         column={{ xxl: 4, xl: 3, lg: 2, md: 2, sm: 1, xs: 1 }}
       >
