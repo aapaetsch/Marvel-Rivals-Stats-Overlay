@@ -1,0 +1,251 @@
+/* Match Tab New Main Styles */
+.match-tab-new {
+  padding: 20px;
+  background: var(--background-color);
+  min-height: 100vh;
+}
+
+.match-tab-new-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.match-tab-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--primary-color-text);
+  margin: 0;
+}
+
+.match-tab-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.reset-cards-btn {
+  background: var(--primary-color);
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background 0.2s ease;
+}
+
+.reset-cards-btn:hover {
+  background: var(--primary-color-dark);
+}
+
+.match-info-summary {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.match-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.match-stat-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.match-stat-value {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--primary-color-text);
+}
+
+/* Match Card Grid */
+.match-card-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* Team Section */
+.team-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.team-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.team-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.team-stats-summary {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.team-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.team-stat-value {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--primary-color-text);
+}
+
+.team-stat-label {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.team-section-friendly .team-header {
+  background: rgba(77, 171, 107, 0.1);
+  border-color: rgba(77, 171, 107, 0.3);
+}
+
+.team-section-enemy .team-header {
+  background: rgba(171, 77, 77, 0.1);
+  border-color: rgba(171, 77, 77, 0.3);
+}
+
+.team-label {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--primary-color-text);
+  margin: 0;
+}
+
+.team-count {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+}
+
+.team-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  justify-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Responsive adjustments */
+@media (min-width: 1400px) {
+  .team-cards {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+@media (max-width: 1200px) {
+  .team-cards {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
+  
+  .player-card {
+    width: 160px;
+    height: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .match-tab-new {
+    padding: 12px;
+  }
+  
+  .team-cards {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+  }
+  
+  .player-card {
+    width: 140px;
+    height: 280px;
+  }
+  
+  .card-face {
+    padding: 10px;
+  }
+  
+  .match-tab-new-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .match-info-summary {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .team-stats-summary {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+/* Loading states */
+.match-tab-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  color: var(--primary-color-text);
+  font-size: 16px;
+}
+
+.no-match-data {
+  text-align: center;
+  padding: 40px;
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+}
+
+.no-match-data h3 {
+  color: var(--primary-color-text);
+  margin-bottom: 12px;
+}
+
+/* Error states */
+.match-tab-error {
+  padding: 20px;
+  background: rgba(220, 38, 38, 0.1);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  border-radius: 8px;
+  color: #fca5a5;
+  text-align: center;
+}
+
+.match-tab-error h3 {
+  color: #dc2626;
+  margin-bottom: 8px;
+}

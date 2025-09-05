@@ -20,7 +20,10 @@ const MatchTable: React.FC = () => {
     finalHits: player.finalHits || 0,
     damageDealt: player.damageDealt || 0,
     totalHeal: player.totalHeal || 0,
-    damageBlocked: player.damageBlocked || 0
+    damageBlocked: player.damageBlocked || 0,
+    // Include final hits data for the expandable rows
+    killedPlayers: player.killedPlayers || {},
+    killedBy: player.killedBy || {}
   }));
 
   // Generate dummy players using a lambda function
@@ -67,7 +70,7 @@ const MatchTable: React.FC = () => {
     <MatchTableComponent 
       players={tableData}
       showTeams={true}
-      showAvatar={false}
+      showAvatar={true}
       translationPrefix="match-info"
       compact={false}
       showSortControls={true}
