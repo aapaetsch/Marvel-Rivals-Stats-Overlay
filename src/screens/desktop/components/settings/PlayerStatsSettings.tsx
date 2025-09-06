@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Segmented, Form, Switch } from 'antd';
+import { Segmented, Form } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { updateSettings } from 'features/appSettings/appSettingsSlice';
@@ -77,7 +77,17 @@ const PlayerStatsSettings: React.FC<PlayerStatsSettingsProps> = ({ form }) => {
 
   // Update segmented controls whenever any relevant form field changes
   useEffect(() => {
-    setVisibilityValue(initialVisibilityValue());
+    const flags = [
+      !!showOwnPlayerCard,
+      !!showTeammate1,
+      !!showTeammate2,
+      !!showTeammate3,
+      !!showTeammate4,
+      !!showTeammate5,
+    ];
+    const allTrue = flags.every(Boolean);
+    const allFalse = flags.every((f) => !f);
+    setVisibilityValue(allTrue ? 'show' : allFalse ? 'hide' : 'mixed');
   }, [
     showOwnPlayerCard,
     showTeammate1,
@@ -90,7 +100,17 @@ const PlayerStatsSettings: React.FC<PlayerStatsSettingsProps> = ({ form }) => {
   // No separate compact segmented anymore
   // Keep the 3-way apply-all control in sync
   useEffect(() => {
-    setApplyAllLayout(computeApplyAllLayout());
+    const rowVals: Array<'expanded' | 'compact' | 'ultra'> = [
+      ultraCompactOwnPlayerCard ? 'ultra' : (compactOwnPlayerCard ? 'compact' : 'expanded'),
+      ultraCompactTeammate1 ? 'ultra' : (compactTeammate1 ? 'compact' : 'expanded'),
+      ultraCompactTeammate2 ? 'ultra' : (compactTeammate2 ? 'compact' : 'expanded'),
+      ultraCompactTeammate3 ? 'ultra' : (compactTeammate3 ? 'compact' : 'expanded'),
+      ultraCompactTeammate4 ? 'ultra' : (compactTeammate4 ? 'compact' : 'expanded'),
+      ultraCompactTeammate5 ? 'ultra' : (compactTeammate5 ? 'compact' : 'expanded'),
+    ];
+    const first = rowVals[0];
+    const allSame = rowVals.every((v) => v === first);
+    setApplyAllLayout(allSame ? first : 'mixed');
   }, [
     compactOwnPlayerCard, compactTeammate1, compactTeammate2, compactTeammate3, compactTeammate4, compactTeammate5,
     ultraCompactOwnPlayerCard, ultraCompactTeammate1, ultraCompactTeammate2, ultraCompactTeammate3, ultraCompactTeammate4, ultraCompactTeammate5
@@ -140,7 +160,17 @@ const PlayerStatsSettings: React.FC<PlayerStatsSettingsProps> = ({ form }) => {
     };
     form.setFieldsValue(newValues);
     dispatch(updateSettings(newValues));
+    // Immediate UI feedback
     setApplyAllLayout(value);
+    const uniform = value as 'expanded' | 'compact' | 'ultra';
+    setRowLayoutState({
+      own: uniform,
+      1: uniform,
+      2: uniform,
+      3: uniform,
+      4: uniform,
+      5: uniform,
+    } as any);
   };
 
   // Per-row layout setter
@@ -171,6 +201,8 @@ const PlayerStatsSettings: React.FC<PlayerStatsSettingsProps> = ({ form }) => {
       ...prev,
       [key]: layout,
     }) as any);
+    // Apply-to-all should reflect divergence immediately
+    setApplyAllLayout('mixed');
   };
 
   const computeRowLayout = () => ({
@@ -183,7 +215,14 @@ const PlayerStatsSettings: React.FC<PlayerStatsSettingsProps> = ({ form }) => {
   } as const);
   const [rowLayout, setRowLayoutState] = useState(computeRowLayout());
   useEffect(() => {
-    setRowLayoutState(computeRowLayout());
+    setRowLayoutState({
+      own: ultraCompactOwnPlayerCard ? 'ultra' : (compactOwnPlayerCard ? 'compact' : 'expanded'),
+      1: ultraCompactTeammate1 ? 'ultra' : (compactTeammate1 ? 'compact' : 'expanded'),
+      2: ultraCompactTeammate2 ? 'ultra' : (compactTeammate2 ? 'compact' : 'expanded'),
+      3: ultraCompactTeammate3 ? 'ultra' : (compactTeammate3 ? 'compact' : 'expanded'),
+      4: ultraCompactTeammate4 ? 'ultra' : (compactTeammate4 ? 'compact' : 'expanded'),
+      5: ultraCompactTeammate5 ? 'ultra' : (compactTeammate5 ? 'compact' : 'expanded'),
+    } as any);
   }, [
     compactOwnPlayerCard, ultraCompactOwnPlayerCard,
     compactTeammate1, ultraCompactTeammate1,

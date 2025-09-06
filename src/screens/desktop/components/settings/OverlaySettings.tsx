@@ -14,6 +14,7 @@ import CardSettingsRowSlider from './CardSettingsRowSlider';
 import CardSettingsRowColorPicker from './CardSettingsRowColorPicker';
 import '../styles/Settings.css';
 import CardSettingsRowToggle from './CardSettingsRowToggle';
+import { logger } from '../../../../../src/lib/log';
 
 const { Panel } = Collapse;
 
@@ -58,7 +59,7 @@ const OverlaySettingsComponent: React.FC<OverlaySettingsComponentProps> = ({ for
   const [positioningModeOverlay, setPositioningModeOverlay] = useState<string | null>(null);
     useEffect(() => {
     // Use the passed-in form instance
-      form.setFieldsValue({
+    form.setFieldsValue({
       showTeamStats: appSettings.showTeamStats,
       showKillFeed: appSettings.showKillFeed,
       opacity: appSettings.opacity,
@@ -231,7 +232,25 @@ const OverlaySettingsComponent: React.FC<OverlaySettingsComponentProps> = ({ for
       if (result.success) {
         // There's no direct way to disable drag mode,
         // but we can restore the window which stops drag mode
-        overwolf.windows.restore(result.window.id);
+        overwolf.windows.restore(windowName, (restoreResult: any) => {
+          if (!restoreResult.success) {
+            logger.logError(
+              restoreResult,
+              'windowManager.ts',
+              `openWindowIfNeeded - restore ${windowName}`
+            );
+          } else {
+            overwolf.windows.bringToFront(windowName,(result: any) => {
+              if (!result.success) {
+                logger.logError(
+                  result,
+                  'windowManager.ts',
+                  `openWindowIfNeeded - bringToFront ${windowName}`
+                );
+              }
+            });
+          }
+        });
       }
     });
   };
@@ -408,7 +427,8 @@ const OverlaySettingsComponent: React.FC<OverlaySettingsComponentProps> = ({ for
                 onSavePositions={handleSaveOverlayPositions}
               />
             </div>
-          </div>        </Panel>
+          </div>        
+        </Panel>
         
         {/* Panel 5: Window Resource Management */}
         <Panel 
