@@ -7,8 +7,9 @@ import { updateSettings } from 'features/appSettings/appSettingsSlice';
 import { WINDOW_NAMES } from 'app/shared/constants';
 import PlayerStatsSettings from './PlayerStatsSettings';
 import OverlayToggleSettings from './OverlayToggleSettings';
-import OverlayPositionEditor from './OverlayPositionEditor'; // Import the new component
-import PlayerStatsAppearanceSettings from './PlayerStatsAppearanceSettings'; // Import the new appearance component
+import OverlayPositionEditor from './OverlayPositionEditor';
+import PlayerStatsAppearanceSettings from './PlayerStatsAppearanceSettings';
+import WindowResourceSettings from './WindowResourceSettings'; // Import the window resource settings component
 import CardSettingsRowSlider from './CardSettingsRowSlider';
 import CardSettingsRowColorPicker from './CardSettingsRowColorPicker';
 import '../styles/Settings.css';
@@ -55,16 +56,18 @@ const OverlaySettingsComponent: React.FC<OverlaySettingsComponentProps> = ({ for
   
   // State for overlay position editing mode (now tracks which overlay is being edited)
   const [positioningModeOverlay, setPositioningModeOverlay] = useState<string | null>(null);
-  
-  useEffect(() => {
+    useEffect(() => {
     // Use the passed-in form instance
-    form.setFieldsValue({
+      form.setFieldsValue({
       showTeamStats: appSettings.showTeamStats,
       showKillFeed: appSettings.showKillFeed,
       opacity: appSettings.opacity,
       position: appSettings.position,
       showPlayerStats: appSettings.showPlayerStats,
       playerStatsOpacity: appSettings.playerStatsOpacity,
+      playerStatsBackgroundColor: appSettings.playerStatsBackgroundColor || '#000000',
+      playerStatsFontColor: appSettings.playerStatsFontColor || '#FFFFFF',
+      teammateBorderColor: appSettings.teammateBorderColor || '#1890FF',
       showOwnPlayerCard: appSettings.showOwnPlayerCard,
       compactOwnPlayerCard: appSettings.compactOwnPlayerCard,
       showTeammate1: appSettings.showTeammate1,
@@ -77,10 +80,19 @@ const OverlaySettingsComponent: React.FC<OverlaySettingsComponentProps> = ({ for
       compactTeammate4: appSettings.compactTeammate4,
       showTeammate5: appSettings.showTeammate5,
       compactTeammate5: appSettings.compactTeammate5,
+      ultraCompactOwnPlayerCard: appSettings.ultraCompactOwnPlayerCard,
+      ultraCompactTeammate1: appSettings.ultraCompactTeammate1,
+      ultraCompactTeammate2: appSettings.ultraCompactTeammate2,
+      ultraCompactTeammate3: appSettings.ultraCompactTeammate3,
+      ultraCompactTeammate4: appSettings.ultraCompactTeammate4,
+      ultraCompactTeammate5: appSettings.ultraCompactTeammate5,
       showPlayerSwapNotification: appSettings.showPlayerSwapNotification,
       playerSwapNotificationDuration: appSettings.playerSwapNotificationDuration,
       showFinalHitsOverlay: appSettings.showFinalHitsOverlay,
       finalHitsOpacity: appSettings.finalHitsOpacity,
+      enablePlayerStatsWindow: appSettings.enablePlayerStatsWindow,
+      enableFinalHitsWindow: appSettings.enableFinalHitsWindow,
+      enableCharSwapWindow: appSettings.enableCharSwapWindow,
       yourFinalHitsColor: appSettings.yourFinalHitsColor || '#1890FF',
       opponentFinalHitsColor: appSettings.opponentFinalHitsColor || '#FF4D4F',
       finalHitsBackgroundColor: appSettings.finalHitsBackgroundColor || '#000000',
@@ -108,20 +120,36 @@ const OverlaySettingsComponent: React.FC<OverlaySettingsComponentProps> = ({ for
     }
     return merged;
   };
-
   // Handler for toggling positioning mode for a specific overlay
   const handleEditOverlayPositions = (enable: boolean, overlayWindowName?: string) => {
     const targetOverlay = overlayWindowName || null;
+    
+    // Update local component state to track which overlay is being positioned
     setPositioningModeOverlay(enable ? targetOverlay : null);
     
+    // Update the Redux store with the positioning mode state for each window
+    const updatedPositioningModeWindows = {
+      ...appSettings.positioningModeWindows || {}
+    };
+    
     if (enable && targetOverlay) {
-      // Enable drag mode for the specific overlay window
+      // Enable drag mode for the specific overlay window and update Redux
+      updatedPositioningModeWindows[targetOverlay] = true;
       enableDragMode(targetOverlay);
     } else {
+      // Disable drag mode for all windows and update Redux
+      updatedPositioningModeWindows[WINDOW_NAMES.INGAME] = false;
+      updatedPositioningModeWindows[WINDOW_NAMES.FINALHITSBAR] = false;
+      updatedPositioningModeWindows[WINDOW_NAMES.CHARSWAPBAR] = false;
+      
+      // Disable actual drag mode in the windows
       disableDragMode(WINDOW_NAMES.INGAME);
       disableDragMode(WINDOW_NAMES.FINALHITSBAR);
       disableDragMode(WINDOW_NAMES.CHARSWAPBAR);
     }
+    
+    // Dispatch the updated positioning mode state to Redux
+    dispatch(updateSettings({ positioningModeWindows: updatedPositioningModeWindows }));
   };
 
   // Handler for saving custom overlay positions (now saves the base position)
@@ -233,17 +261,17 @@ const OverlaySettingsComponent: React.FC<OverlaySettingsComponentProps> = ({ for
         ghost // Added ghost prop for cleaner look
       >
         {/* Panel 1: Overlay Visibility & Positioning */}
-        <Collapse.Panel 
-          header={t("components.desktop.settings.overlay-visibility", "Overlay Visibility & Positioning")} 
+        <Panel 
+          header={t("components.desktop.settings.overlay-visibility", "Overlay Visibility & Positioning") || "Overlay Visibility & Positioning"} 
           key="1"
           className="settings-panel"
         >
-          <OverlayToggleSettings 
+          {/* <OverlayToggleSettings 
             form={form} // Pass down the form instance
             isPositioningMode={positioningModeOverlay !== null} 
             onEditPositions={handleEditOverlayPositions}
             onSavePositions={handleSaveOverlayPositions}
-          />
+          /> */}
           
           {positioningModeOverlay !== null && ( 
             <div className="positioning-mode-notice">
@@ -255,11 +283,11 @@ const OverlaySettingsComponent: React.FC<OverlaySettingsComponentProps> = ({ for
               />
             </div>
           )}
-        </Collapse.Panel>
+        </Panel>
         
         {/* Panel 2: Player Stats Overlay */}
-        <Collapse.Panel 
-          header={t("components.desktop.settings.player-stats-overlay", "Player Stats Overlay")} 
+        <Panel 
+          header={t("components.desktop.settings.player-stats-overlay", "Player Stats Overlay") || "Player Stats Overlay"} 
           key="2"
           className={`settings-panel ${!appSettings.showTeamStats ? 'disabled-panel' : ''}`}
           collapsible={!appSettings.showTeamStats ? "disabled" : undefined}
@@ -279,11 +307,11 @@ const OverlaySettingsComponent: React.FC<OverlaySettingsComponentProps> = ({ for
             </div>
           </div>
           <PlayerStatsSettings form={form} /> {/* Pass down form */} 
-        </Collapse.Panel>
+        </Panel>
         
         {/* Panel 3: Player Swap Notification */}
-        <Collapse.Panel 
-          header={t("components.desktop.settings.player-swap", "Player Swap Notification")} 
+        <Panel 
+          header={t("components.desktop.settings.player-swap", "Player Swap Notification") || "Player Swap Notification"} 
           key="3"
           className={`settings-panel ${!appSettings.showPlayerSwapNotification ? 'disabled-panel' : ''}`}
           collapsible={!appSettings.showPlayerSwapNotification ? "disabled" : undefined}
@@ -330,10 +358,11 @@ const OverlaySettingsComponent: React.FC<OverlaySettingsComponentProps> = ({ for
               />
             </div>
           </div>
-        </Collapse.Panel>
+        </Panel>
+        
         {/* Panel 4: Final Hits Overlay */}
-        <Collapse.Panel 
-          header={t("components.desktop.settings.final-hits", "Final Hits Overlay")} 
+        <Panel 
+          header={t("components.desktop.settings.final-hits", "Final Hits Overlay") || "Final Hits Overlay"} 
           key="4"
           className={`settings-panel ${!appSettings.showFinalHitsOverlay ? 'disabled-panel' : ''}`}
           collapsible={!appSettings.showFinalHitsOverlay ? "disabled" : undefined}
@@ -379,8 +408,16 @@ const OverlaySettingsComponent: React.FC<OverlaySettingsComponentProps> = ({ for
                 onSavePositions={handleSaveOverlayPositions}
               />
             </div>
-          </div>
-        </Collapse.Panel>
+          </div>        </Panel>
+        
+        {/* Panel 5: Window Resource Management */}
+        <Panel 
+          header={t("components.desktop.settings.window-resource-management", "Window Resource Management") || "Window Resource Management"} 
+          key="5"
+          className="settings-panel"
+        >
+          <WindowResourceSettings form={form} />
+        </Panel>
       </Collapse>
     </div> 
   );
