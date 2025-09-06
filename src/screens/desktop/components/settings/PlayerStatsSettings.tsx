@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Segmented, Form } from 'antd'; // Added Form import
+import { Segmented, Form } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { updateSettings } from 'features/appSettings/appSettingsSlice';
@@ -31,44 +31,63 @@ const PlayerStatsSettings: React.FC<PlayerStatsSettingsProps> = ({ form }) => {
   const compactTeammate3 = Form.useWatch('compactTeammate3', form);
   const compactTeammate4 = Form.useWatch('compactTeammate4', form);
   const compactTeammate5 = Form.useWatch('compactTeammate5', form);
+  // Ultra compact watchers
+  const ultraCompactOwnPlayerCard = Form.useWatch('ultraCompactOwnPlayerCard', form);
+  const ultraCompactTeammate1 = Form.useWatch('ultraCompactTeammate1', form);
+  const ultraCompactTeammate2 = Form.useWatch('ultraCompactTeammate2', form);
+  const ultraCompactTeammate3 = Form.useWatch('ultraCompactTeammate3', form);
+  const ultraCompactTeammate4 = Form.useWatch('ultraCompactTeammate4', form);
+  const ultraCompactTeammate5 = Form.useWatch('ultraCompactTeammate5', form);
   
-  // Calculate the initial visibility value based on current toggle states
-  const initialVisibilityValue = (): string => {
-    const allHidden = !showOwnPlayerCard && 
-      !showTeammate1 && 
-      !showTeammate2 && 
-      !showTeammate3 && 
-      !showTeammate4 && 
-      !showTeammate5;
-    return allHidden ? 'hide' : 'show';
+  // Calculate the initial visibility value based on current toggle states (show | hide | mixed)
+  const initialVisibilityValue = (): 'show' | 'hide' | 'mixed' => {
+    const flags = [
+      !!showOwnPlayerCard,
+      !!showTeammate1,
+      !!showTeammate2,
+      !!showTeammate3,
+      !!showTeammate4,
+      !!showTeammate5,
+    ];
+    const allTrue = flags.every(Boolean);
+    const allFalse = flags.every((f) => !f);
+    if (allTrue) return 'show';
+    if (allFalse) return 'hide';
+    return 'mixed';
   };
   
   // Calculate the initial compact value based on current toggle states
-  const initialCompactValue = (): string => {
-    const allCompact = compactOwnPlayerCard && 
-      compactTeammate1 && 
-      compactTeammate2 && 
-      compactTeammate3 && 
-      compactTeammate4 && 
-      compactTeammate5;
-    return allCompact ? 'compact' : 'expanded';
-  };
     // State for the segmented controls with calculated initial values
   const [visibilityValue, setVisibilityValue] = useState<string>(initialVisibilityValue());
-  const [compactValue, setCompactValue] = useState<string>(initialCompactValue());
+  // 3-way apply-all (expanded | compact | ultra)
+  const computeApplyAllLayout = (): 'expanded' | 'compact' | 'ultra' | 'mixed' => {
+    const rowVals: Array<'expanded' | 'compact' | 'ultra'> = [
+      ultraCompactOwnPlayerCard ? 'ultra' : (compactOwnPlayerCard ? 'compact' : 'expanded'),
+      ultraCompactTeammate1 ? 'ultra' : (compactTeammate1 ? 'compact' : 'expanded'),
+      ultraCompactTeammate2 ? 'ultra' : (compactTeammate2 ? 'compact' : 'expanded'),
+      ultraCompactTeammate3 ? 'ultra' : (compactTeammate3 ? 'compact' : 'expanded'),
+      ultraCompactTeammate4 ? 'ultra' : (compactTeammate4 ? 'compact' : 'expanded'),
+      ultraCompactTeammate5 ? 'ultra' : (compactTeammate5 ? 'compact' : 'expanded'),
+    ];
+    const first = rowVals[0];
+    const allSame = rowVals.every((v) => v === first);
+    return allSame ? first : 'mixed';
+  };
+  const [applyAllLayout, setApplyAllLayout] = useState<'expanded' | 'compact' | 'ultra' | 'mixed'>(computeApplyAllLayout());
 
   // Update segmented controls whenever any relevant form field changes
   useEffect(() => {
-    // Check if all player cards are hidden
-    const allHidden = !showOwnPlayerCard && 
-      !showTeammate1 && 
-      !showTeammate2 && 
-      !showTeammate3 && 
-      !showTeammate4 && 
-      !showTeammate5;
-      
-    // Update the visibility segmented control
-    setVisibilityValue(allHidden ? 'hide' : 'show');
+    const flags = [
+      !!showOwnPlayerCard,
+      !!showTeammate1,
+      !!showTeammate2,
+      !!showTeammate3,
+      !!showTeammate4,
+      !!showTeammate5,
+    ];
+    const allTrue = flags.every(Boolean);
+    const allFalse = flags.every((f) => !f);
+    setVisibilityValue(allTrue ? 'show' : allFalse ? 'hide' : 'mixed');
   }, [
     showOwnPlayerCard,
     showTeammate1,
@@ -78,29 +97,28 @@ const PlayerStatsSettings: React.FC<PlayerStatsSettingsProps> = ({ form }) => {
     showTeammate5
   ]);
   
-  // Update compact segmented control whenever any compact setting changes
+  // No separate compact segmented anymore
+  // Keep the 3-way apply-all control in sync
   useEffect(() => {
-    // Check if all player cards are compact
-    const allCompact = compactOwnPlayerCard && 
-      compactTeammate1 && 
-      compactTeammate2 && 
-      compactTeammate3 && 
-      compactTeammate4 && 
-      compactTeammate5;
-    
-    // Update the compact segmented control
-    setCompactValue(allCompact ? 'compact' : 'expanded');
+    const rowVals: Array<'expanded' | 'compact' | 'ultra'> = [
+      ultraCompactOwnPlayerCard ? 'ultra' : (compactOwnPlayerCard ? 'compact' : 'expanded'),
+      ultraCompactTeammate1 ? 'ultra' : (compactTeammate1 ? 'compact' : 'expanded'),
+      ultraCompactTeammate2 ? 'ultra' : (compactTeammate2 ? 'compact' : 'expanded'),
+      ultraCompactTeammate3 ? 'ultra' : (compactTeammate3 ? 'compact' : 'expanded'),
+      ultraCompactTeammate4 ? 'ultra' : (compactTeammate4 ? 'compact' : 'expanded'),
+      ultraCompactTeammate5 ? 'ultra' : (compactTeammate5 ? 'compact' : 'expanded'),
+    ];
+    const first = rowVals[0];
+    const allSame = rowVals.every((v) => v === first);
+    setApplyAllLayout(allSame ? first : 'mixed');
   }, [
-    compactOwnPlayerCard,
-    compactTeammate1,
-    compactTeammate2,
-    compactTeammate3,
-    compactTeammate4,
-    compactTeammate5
+    compactOwnPlayerCard, compactTeammate1, compactTeammate2, compactTeammate3, compactTeammate4, compactTeammate5,
+    ultraCompactOwnPlayerCard, ultraCompactTeammate1, ultraCompactTeammate2, ultraCompactTeammate3, ultraCompactTeammate4, ultraCompactTeammate5
   ]);
   
   // Handler for "Apply to All" visibility toggle
-  const handleApplyAllVisibility = (value: string) => {
+  const handleApplyAllVisibility = (value: 'show' | 'hide' | 'mixed') => {
+    if (value === 'mixed') return; // not selectable
     const checked = value === 'show';
     const currentValues = form.getFieldsValue();
     const newValues = {
@@ -117,23 +135,102 @@ const PlayerStatsSettings: React.FC<PlayerStatsSettingsProps> = ({ form }) => {
     setVisibilityValue(value);
   };
   
-  // Handler for "Apply to All" compact toggle
-  const handleApplyAllCompact = (value: string) => {
-    const checked = value === 'compact';
+  // Apply to all (3-way)
+  const handleApplyAllLayout = (value: 'expanded' | 'compact' | 'ultra' | 'mixed') => {
+    if (value === 'mixed') return; // not selectable
     const currentValues = form.getFieldsValue();
+    const setCompact = value === 'compact';
+    const setUltra = value === 'ultra';
     const newValues = {
       ...currentValues,
-      compactOwnPlayerCard: checked,
-      compactTeammate1: checked,
-      compactTeammate2: checked,
-      compactTeammate3: checked,
-      compactTeammate4: checked,
-      compactTeammate5: checked,
+      // own
+      compactOwnPlayerCard: setCompact,
+      ultraCompactOwnPlayerCard: setUltra,
+      // teammates
+      compactTeammate1: setCompact,
+      ultraCompactTeammate1: setUltra,
+      compactTeammate2: setCompact,
+      ultraCompactTeammate2: setUltra,
+      compactTeammate3: setCompact,
+      ultraCompactTeammate3: setUltra,
+      compactTeammate4: setCompact,
+      ultraCompactTeammate4: setUltra,
+      compactTeammate5: setCompact,
+      ultraCompactTeammate5: setUltra,
     };
     form.setFieldsValue(newValues);
     dispatch(updateSettings(newValues));
-    setCompactValue(value);
+    // Immediate UI feedback
+    setApplyAllLayout(value);
+    const uniform = value as 'expanded' | 'compact' | 'ultra';
+    setRowLayoutState({
+      own: uniform,
+      1: uniform,
+      2: uniform,
+      3: uniform,
+      4: uniform,
+      5: uniform,
+    } as any);
   };
+
+  // Per-row layout setter
+  type CardKey = 'own' | 1 | 2 | 3 | 4 | 5;
+  const setRowLayout = (key: CardKey, layout: 'expanded' | 'compact' | 'ultra') => {
+    const currentValues = form.getFieldsValue();
+    const setCompact = layout === 'compact';
+    const setUltra = layout === 'ultra';
+    const field = (name: string) => {
+      switch (key) {
+        case 'own': return name.replace('Teammate', 'OwnPlayerCard');
+        case 1: return name + '1';
+        case 2: return name + '2';
+        case 3: return name + '3';
+        case 4: return name + '4';
+        case 5: return name + '5';
+      }
+    };
+    const newValues = {
+      ...currentValues,
+      [field('compactTeammate')!]: setCompact,
+      [field('ultraCompactTeammate')!]: setUltra,
+    };
+    form.setFieldsValue(newValues);
+    dispatch(updateSettings(newValues));
+    // Update local UI state immediately for snappy switch feedback
+    setRowLayoutState((prev) => ({
+      ...prev,
+      [key]: layout,
+    }) as any);
+    // Apply-to-all should reflect divergence immediately
+    setApplyAllLayout('mixed');
+  };
+
+  const computeRowLayout = () => ({
+    own: ultraCompactOwnPlayerCard ? 'ultra' : (compactOwnPlayerCard ? 'compact' : 'expanded'),
+    1: ultraCompactTeammate1 ? 'ultra' : (compactTeammate1 ? 'compact' : 'expanded'),
+    2: ultraCompactTeammate2 ? 'ultra' : (compactTeammate2 ? 'compact' : 'expanded'),
+    3: ultraCompactTeammate3 ? 'ultra' : (compactTeammate3 ? 'compact' : 'expanded'),
+    4: ultraCompactTeammate4 ? 'ultra' : (compactTeammate4 ? 'compact' : 'expanded'),
+    5: ultraCompactTeammate5 ? 'ultra' : (compactTeammate5 ? 'compact' : 'expanded'),
+  } as const);
+  const [rowLayout, setRowLayoutState] = useState(computeRowLayout());
+  useEffect(() => {
+    setRowLayoutState({
+      own: ultraCompactOwnPlayerCard ? 'ultra' : (compactOwnPlayerCard ? 'compact' : 'expanded'),
+      1: ultraCompactTeammate1 ? 'ultra' : (compactTeammate1 ? 'compact' : 'expanded'),
+      2: ultraCompactTeammate2 ? 'ultra' : (compactTeammate2 ? 'compact' : 'expanded'),
+      3: ultraCompactTeammate3 ? 'ultra' : (compactTeammate3 ? 'compact' : 'expanded'),
+      4: ultraCompactTeammate4 ? 'ultra' : (compactTeammate4 ? 'compact' : 'expanded'),
+      5: ultraCompactTeammate5 ? 'ultra' : (compactTeammate5 ? 'compact' : 'expanded'),
+    } as any);
+  }, [
+    compactOwnPlayerCard, ultraCompactOwnPlayerCard,
+    compactTeammate1, ultraCompactTeammate1,
+    compactTeammate2, ultraCompactTeammate2,
+    compactTeammate3, ultraCompactTeammate3,
+    compactTeammate4, ultraCompactTeammate4,
+    compactTeammate5, ultraCompactTeammate5
+  ]);
 
   return (
     <>
@@ -149,8 +246,9 @@ const PlayerStatsSettings: React.FC<PlayerStatsSettingsProps> = ({ form }) => {
               options={[
                 { label: t("components.desktop.settings.show", "Show"), value: 'show' },
                 { label: t("components.desktop.settings.hide", "Hide"), value: 'hide' },
+                { label: t("components.desktop.settings.mixed", "Mixed"), value: 'mixed', disabled: true },
               ]}
-              onChange={handleApplyAllVisibility}
+              onChange={(val) => handleApplyAllVisibility(val as 'show' | 'hide' | 'mixed')}
               value={visibilityValue}
             />
           </div>
@@ -181,54 +279,50 @@ const PlayerStatsSettings: React.FC<PlayerStatsSettingsProps> = ({ form }) => {
         </div>
         <div className="settings-column">
           <div className="settings-column-title">
-            {t("components.desktop.settings.use-compact-card", "Use Compact Card")}
+            {t("components.desktop.settings.card-layout", "Card Layout")}
           </div>
           <div className="apply-all-toggle">
-            <span>{t("components.desktop.settings.apply-all-compact", "Apply to All")}</span>
+            <span>{t("components.desktop.settings.apply-all-layout", "Apply to All")}</span>
             <Segmented
               options={[
                 { label: t("components.desktop.settings.expanded", "Expanded"), value: 'expanded' },
                 { label: t("components.desktop.settings.compact", "Compact"), value: 'compact' },
+                { label: t("components.desktop.settings.ultra", "Ultra"), value: 'ultra' },
+                { label: t("components.desktop.settings.mixed", "Mixed"), value: 'mixed', disabled: true },
               ]}
-              onChange={handleApplyAllCompact}
-              value={compactValue}
+              value={applyAllLayout}
+              onChange={handleApplyAllLayout as any}
             />
           </div>
-          <CardSettingsRowToggle
-            label={t("components.desktop.settings.your-player-card", "Your Player Card")}
-            formName="compactOwnPlayerCard"
-            dynamicLabel={false}
-          />
-          
-          <CardSettingsRowToggle
-            label={t("components.desktop.settings.teammate-1", "Teammate 1")}
-            formName="compactTeammate1"
-            dynamicLabel={false}
-          />
-          
-          <CardSettingsRowToggle
-            label={t("components.desktop.settings.teammate-2", "Teammate 2")}
-            formName="compactTeammate2"
-            dynamicLabel={false}
-          />
-          
-          <CardSettingsRowToggle
-            label={t("components.desktop.settings.teammate-3", "Teammate 3")}
-            formName="compactTeammate3"
-            dynamicLabel={false}
-          />
-          
-          <CardSettingsRowToggle
-            label={t("components.desktop.settings.teammate-4", "Teammate 4")}
-            formName="compactTeammate4"
-            dynamicLabel={false}
-          />
-          
-          <CardSettingsRowToggle
-            label={t("components.desktop.settings.teammate-5", "Teammate 5")}
-            formName="compactTeammate5"
-            dynamicLabel={false}
-          />
+
+          {/* Per-row 3-way segmented controls */}
+          <div className="settings-row-triple">
+            <span>{t("components.desktop.settings.your-player-card", "Your Player Card")}</span>
+            <Segmented
+              options={[
+                { label: t("components.desktop.settings.expanded", "Expanded"), value: 'expanded' },
+                { label: t("components.desktop.settings.compact", "Compact"), value: 'compact' },
+                { label: t("components.desktop.settings.ultra", "Ultra"), value: 'ultra' },
+              ]}
+              value={rowLayout.own}
+              onChange={(val) => setRowLayout('own', val as 'expanded' | 'compact' | 'ultra')}
+            />
+          </div>
+
+          {[1,2,3,4,5].map((i) => (
+            <div key={i} className="settings-row-triple">
+              <span>{t(`components.desktop.settings.teammate-${i}`, `Teammate ${i}`)}</span>
+              <Segmented
+                options={[
+                  { label: t("components.desktop.settings.expanded", "Expanded"), value: 'expanded' },
+                  { label: t("components.desktop.settings.compact", "Compact"), value: 'compact' },
+                  { label: t("components.desktop.settings.ultra", "Ultra"), value: 'ultra' },
+                ]}
+                value={rowLayout[i as 1|2|3|4|5] as 'expanded' | 'compact' | 'ultra'}
+                onChange={(val) => setRowLayout(i as any, val as 'expanded' | 'compact' | 'ultra')}
+              />
+            </div>
+          ))}
         </div>
       </div>
     </>

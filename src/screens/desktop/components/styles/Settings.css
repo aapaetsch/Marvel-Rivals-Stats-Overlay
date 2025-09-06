@@ -150,6 +150,24 @@
   justify-content: space-between;
 }
 
+/* Triple switch rows for card layout */
+.settings-row-triple {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--neutral-3);
+}
+.settings-row-triple span { color: var(--primary-color-text); }
+.settings-row-triple > span { font-weight: 500; }
+.settings-row-triple .triple-switches {
+  display: grid;
+  grid-template-columns: auto auto auto auto auto auto; /* label-switch x3 */
+  align-items: center;
+  gap: 8px;
+}
+.settings-row-triple .triple-switches span { color: var(--primary-color-text); opacity: 0.9; }
+
 .apply-all-toggle span {
   color: var(--primary-color-text);
   font-weight: 500;

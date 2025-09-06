@@ -1,15 +1,44 @@
 import React from 'react';
-import { Collapse, Switch, Form, Select, Button, Divider } from 'antd';
+import { Collapse, Switch, FormInstance, Form, Select, Button, Divider } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { isDev } from 'lib/utils';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootReducer } from 'app/shared/rootReducer';
 import '../styles/Settings.css';
+import { Themes, updateSettings } from 'features/appSettings/appSettingsSlice';
+import WindowResourceSettings from './WindowResourceSettings';
+import RecentPlayersSettings from './RecentPlayersSettings';
 
 const { Panel } = Collapse;
 const { Option } = Select;
 
 // General Settings Component
-export const GeneralSettingsComponent: React.FC = () => {
+interface GeneralSettingsProps {
+  form?: FormInstance<any>; // Optional since it might be used standalone or with a parent form
+}
+
+export const GeneralSettingsComponent: React.FC<GeneralSettingsProps> = ({ form: parentForm }) => {
   const { t, i18n } = useTranslation();
+  const appSettings = useSelector((state: RootReducer) => state.appSettingsReducer.settings);
+  const dispatch = useDispatch();
+  const [localForm] = Form.useForm();
+  const form = parentForm || localForm;
+  
+  // Set the form values from Redux when component mounts
+  React.useEffect(() => {
+    form.setFieldsValue({
+      language: appSettings.language,
+      theme: appSettings.theme,
+      showDevWindow: appSettings.showDevWindow,
+      // Add overlay visibility settings
+      // showTeamStats: appSettings.showTeamStats,
+      // showPlayerSwapNotification: appSettings.showPlayerSwapNotification,
+      // showFinalHitsOverlay: appSettings.showFinalHitsOverlay,
+      // Window resource management settings
+      // enablePlayerStatsWindow: appSettings.enablePlayerStatsWindow,
+      // enableFinalHitsWindow: appSettings.enableFinalHitsWindow,
+      // enableCharSwapWindow: appSettings.enableCharSwapWindow
+    });
+  }, [appSettings, form]);
   
   const languages = [
     { value: 'en', label: 'English' },
@@ -26,21 +55,30 @@ export const GeneralSettingsComponent: React.FC = () => {
   
   const changeLanguage = (langCode: string) => {
     i18n.changeLanguage(langCode);
+    // Also update the Redux store
+    dispatch(updateSettings({ language: langCode }));
+  };
+
+  const handleThemeChange = (value: Themes) => {
+    dispatch(updateSettings({ theme: value }));
+  };
+
+  const handleToggleDevWindow = (checked: boolean) => {
+    dispatch(updateSettings({ showDevWindow: checked }));
   };
 
   return (
-    <div className="settings-container">
+    <div className="settings-container">      
       <Collapse 
-        defaultActiveKey={['1', '3']} 
+        defaultActiveKey={['1', '2']} 
         className="settings-collapse"
-      >
+      >        
         <Panel 
-          header={t("components.desktop.settings.general", "General Settings")} 
+          header={t("components.desktop.settings.general-settings", "General Settings")} 
           key="1"
           className="settings-panel"
         >
-          {/* Remove the Form component wrapper but keep its contents */}
-          <div className="settings-form">
+          <Form form={form} className="settings-form">
             <Form.Item 
               name="language" 
               label={t("components.desktop.settings.language", "Language")}
@@ -48,54 +86,87 @@ export const GeneralSettingsComponent: React.FC = () => {
               <Select 
                 onChange={changeLanguage}
                 className="settings-select"
+                value={appSettings.language}
               >
                 {languages.map(lang => (
                   <Option key={lang.value} value={lang.value}>{lang.label}</Option>
                 ))}
               </Select>
             </Form.Item>
-
-            {/* Keep other form items as they were */}
-            <Form.Item 
-              name="startWithWindows" 
-              label={t("components.desktop.settings.start-with-windows", "Start with Windows")}
-              valuePropName="checked"
-            >
-              <Switch />
-            </Form.Item>
-
-            <Form.Item 
-              name="notifications" 
-              label={t("components.desktop.settings.notifications", "Enable notifications")}
-              valuePropName="checked"
-            >
-              <Switch />
-            </Form.Item>
-
             <Form.Item 
               name="theme" 
               label={t("components.desktop.settings.theme", "Theme")}
             >
-              <Select className="settings-select">
-                <Option value="dark">{t("components.desktop.settings.dark", "Dark")}</Option>
-                <Option value="light">{t("components.desktop.settings.light", "Light")}</Option>
-                <Option value="minimalistic-black">{t("components.desktop.settings.minimalistic-black", "Minimalistic Black")}</Option>
+              <Select 
+                className="settings-select"
+                value={appSettings.theme}
+                onChange={handleThemeChange}
+              >
+                <Option value={Themes.DARK}>{t("components.desktop.settings.dark", "Dark")}</Option>
+                <Option value={Themes.LIGHT}>{t("components.desktop.settings.light", "Light")}</Option>
+                <Option value={Themes.MINIMALISTIC_BLACK}>{t("components.desktop.settings.minimalistic-black", "Minimalistic Black")}</Option>
               </Select>
             </Form.Item>
-            {true && (
-              <Form.Item 
-                name="showStoreViewer" 
-                label={t("components.desktop.settings.show-store-viewer", "Show Store Viewer (Dev)")}
-                valuePropName="checked"
-              >
-                <Switch />
-              </Form.Item>
-            )}
-          </div>
+            <Form.Item 
+              name="showDevWindow" 
+              label={t("components.desktop.settings.show-dev-window", "Show Dev Window")}
+              valuePropName="checked"
+            >
+              <Switch onChange={handleToggleDevWindow} checked={appSettings.showDevWindow} />
+            </Form.Item>
+          </Form>        
         </Panel>
 
         <Panel 
-          header={t("components.desktop.settings.about", "About")} 
+          header={t("components.desktop.settings.recent-players-settings", "Recent Players")} 
+          key="2"
+          className="settings-panel"
+        >
+          <RecentPlayersSettings form={form} />
+        </Panel>
+
+        {/* <Panel 
+          header={t("components.desktop.settings.window-resource-management", "Window Resource Management")} 
+          key="2"
+          className="settings-panel"
+        >
+          <WindowResourceSettings form={form} />
+        </Panel> */}
+        {/* <Panel 
+          header={t("components.desktop.settings.overlay-visibility", "Overlay Visibility")} 
+          key="3"
+          className="settings-panel"
+        >
+          <Form form={form} className="settings-form">
+            <div className="settings-column">
+              <Form.Item
+                name="showTeamStats"
+                label={t("components.desktop.settings.player-stats-overlay", "Show Player Stats Overlay")}
+                valuePropName="checked"
+              >
+                <Switch onChange={(checked) => dispatch(updateSettings({ showTeamStats: checked }))} />
+              </Form.Item>
+              
+              <Form.Item
+                name="showPlayerSwapNotification"
+                label={t("components.desktop.settings.player-swap", "Player Swap Notifications")}
+                valuePropName="checked"
+              >
+                <Switch onChange={(checked) => dispatch(updateSettings({ showPlayerSwapNotification: checked }))} />
+              </Form.Item>
+              
+              <Form.Item
+                name="showFinalHitsOverlay"
+                label={t("components.desktop.settings.final-hits", "Final Hits Overlay")}
+                valuePropName="checked"
+              >
+                <Switch onChange={(checked) => dispatch(updateSettings({ showFinalHitsOverlay: checked }))} />
+              </Form.Item>
+            </div>
+          </Form>
+        </Panel> */}
+        {/* <Panel 
+          header={t("components.desktop.set", "About")} 
           key="3"
           className="settings-panel"
         >
@@ -116,7 +187,7 @@ export const GeneralSettingsComponent: React.FC = () => {
               </Button>
             </div>
           </div>
-        </Panel>
+        </Panel> */}
       </Collapse>
     </div>
   );
