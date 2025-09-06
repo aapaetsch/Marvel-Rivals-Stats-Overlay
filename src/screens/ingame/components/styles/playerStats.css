@@ -82,7 +82,7 @@
 .teammates-grid {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   overflow: hidden;;
 }
 
@@ -106,6 +106,17 @@
   margin: 2px 0; /* Changed from margin: 4px auto to ensure left alignment */
   opacity: 0.7;
   overflow: hidden;
+}
+
+/* Compact (closed) layout adjustments */
+.teammate-card.is-closed .teammate-stats {
+  height: auto; /* Allow stacking extra rows */
+}
+.teammate-card.is-closed .stat-row {
+  line-height: 1.1;
+}
+.teammate-card.is-closed .teammate-footer {
+  display: none; /* Footer is moved inline in compact view */
 }
 
 .ultimate-border {
@@ -197,6 +208,25 @@
   margin-left: auto;
 }
 
+/* Badge similar to ultimate-percentage for KD/KDA mini icons */
+.ult-like-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  padding: 0 4px;
+  height: 14px;
+  line-height: 14px;
+  font-size: 10px;
+  color: #ddd;
+}
+.ult-like-badge.accent {
+  border-color: var(--victory-color);
+  color: var(--victory-color);
+}
+
 /* Stats styling */
 .teammate-stats {
   flex-grow: 1;
@@ -253,4 +283,79 @@
 .kda-ratio {
   color: var(--victory-color); /* Highlight KDA with a special color */
 }
+
+/* Two-column stats layout for compact view */
+.teammate-stats-grid {
+  display: flex;
+  gap: 8px;
+}
+.teammate-stats-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+}
+
+/* Ultra-compact layout */
+.teammate-card.ultra .teammate-card-content {
+  padding: 3px 5px;
+}
+
+.teammate-ultra {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.ultra-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.ultra-char-ult { margin-top: 1px; }
+
+.ultra-character-name { color: #bfbfbf; font-weight: 400; font-size: 0.7rem; }
+
+/* Reuse ultimate-percentage badge inside ultra container */
+.teammate-ultra { position: relative; }
+.teammate-ultra .ultimate-percentage {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: auto;
+  left: auto;
+}
+
+.ultra-stats { gap: 2px; justify-content: flex-start; }
+
+.ultra-stats.secondary { color: var(--primary-color-text); font-size: 0.8rem; }
+
+.ultra-label { font-weight: 600; color: var(--primary-color-text); }
+
+.ultra-label.kda, .stat-value.kda {
+  color: var(--victory-color);
+}
+
+.ultra-sep { width: 2px; }
+
+/* Smaller fonts for ultra (excluding player name) */
+.teammate-card.ultra .stat-icon,
+.teammate-card.ultra .stat-value,
+.teammate-card.ultra .ultra-label { font-size: 11px; color: var(--primary-color-text); }
+
+/* Align name left in ultra */
+.teammate-card.ultra .teammate-name { text-align: left; }
+
+/* Tighter icon/value spacing in ultra */
+.teammate-card.ultra .stat-icon { margin-right: 1px; width: auto; }
+.teammate-card.ultra .stat-value { margin-left: 1px; }
+
+/* Make KD/KDA badges slightly smaller in ultra */
+.teammate-card.ultra .ult-like-badge { height: 12px; line-height: 12px; font-size: 9px; padding: 0 3px; border-radius: 5px; }
+
+/* Reduce overall card width for ultra to be smaller than compact */
+.teammate-card.ultra { width: 55%; }
+
+.ultra-colon { margin: 0 2px; color: var(--primary-color-text); }
 
