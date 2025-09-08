@@ -1,0 +1,45 @@
+.dev-playground {
+  color: #e6e6e6;
+}
+
+.dev-playground h3 {
+  margin: 0 0 12px 0;
+  color: #ffffff;
+}
+
+.dev-playground .ant-form-item {
+  margin-bottom: 12px;
+}
+
+.dev-playground .ant-form-item-label > label {
+  color: #e6e6e6;
+  padding-bottom: 4px;
+}
+
+.dev-playground .section-divider {
+  margin: 12px 0 !important;
+}
+
+.dev-playground .row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.dev-playground .row-2-wide-narrow {
+  display: grid;
+  grid-template-columns: 1fr 160px;
+  gap: 12px;
+}
+
+.dev-playground .align-right {
+  text-align: right;
+}
+
+.dev-playground .card-section {
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 8px;
+  margin-bottom: 12px;
+}
+
