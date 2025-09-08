@@ -1,0 +1,98 @@
+/* Container layout */
+.app-status-root {
+  padding: 12px;
+}
+
+.app-status-2col {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 12px;
+}
+.left-col {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 12px;
+}
+.right-col {
+  display: grid;
+  grid-auto-rows: max-content;
+  gap: 12px;
+}
+
+.app-status-grid-item.wide { grid-column: span 2; }
+
+@media (max-width: 1100px) {
+  .app-status-2col {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Card */
+.status-card {
+  border: 1px solid var(--ant-border-color-base, #333);
+  border-radius: 10px;
+  background: var(--neutral-2, #1a1a1a);
+  overflow: hidden;
+}
+.status-card-header {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--ant-border-color-base, #333);
+  background: var(--neutral-1, #232323);
+}
+.status-card-body {
+  padding: 12px;
+}
+
+/* Team stats mini-cards */
+.team-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+.team-stat {
+  border: 1px solid var(--ant-border-color-base, #333);
+  border-radius: 8px;
+  padding: 10px;
+  background: var(--neutral-1, #232323);
+}
+.team-stat-title {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.team-stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0;
+}
+
+/* Light theme tweaks */
+body.theme-light .status-card {
+  background: #fff;
+  border-color: #ddd;
+}
+body.theme-light .status-card-header {
+  background: #fafafa;
+  border-bottom-color: #eee;
+}
+body.theme-light .team-stat {
+  background: #fafafa;
+  border-color: #eee;
+}
+
+/* Minimalistic black: force text to white for details */
+body.theme-minimalistic-black .app-status-root,
+body.theme-minimalistic-black .app-status-root .ant-typography,
+body.theme-minimalistic-black .app-status-root .ant-descriptions,
+body.theme-minimalistic-black .app-status-root .ant-descriptions-item-label,
+body.theme-minimalistic-black .app-status-root .ant-descriptions-item-content,
+body.theme-minimalistic-black .app-status-root .status-card,
+body.theme-minimalistic-black .app-status-root .status-card * {
+  color: #ffffff !important;
+}
+
+/* Simple mini table for ally/opponent lists */
+.mini-table { display: flex; flex-direction: column; gap: 4px; }
+.mini-row { display: grid; grid-template-columns: 1.2fr 1.1fr 0.6fr 0.6fr 0.6fr; gap: 8px; align-items: center; }
+.mini-col.name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mini-col.char, .mini-col.kda, .mini-col.fh, .mini-col.ult { opacity: 0.9; }
+
