@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { PlayerCardData } from '../types/MatchCardTypes';
 import CharacterAvatar from './CharacterAvatar';
 import KDADisplay from './KDADisplay';
@@ -11,9 +11,8 @@ const PlayerCardFront: React.FC<PlayerCardFrontProps> = ({ player }) => {
   return (
     <div className="player-card-front">
       <div className="card-header">
-        <div className="player-name" title={player.name}>
+        <div className="player-name-back" title={player.name}>
           {player.name}
-          {player.isLocal && <span className="local-indicator">⭐</span>}
         </div>
       </div>
 
@@ -21,12 +20,13 @@ const PlayerCardFront: React.FC<PlayerCardFrontProps> = ({ player }) => {
         <CharacterAvatar 
           characterName={player.characterName}
           playerName={player.name}
-          size={40}
+          size={32}
+          className="back-avatar"
         />
       </div>
 
       <div className="card-character">
-        <div className="character-name" title={player.characterName}>
+        <div className="character-name-back" title={player.characterName}>
           {player.characterName}
         </div>
       </div>

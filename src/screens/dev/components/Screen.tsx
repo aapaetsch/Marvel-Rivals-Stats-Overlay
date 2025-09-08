@@ -8,6 +8,7 @@ import DevStoreViewer from 'screens/desktop/components/DevStoreViewer';
 import DevWindowHeader from './DevWindowHeader';
 import 'screens/desktop/components/styles/themes.css';
 import './styles/DevScreen.css';
+import AppStatus from './appStatus/AppStatus';
 
 const DevScreen: React.FC = () => {
   const { theme } = useSelector((state: RootReducer) => state.appSettingsReducer.settings);
@@ -26,6 +27,7 @@ const DevScreen: React.FC = () => {
         destroyInactiveTabPane
         className="dev-tabs"
         items={[
+          { key: 'appstatus', label: 'App Status', children: <AppStatus /> },
           { key: 'replay', label: 'Log Replayer', children: <LogReplayer /> },
           { key: 'redux', label: 'Redux Viewer', children: <DevStoreViewer /> }
         ]}
