@@ -2,7 +2,7 @@ import { lazy, memo } from "react";
 import { WINDOW_NAMES } from "../shared/constants";
 
 //window name in manifest file
-const { BACKGROUND, DESKTOP, INGAME, FINALHITSBAR, CHARSWAPBAR } = WINDOW_NAMES;
+const { BACKGROUND, DESKTOP, INGAME, FINALHITSBAR, CHARSWAPBAR, DEVTOOLS } = WINDOW_NAMES;
 
 //lazy load window components, so that they are not loaded until they are needed
 //this is done to reduce the amount of time spent loading
@@ -11,6 +11,7 @@ const DesktopScreen = lazy(() => import("screens/desktop"));
 const InGameScreen = lazy(() => import("screens/ingame"));
 const FinalHitsBarScreen = lazy(() => import("screens/finalhitsbar"));
 const CharacterSwapBarScreen = lazy(() => import("screens/characterswapbar"));
+const DevToolsScreen = lazy(() => import("screens/dev"));
 
 type CurrentScreenProps = {
   name: string;
@@ -29,6 +30,8 @@ export const CurrentScreen = memo(({ name }: CurrentScreenProps) => {
       return <FinalHitsBarScreen />;
     case CHARSWAPBAR:
       return <CharacterSwapBarScreen />;
+    case DEVTOOLS:
+      return <DevToolsScreen />;
     default:
       return null;
   }
