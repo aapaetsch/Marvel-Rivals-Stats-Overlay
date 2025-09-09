@@ -1,0 +1,47 @@
+.gauge {
+  position: relative;
+  display: inline-block;
+}
+
+.gauge svg {
+  display: block;
+}
+
+.gauge-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.gauge-value {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.gauge-label {
+  font-size: 10px;
+  opacity: 0.85;
+}
+
+/* Horizontal bar variant */
+.gauge-bar {
+  position: relative;
+}
+.gauge-bar .gauge-track {
+  width: 100%;
+  background: rgba(255,255,255,0.12);
+  border-radius: 9999px;
+}
+.gauge-bar .gauge-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 9999px;
+}
+.gauge-bar .gauge-center {
+  font-size: 10px;
+}
