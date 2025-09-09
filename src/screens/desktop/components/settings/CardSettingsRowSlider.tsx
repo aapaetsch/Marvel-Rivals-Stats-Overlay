@@ -1,6 +1,9 @@
+// filepath: c:\Users\aapae\Documents\Overwolf Projects\rivalsreactoverlay\src\screens\desktop\components\settings\CardSettingsRowSlider.fixed.tsx
 import React from 'react';
 import { Form, Slider } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
+import { updateSettings } from 'features/appSettings/appSettingsSlice';
 import { SliderMarks } from 'antd/lib/slider';
 
 interface CardSettingsRowSliderProps {
@@ -55,13 +58,13 @@ interface CardSettingsRowSliderProps {
   indented?: boolean;
     /**
    * Whether the label should be stacked above the slider 
-   * and aligned to the right
    */
   stackedLabel?: boolean;
 }
 
 /**
  * A reusable component for creating slider settings rows
+ * with direct updates to Redux when the value changes
  */
 const CardSettingsRowSlider: React.FC<CardSettingsRowSliderProps> = ({
   label,
@@ -77,6 +80,7 @@ const CardSettingsRowSlider: React.FC<CardSettingsRowSliderProps> = ({
   stackedLabel = false
 }) => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   
   // Generate default marks if not provided
   const defaultMarks = showPercentage ? {
@@ -92,7 +96,21 @@ const CardSettingsRowSlider: React.FC<CardSettingsRowSliderProps> = ({
   };
   
   const sliderMarks = marks || defaultMarks;
-    return (
+
+  // Handle slider value change and update Redux directly
+  const handleSliderChange = (value: number) => {
+    // Call the provided onChange callback if it exists
+    if (onChange) {
+      onChange(value);
+    }
+
+    // Update Redux directly with the new value
+    const updateObj: any = {};
+    updateObj[formName] = value;
+    dispatch(updateSettings(updateObj));
+  };
+  
+  return (
     <div className={`card-settings-row slider-row ${stackedLabel ? 'stacked-label' : ''}`}>
       {stackedLabel ? (
         <>
@@ -110,7 +128,7 @@ const CardSettingsRowSlider: React.FC<CardSettingsRowSliderProps> = ({
                 step={step}
                 marks={sliderMarks}
                 disabled={disabled}
-                onChange={onChange}
+                onChange={handleSliderChange}
                 className="settings-slider"
               />
             </Form.Item>
@@ -132,7 +150,7 @@ const CardSettingsRowSlider: React.FC<CardSettingsRowSliderProps> = ({
                 step={step}
                 marks={sliderMarks}
                 disabled={disabled}
-                onChange={onChange}
+                onChange={handleSliderChange}
                 className="settings-slider"
               />
             </Form.Item>
