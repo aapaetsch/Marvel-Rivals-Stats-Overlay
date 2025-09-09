@@ -1,8 +1,10 @@
-// filepath: c:\Users\aapae\Documents\Overwolf Projects\rivalsreactoverlay\src\screens\desktop\components\settings\OverlayPositionEditor.tsx
+// filepath: c:\Users\aapae\Documents\Overwolf Projects\rivalsreactoverlay\src\screens\desktop\components\settings\OverlayPositionEditor.fixed.tsx
 import React, { useState } from 'react';
 import { Form, Button, InputNumber, Switch, Space } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
 import { WINDOW_NAMES } from 'app/shared/constants';
+import { updateSettings } from 'features/appSettings/appSettingsSlice';
 import '../styles/Settings.css';
 
 interface OverlayPositionEditorProps {
@@ -14,6 +16,7 @@ interface OverlayPositionEditorProps {
 }
 
 const gameModes = ['Domination', 'Convoy', 'Doom Match', 'Conquest'];
+
 const OverlayPositionEditor: React.FC<OverlayPositionEditorProps> = ({
   overlayKey,
   form,
@@ -22,6 +25,7 @@ const OverlayPositionEditor: React.FC<OverlayPositionEditorProps> = ({
   onSavePositions,
 }) => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   
   // Track which game modes have custom positions enabled
   const [customEnabledModes, setCustomEnabledModes] = useState<Record<string, boolean>>({});
@@ -46,7 +50,11 @@ const OverlayPositionEditor: React.FC<OverlayPositionEditorProps> = ({
       },
     };
     
+    // Update form values
     form.setFieldsValue({ customPositions: updatedPositions });
+    
+    // Directly update Redux to ensure immediate effect
+    dispatch(updateSettings({ customPositions: updatedPositions }));
   };
   
   // Toggle custom position for a specific game mode
@@ -76,6 +84,9 @@ const OverlayPositionEditor: React.FC<OverlayPositionEditorProps> = ({
     };
     
     form.setFieldsValue({ customPositions: updatedPositions });
+    
+    // Also update Redux directly
+    dispatch(updateSettings({ customPositions: updatedPositions }));
   };
 
   return (
@@ -112,8 +123,9 @@ const OverlayPositionEditor: React.FC<OverlayPositionEditorProps> = ({
                 onChange={(value: number | null) => handlePositionChange('_base', 'y', value)}
               />
             </Form.Item>
-          </div>
-        </div>        <div className="is-flex is-justify-content-flex-end mb-2 is-full-width">            
+          </div>        
+        </div>        
+        <div className="is-flex is-justify-content-flex-end mb-2 is-full-width">            
           <Space>
             <Button
               variant="text"
@@ -121,6 +133,11 @@ const OverlayPositionEditor: React.FC<OverlayPositionEditorProps> = ({
               onClick={() => {
                 // Call the original handler which will update the Redux state
                 onEditPositions(!isPositioningMode, windowName);
+                
+                // Auto-save position when disabling drag mode
+                if (isPositioningMode) {
+                  onSavePositions(windowName);
+                }
               }}
               className="edit-position-button"
             >
@@ -128,16 +145,6 @@ const OverlayPositionEditor: React.FC<OverlayPositionEditorProps> = ({
                 ? t('components.desktop.settings.disable-drag-mode', 'Disable Drag Mode') 
                 : t('components.desktop.settings.enable-drag-move', 'Enable Drag to Move')}
             </Button>
-            {isPositioningMode && (
-              <Button
-                type="default"
-                ghost
-                onClick={() => onSavePositions(windowName)}
-                className="edit-position-button"
-              >
-                {t('components.desktop.settings.save-position', 'Save Position')}
-              </Button>
-            )}
           </Space>
         </div>
       </div>
@@ -200,10 +207,9 @@ const OverlayPositionEditor: React.FC<OverlayPositionEditorProps> = ({
             )}
           </div>
         </div>
-    ))}
+      ))}
     </div>
   );
 };
 
 export default OverlayPositionEditor;
-
