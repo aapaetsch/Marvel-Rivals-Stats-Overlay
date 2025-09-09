@@ -1,19 +1,17 @@
-# General Instructions
-- Do not lie
-- Do not make things up
-- Do not hallucinate
+# Project Agents.md Guide for OpenAI Codex
+This Agents.md file provides a brief overview of the project structure and about documenting changes
 
-## Documenting Changes
-- Document any changes you make inside CHANGELOG.md
-- The higher level change description should be in the root CHANGELOG.md and then if the area that was changed has an associated CHANGELOG.md, the details of the change should be broken down and added there.
-- Some examples of areas with changelogs for details is each of the screens, lib, src/components, src/features
-- In order to document the change, you need to make sure that you actually did it
+## Project Structure for OpenAI Codex Navigation
+- `/src`: Source code containing the majority of the app
+  - `/components`: Reusable React Components
+  - `/features`: larger features & their services that have outgrown lib
+  - `/lib`: Utilities, services, windowmanager, icons
+  - `/locals`: localization files using i18n
+  - `/screens`: Contains the various overwolf screens and overlays along with their specific components and pages
 
+## Documenting changes
+- The overall change should be in the root level CHANGELOG.md file.
+- You should be documenting specific changes in the appropriate CHANGELOG.md files and referencing the overall change that it falls under that you put in the CHANGELOG.md file.
 
-## .tsx File Style
-- Strings should usually be enclosed in single quotes. 
-- Strings used for component props such as className should still be enclosed in double quotes.
-- rem is preferable over px
-
-## PR instructions
-- Title format: [<project_name>] <Title>
+### Change Log Formatting:
+- The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
