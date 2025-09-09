@@ -2,11 +2,11 @@ import { CharacterName, approximateName } from './characterIcons';
 
 // /c:/Users/aapae/Documents/Overwolf Projects/rivalsreactoverlay/src/lib/characterClassIcons.ts
 
-// export type CharacterClass = 'Vanguard' | 'Dualist' | 'Strategist';
+// export type CharacterClass = 'Vanguard' | 'Duelist' | 'Strategist';
 
 export enum CharacterClass {
   VANGUARD = 'Vanguard',
-  DUALIST = 'Dualist',
+  DUELIST = 'Duelist',
   STRATEGIST = 'Strategist',
 }
 
@@ -18,9 +18,9 @@ export const CLASS_ICONS: Record<
     name: CharacterClass.VANGUARD,
     file: '/heroheadshots/regular/Vanguard_Icon.png',
   },
-  Dualist: {
-    name: CharacterClass.DUALIST,
-    file: '/heroheadshots/regular/Dualist_Icon.png',
+  Duelist: {
+    name: CharacterClass.DUELIST,
+    file: '/heroheadshots/regular/Duelist_Icon.png',
   },
   Strategist: {
     name: CharacterClass.STRATEGIST,
@@ -37,30 +37,30 @@ function normalizeKey(input: unknown): string {
 
 // Hardcoded mapping from CharacterName -> CharacterClass based on provided lists.
 export const CHARACTER_CLASS_RECORD: Record<CharacterName, CharacterClass> = {
-  // Dualists
-  [CharacterName.WINTER_SOLDIER]: CharacterClass.DUALIST,
-  [CharacterName.WOLVERINE]: CharacterClass.DUALIST,
-  [CharacterName.BLADE]: CharacterClass.DUALIST,
-  [CharacterName.PHOENIX]: CharacterClass.DUALIST,
-  [CharacterName.SCARLET_WITCH]: CharacterClass.DUALIST,
-  [CharacterName.SPIDER_MAN]: CharacterClass.DUALIST,
-  [CharacterName.SQUIRREL_GIRL]: CharacterClass.DUALIST,
-  [CharacterName.STAR_LORD]: CharacterClass.DUALIST,
-  [CharacterName.STORM]: CharacterClass.DUALIST,
-  [CharacterName.HAWKEYE]: CharacterClass.DUALIST,
-  [CharacterName.HELA]: CharacterClass.DUALIST,
-  [CharacterName.THE_PUNISHER]: CharacterClass.DUALIST,
-  [CharacterName.PSYLOCKE]: CharacterClass.DUALIST,
-  [CharacterName.MISTER_FANTASTIC]: CharacterClass.DUALIST,
-  [CharacterName.MOON_KNIGHT]: CharacterClass.DUALIST,
-  [CharacterName.NAMOR]: CharacterClass.DUALIST,  
-  [CharacterName.MAGIK]: CharacterClass.DUALIST,
-  [CharacterName.HUMAN_TORCH]: CharacterClass.DUALIST,
-  [CharacterName.BLACK_PANTHER]: CharacterClass.DUALIST,
-  [CharacterName.BLACK_WIDOW]: CharacterClass.DUALIST,
-  [CharacterName.IRON_FIST]: CharacterClass.DUALIST,
-  [CharacterName.IRON_MAN]: CharacterClass.DUALIST,
-  [CharacterName.DUELIST]: CharacterClass.DUALIST,
+  // Duelists
+  [CharacterName.WINTER_SOLDIER]: CharacterClass.DUELIST,
+  [CharacterName.WOLVERINE]: CharacterClass.DUELIST,
+  [CharacterName.BLADE]: CharacterClass.DUELIST,
+  [CharacterName.PHOENIX]: CharacterClass.DUELIST,
+  [CharacterName.SCARLET_WITCH]: CharacterClass.DUELIST,
+  [CharacterName.SPIDER_MAN]: CharacterClass.DUELIST,
+  [CharacterName.SQUIRREL_GIRL]: CharacterClass.DUELIST,
+  [CharacterName.STAR_LORD]: CharacterClass.DUELIST,
+  [CharacterName.STORM]: CharacterClass.DUELIST,
+  [CharacterName.HAWKEYE]: CharacterClass.DUELIST,
+  [CharacterName.HELA]: CharacterClass.DUELIST,
+  [CharacterName.THE_PUNISHER]: CharacterClass.DUELIST,
+  [CharacterName.PSYLOCKE]: CharacterClass.DUELIST,
+  [CharacterName.MISTER_FANTASTIC]: CharacterClass.DUELIST,
+  [CharacterName.MOON_KNIGHT]: CharacterClass.DUELIST,
+  [CharacterName.NAMOR]: CharacterClass.DUELIST,  
+  [CharacterName.MAGIK]: CharacterClass.DUELIST,
+  [CharacterName.HUMAN_TORCH]: CharacterClass.DUELIST,
+  [CharacterName.BLACK_PANTHER]: CharacterClass.DUELIST,
+  [CharacterName.BLACK_WIDOW]: CharacterClass.DUELIST,
+  [CharacterName.IRON_FIST]: CharacterClass.DUELIST,
+  [CharacterName.IRON_MAN]: CharacterClass.DUELIST,
+  [CharacterName.DUELIST]: CharacterClass.DUELIST,
   // Vanguards
   [CharacterName.THE_THING]: CharacterClass.VANGUARD,
   [CharacterName.THOR]: CharacterClass.VANGUARD,
