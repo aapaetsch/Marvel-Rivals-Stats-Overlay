@@ -85,6 +85,9 @@ const RecentPlayerItem: React.FC<RecentPlayerItemProps> = ({ player, censor = fa
   // Overall W/L (opponent + teammate)
   const overallWins = derivedTeamsWithWins + derivedTeamsAgainstWins;
   const overallLosses = derivedTeamsWithLosses + derivedTeamsAgainstLosses;
+  const overallWinRate = (overallWins + overallLosses) > 0
+    ? Math.round((overallWins / (overallWins + overallLosses)) * 100)
+    : 0;
 
   // Aggregated role W/L for ally or opponent view
   type RoleAgg = Record<CharacterClass, { wins: number; losses: number }>;
@@ -194,6 +197,7 @@ const RecentPlayerItem: React.FC<RecentPlayerItemProps> = ({ player, censor = fa
             <div className="rpc-name">
               <Text className="player-name">{player.name}</Text>
               <div className="overall-wl-under-name">
+                <Text className="overall-wr-text" style={{ marginRight: 8 }}>{overallWinRate}%</Text>
                 <Text className="overall-wl-text">{overallWins}W - {overallLosses}L</Text>
               </div>
             </div>
@@ -281,13 +285,6 @@ const RecentPlayers: React.FC = () => {
   });
 
   const sortedPlayers = [...filteredPlayers].sort((a, b) => {
-    if (filter !== RecentPlayerTeamFilter.Favorites) {
-      if (a.isFavorited && !b.isFavorited) return -1;
-      if (!a.isFavorited && b.isFavorited) return 1;
-      if (a.isFavorited && b.isFavorited) return b.favoriteOrder - a.favoriteOrder;
-    } else if (sortBy === RecentPlayerSortOption.Recent) {
-      return b.favoriteOrder - a.favoriteOrder;
-    }
     if (sortBy === RecentPlayerSortOption.Recent) return b.lastSeen - a.lastSeen;
     if (sortBy === RecentPlayerSortOption.MostEncounters) {
       const aTotal = a.teamsWithCount + a.teamsAgainstCount;
