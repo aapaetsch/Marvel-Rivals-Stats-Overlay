@@ -128,10 +128,10 @@
 }
 .overall-wl-under-name {
   margin-top: 2px;
+  color: var(--primary-color-text);
 }
 .overall-wl-text {
   font-size: 12px;
-  color: rgba(255,255,255,0.8);
   font-weight: 700;
 }
 
