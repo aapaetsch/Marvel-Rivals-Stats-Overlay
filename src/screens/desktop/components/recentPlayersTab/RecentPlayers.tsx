@@ -305,69 +305,45 @@ const RecentPlayerItem: React.FC<RecentPlayerItemProps> = ({ player, censor = fa
 const RecentPlayers: React.FC = () => {
   const { t } = useTranslation();
   const { players } = useSelector((state: RootReducer) => state.recentPlayersReducer);
-  
-  // Local state for search and filters
+
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState<'all' | 'teammates' | 'opponents' | 'favorites'>('all');
   const [sortBy, setSortBy] = useState<'recent' | 'most' | 'name'>('recent');
-  // Censor state (can be wired to global store in future)
   const [censorCharactersWhileCurrentMatchCharacterPick, setCensorCharactersWhileCurrentMatchCharacterPick] = useState(false);
-  
-  // Process players data
-  const playersList = Object.values(players).map(player => player);
-  
-  // Apply filters and search
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(9);
+
+  const playersList = Object.values(players).map(p => p);
+
   const filteredPlayers = playersList.filter(player => {
-    // Apply search filter
-    if (searchTerm && !player.name.toLowerCase().includes(searchTerm.toLowerCase())) {
-      return false;
-    }
-    
-    // Apply type filter
-    if (filter === 'teammates' && player.teamsWithCount === 0) {
-      return false;
-    }
-    if (filter === 'opponents' && player.teamsAgainstCount === 0) {
-      return false;
-    }
-    if (filter === 'favorites' && !player.isFavorited) {
-      return false;
-    }
-    
+    if (searchTerm && !player.name.toLowerCase().includes(searchTerm.toLowerCase())) return false;
+    if (filter === 'teammates' && player.teamsWithCount === 0) return false;
+    if (filter === 'opponents' && player.teamsAgainstCount === 0) return false;
+    if (filter === 'favorites' && !player.isFavorited) return false;
     return true;
   });
-  
-  // Apply sorting
+
   const sortedPlayers = [...filteredPlayers].sort((a, b) => {
-    // Always prioritize favorited players if we're not filtering by favorites specifically
     if (filter !== 'favorites') {
       if (a.isFavorited && !b.isFavorited) return -1;
       if (!a.isFavorited && b.isFavorited) return 1;
-      
-      // For favorites, also sort by favorite order
-      if (a.isFavorited && b.isFavorited) {
-        return b.favoriteOrder - a.favoriteOrder; // Most recently favorited first
-      }
-    } else {
-      // When filtering by favorites, sort by favorite order
-      if (sortBy === 'recent') {
-        return b.favoriteOrder - a.favoriteOrder;
-      }
+      if (a.isFavorited && b.isFavorited) return b.favoriteOrder - a.favoriteOrder;
+    } else if (sortBy === 'recent') {
+      return b.favoriteOrder - a.favoriteOrder;
     }
-    
-    if (sortBy === 'recent') {
-      return b.lastSeen - a.lastSeen; // Most recent first
-    }
+    if (sortBy === 'recent') return b.lastSeen - a.lastSeen;
     if (sortBy === 'most') {
       const aTotal = a.teamsWithCount + a.teamsAgainstCount;
       const bTotal = b.teamsWithCount + b.teamsAgainstCount;
-      return bTotal - aTotal; // Most encounters first
+      return bTotal - aTotal;
     }
-    // Sort by name
     return a.name.localeCompare(b.name);
   });
-  
-  // Filter dropdown menu
+
+  useEffect(() => { setPage(1); }, [searchTerm, filter, sortBy]);
+  const total = sortedPlayers.length;
+  const pagedPlayers = sortedPlayers.slice((page - 1) * pageSize, page * pageSize);
+
   const filterMenu = (
     <Menu onClick={(e) => setFilter(e.key as 'all' | 'favorites' | 'teammates' | 'opponents')} selectedKeys={[filter]}>
       <Menu.Item key="all">{t('components.desktop.recent-players.all', 'All')}</Menu.Item>
@@ -426,6 +402,11 @@ const RecentPlayers: React.FC = () => {
               <span style={{ color: 'var(--primary-color-text)', opacity: 0.85 }}>{t('components.desktop.recent-players.censor-toggle', 'Censor during pick')}</span>
               <Switch checked={censorCharactersWhileCurrentMatchCharacterPick} onChange={setCensorCharactersWhileCurrentMatchCharacterPick} />
             </Space>
+            <Space size={6}>
+              <span style={{ color: 'var(--primary-color-text)', opacity: 0.85 }}>Cards/page</span>
+              <Select size="small" value={pageSize} onChange={(v:number)=>{ setPageSize(v); setPage(1); }} style={{ width: 84 }} options={[6,9,12,15,18].map(v=>({label:String(v), value:v}))} />
+            </Space>
+            <Pagination simple current={page} pageSize={pageSize} total={total} onChange={setPage} />
           </Space>
         }
       >
@@ -444,23 +425,10 @@ const RecentPlayers: React.FC = () => {
         {sortedPlayers.length > 0 ? (
           <List
             className="recent-players-list"
-            grid={{
-              gutter: 16,
-              xs: 1,
-              sm: 1,
-              md: 2,
-              lg: 3,
-              xl: 3,
-              xxl: 3,
-            }}
-            dataSource={sortedPlayers}
-            renderItem={(player) => <RecentPlayerItem player={player} censor={censorCharactersWhileCurrentMatchCharacterPick} />}
-            pagination={{
-              pageSize: 9,
-              simple: true,
-              position: 'bottom',
-              showSizeChanger: false,
-            }}
+            grid={{ gutter: 16, xs: 1, sm: 1, md: 2, lg: 3, xl: 3, xxl: 3 }}
+            dataSource={pagedPlayers}
+            renderItem={(player) => <RecentPlayerItem player={player} />}
+            pagination={false}
           />
         ) : (
           <div className="empty-state">
