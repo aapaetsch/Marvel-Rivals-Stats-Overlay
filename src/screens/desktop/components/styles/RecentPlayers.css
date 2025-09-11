@@ -1,4 +1,4 @@
-/* RecentPlayers.css - Styles for the Recent Players tab */
+﻿/* RecentPlayers.css - Styles for the Recent Players tab */
 
 .recent-players-container {
   width: 100%;
@@ -7,7 +7,7 @@
 
 .recent-players-card {
   background-color: var(--neutral-2) !important;
-  border: 1px solid var(--primary-color-medium) !important;
+  border: none !important; /* [#36] remove border around main page */
   border-radius: var(--border-radius) !important;
 }
 
@@ -50,7 +50,7 @@
 }
 .recent-player-card .ant-card-body {
   background: transparent !important;
-  padding: 12px; /* Reduce default padding by half */
+  padding: 0.5rem;
 }
 
 /* Card-face inspired sections */
@@ -171,8 +171,16 @@
   grid-template-columns: 1fr 1fr;
   gap: 12px;
   align-items: stretch;
+}
+
+.recent-player-card:not(.collapsed) .rpc-columns {
   min-height: 220px; /* keep overall height consistent between collapsed/expanded */
 }
+
+.recent-player-card.collapsed .rpc-columns .rpc-col {
+  gap: 0!important; 
+}
+
 .rpc-col {
   display: flex;
   flex-direction: column;
@@ -186,6 +194,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  cursor: pointer;
+  font-weight: bold;
 }
 .col-title {
   font-size: 12px;
@@ -254,18 +264,33 @@
   flex-direction: column;
   gap: 6px;
 }
+.col-collapsed-summary {
+  display: flex;
+  color: var(--primary-color-text);
+}
+.col-collapsed-summary span {
+  font-size: 0.75rem;
+  margin-left: 0.5rem;
+}
 .breakdown-row {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto auto 1fr auto; /* avatar, pct, name, wl */
   align-items: center;
   gap: 8px;
+}
+.breakdown-pct {
+  color: var(--primary-color-text);
+  font-weight: 700;
+  font-size: 12px;
+  width: 34px;
+  text-align: right;
 }
 .breakdown-name {
   color: var(--primary-color-text);
   font-size: 12px;
 }
 .breakdown-wl {
-  color: rgba(255,255,255,0.85);
+  color: var(--primary-color-text);
   font-weight: 700;
 }
 
@@ -310,13 +335,36 @@
 }
 .rpc-footer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   margin-top: 8px;
 }
 .delete-outline {
   background: transparent !important;
   border: 1px solid #ff4d4f !important;
   color: #ff4d4f !important;
+}
+.collapse-chevron {
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.9);
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.collapse-chevron:hover {
+  color: var(--primary-color-text);
+}
+
+/* Collapsed card hides internals, keeps headers */
+.recent-player-card.collapsed .col-stats,
+.recent-player-card.collapsed .col-characters,
+.recent-player-card.collapsed .col-breakdown,
+.recent-player-card.collapsed .expanded-content {
+  display: none !important;
 }
 .rpc-columns.expanded .rpc-col {
   display: none;
@@ -340,9 +388,16 @@
 }
 .role-row {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto auto 1fr auto; /* icon, pct, name, wl */
   align-items: center;
   gap: 8px;
+}
+.role-pct {
+  color: rgba(255,255,255,0.85);
+  font-weight: 700;
+  font-size: 12px;
+  width: 34px;
+  text-align: right;
 }
 .role-name {
   color: var(--primary-color-text);
@@ -370,6 +425,45 @@
 .rpc-columns.expanded .col-breakdown {
   max-height: 130px;
   overflow-y: auto;
+}
+
+/* Collapse/expand animation and disabled clicks */
+.recent-player-card .rpc-columns {
+  transition: max-height 0.25s ease, padding 0.2s ease, gap 0.2s ease;
+  overflow: hidden;
+}
+.recent-player-card:not(.collapsed) .rpc-columns {
+  max-height: 1000px;
+}
+
+.recent-player-card.collapsed .rpc-columns {
+  max-height: 3.75rem;
+}
+.recent-player-card.collapsed .section {
+  padding: 2px 0;
+  margin-top: 2px;
+}
+.recent-player-card.collapsed .rpc-col {
+  padding-top: 4px;
+  padding-bottom: 4px;
+  cursor: default;
+}
+.recent-player-card.collapsed .rpc-col .col-header {
+  min-height: 24px;
+}
+.recent-player-card.collapsed .col-title {
+  font-size: 11px;
+}
+.recent-player-card.collapsed .count-badge {
+  padding: 1px 6px;
+  font-size: 11px;
+}
+.recent-player-card.collapsed .col-title {
+  font-size: 11px;
+}
+.recent-player-card.collapsed .count-badge {
+  padding: 1px 6px;
+  font-size: 11px;
 }
 
 /* Player header layout */
@@ -537,7 +631,7 @@
 }
 
 .recent-players-list .ant-pagination-item-link {
-  color: var(--primary-color-text);
+  color: #ffffff;
 }
 
 .recent-players-list .ant-pagination-item {
@@ -551,7 +645,15 @@
 }
 
 .recent-players-list .ant-pagination-item a {
-  color: var(--primary-color-text);
+  color: #ffffff;
+}
+
+/* Top-bar pagination overrides */
+.recent-players-card .ant-pagination .ant-pagination-item-link,
+.recent-players-card .ant-pagination .ant-pagination-item a,
+.recent-players-card .ant-pagination .ant-pagination-prev .ant-pagination-item-link,
+.recent-players-card .ant-pagination .ant-pagination-next .ant-pagination-item-link {
+  color: #ffffff !important;
 }
 
 /* Responsive adjustments */
@@ -571,3 +673,4 @@
     text-align: left;
   }
 }
+

@@ -1,20 +1,22 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { List, Avatar, Row, Col, Card, Typography, Space, Button, Dropdown, Menu, Input, Tooltip, message, Badge, Alert, Switch } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { RootReducer } from 'app/shared/rootReducer';
-import { SearchOutlined, FilterOutlined, ClockCircleOutlined, TeamOutlined, UserOutlined, StarOutlined, StarFilled, DeleteOutlined } from '@ant-design/icons';
+import { SearchOutlined, FilterOutlined, ClockCircleOutlined, TeamOutlined, UserOutlined, StarOutlined, StarFilled, DeleteOutlined, DownOutlined } from '@ant-design/icons';
+import MorphChevron from '../shared/MorphChevron';
+import PlayerEncounterSection from './components/PlayerEncounterSection';
 import { getCharacterDefaultIconPath } from 'lib/characterIcons';
-import { getCharacterClass, getClassImagePath, CharacterClass } from 'lib/characterClassIcons';
-import Gauge from '../../../../components/Gauge/Gauge';
+import { getCharacterClass, CharacterClass } from 'lib/characterClassIcons';
 import type { RecentPlayer } from '../../../background/stores/recentPlayersSlice';
 import { togglePlayerFavorite, removePlayer } from '../../../background/stores/recentPlayersSlice';
 import { formatRelativeTime } from 'lib/utils';
 import '../styles/RecentPlayers.css';
+import { RecentPlayerSortOption, RecentPlayerTeam, RecentPlayerTeamFilter } from './RecentPlayerTypes';
 
 const { Title, Text } = Typography;
 
-interface RecentPlayerItemProps {
+export interface RecentPlayerItemProps {
   player: RecentPlayer;
   censor?: boolean;
 }
@@ -23,7 +25,8 @@ const RecentPlayerItem: React.FC<RecentPlayerItemProps> = ({ player, censor = fa
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { maxFavoriteRecentPlayers } = useSelector((state: RootReducer) => state.appSettingsReducer.settings);
-  const [expandedSide, setExpandedSide] = useState<'opponent' | 'ally' | null>(null);
+  const [expandedSide, setExpandedSide] = useState<RecentPlayerTeam | null>(null);
+  const [collapsed, setCollapsed] = useState(true);
   
   // Compute primary (top overall) character and per-role top picks
   const getTopOverallCharacter = (): string => {
@@ -44,11 +47,11 @@ const RecentPlayerItem: React.FC<RecentPlayerItemProps> = ({ player, censor = fa
     return entries[0][0];
   };
 
-  const getTopCharacters = (role: 'ally' | 'opponent', limit: number = 6): string[] => {
-    const stats = role === 'ally' ? (player.allyCharacterStats || {}) : (player.opponentCharacterStats || {});
+  const getTopCharacters = (role: RecentPlayerTeam, limit: number = 6): string[] => {
+    const stats = role === RecentPlayerTeam.Ally ? (player.allyCharacterStats || {}) : (player.opponentCharacterStats || {});
     const entries = Object.entries(stats).map(([name, s]) => ({ name, count: s?.count || 0 }));
     if (entries.length === 0) {
-      const fallback = role === 'ally' ? (player.charactersAsAlly || []) : (player.charactersAsOpponent || []);
+      const fallback = role === RecentPlayerTeam.Ally ? (player.charactersAsAlly || []) : (player.charactersAsOpponent || []);
       return fallback.slice(0, limit);
     }
     entries.sort((a, b) => b.count - a.count);
@@ -61,21 +64,27 @@ const RecentPlayerItem: React.FC<RecentPlayerItemProps> = ({ player, censor = fa
   // Calculate total encounters
   const totalEncounters = player.teamsWithCount + player.teamsAgainstCount;
   
+  // Derive losses from counts minus wins to avoid drift issues
+  const derivedTeamsWithWins = player.teamsWithWins;
+  const derivedTeamsWithLosses = Math.max(0, player.teamsWithCount - derivedTeamsWithWins);
+  const derivedTeamsAgainstWins = player.teamsAgainstWins;
+  const derivedTeamsAgainstLosses = Math.max(0, player.teamsAgainstCount - derivedTeamsAgainstWins);
+
   // Calculate win rates
   const teamsWithWinRate = player.teamsWithCount > 0
-    ? Math.round((player.teamsWithWins / player.teamsWithCount) * 100)
+    ? Math.round((derivedTeamsWithWins / player.teamsWithCount) * 100)
     : 0;
     
   const teamsAgainstWinRate = player.teamsAgainstCount > 0
-    ? Math.round((player.teamsAgainstWins / player.teamsAgainstCount) * 100)
+    ? Math.round((derivedTeamsAgainstWins / player.teamsAgainstCount) * 100)
     : 0;
   
   // Format the last seen time
   const lastSeenFormatted = formatRelativeTime(player.lastSeen);
 
   // Overall W/L (opponent + teammate)
-  const overallWins = player.teamsWithWins + player.teamsAgainstWins;
-  const overallLosses = player.teamsWithLosses + player.teamsAgainstLosses;
+  const overallWins = derivedTeamsWithWins + derivedTeamsAgainstWins;
+  const overallLosses = derivedTeamsWithLosses + derivedTeamsAgainstLosses;
 
   // Aggregated role W/L for ally or opponent view
   type RoleAgg = Record<CharacterClass, { wins: number; losses: number }>;
@@ -167,7 +176,7 @@ const RecentPlayerItem: React.FC<RecentPlayerItemProps> = ({ player, censor = fa
   
   return (
     <List.Item className="recent-player-item">
-      <Card className={`recent-player-card ${player.isFavorited ? 'favorited-player' : ''}`} bordered={false}>
+      <Card className={`recent-player-card ${player.isFavorited ? 'favorited-player' : ''} ${collapsed ? 'collapsed' : ''}`} bordered={false}>
         {/* Header: avatar + inline name (bottom-aligned) and last seen on right */}
         <div className="rpc-header">
           <div className="rpc-left">
@@ -199,101 +208,49 @@ const RecentPlayerItem: React.FC<RecentPlayerItemProps> = ({ player, censor = fa
           {player.isFavorited ? <StarFilled style={{ color: '#fadb14' }} /> : <StarOutlined />}
         </button>
         {/* Two columns: Left = Opponent, Right = Ally */}
-        <div className={`rpc-columns section ${expandedSide ? 'expanded' : ''}`}>
-          <div className={`rpc-col opponent ${expandedSide === 'opponent' ? 'expanded' : ''}`} onClick={() => setExpandedSide(expandedSide === 'opponent' ? null : 'opponent')}>
-            <div className="col-header">
-              <Text className="col-title">{t('components.desktop.recent-players.as-opponent', 'As Opponent')}</Text>
-              <span className="count-badge">{player.teamsAgainstCount}</span>
-            </div>
-            {expandedSide === 'opponent' ? (
-              <div className="expanded-content">
-                <div className="role-wl">
-                  {([CharacterClass.VANGUARD, CharacterClass.DUELIST, CharacterClass.STRATEGIST] as CharacterClass[]).map((cls) => (
-                    <div className="role-row" key={`opp-role-${cls}`}>
-                      <Avatar shape="square" size={20} src={getClassImagePath(cls)} className="character-icon-small" />
-                      <span className="role-name">{cls}</span>
-                      <span className="role-wl-text">{opponentRoleAgg[cls].wins}W-{opponentRoleAgg[cls].losses}L</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="gauge-col">
-                  <Gauge value={teamsAgainstWinRate} color="#ff4d4f" textColor="#ffffff" variant="arc" mode="half" size={88} strokeWidth={8} />
-                  <div className="wl">
-                    <Text className="stat-sub">{player.teamsAgainstWins}W - {player.teamsAgainstLosses}L</Text>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="col-stats">
-                <Gauge value={teamsAgainstWinRate} color="#ff4d4f" textColor="#ffffff" variant="arc" mode="half" size={88} strokeWidth={8} />
-                <div className="wl">
-                  <Text className="stat-sub">{player.teamsAgainstWins}W - {player.teamsAgainstLosses}L</Text>
-                </div>
-              </div>
-            )}
-            <div className="col-characters">
-              {renderCharacterIcons(getTopCharacters('opponent', 6), 6)}
-            </div>
-            {expandedSide === 'opponent' && (
-              <div className="col-breakdown">
-                {Object.entries(player.opponentCharacterStats || {}).sort((a: any,b: any)=> (b[1]?.count||0)-(a[1]?.count||0)).map(([name, s]: any) => (
-                  <div key={`opp-${name}`} className="breakdown-row">
-                    <Avatar shape="square" size={20} src={censor ? undefined : (getCharacterDefaultIconPath(name) || undefined)} className="character-icon-small" icon={censor ? <UserOutlined /> : undefined} />
-                    <span className="breakdown-name">{censor ? 'Hidden' : name}</span>
-                    <span className="breakdown-wl">{s.wins}W-{s.losses}L</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-          <div className={`rpc-col ally ${expandedSide === 'ally' ? 'expanded' : ''}`} onClick={() => setExpandedSide(expandedSide === 'ally' ? null : 'ally')}>
-            <div className="col-header">
-              <Text className="col-title">{t('components.desktop.recent-players.as-teammate', 'As Teammate')}</Text>
-              <span className="count-badge">{player.teamsWithCount}</span>
-            </div>
-            {expandedSide === 'ally' ? (
-              <div className="expanded-content">
-                <div className="role-wl">
-                  {([CharacterClass.VANGUARD, CharacterClass.DUELIST, CharacterClass.STRATEGIST] as CharacterClass[]).map((cls) => (
-                    <div className="role-row" key={`ally-role-${cls}`}>
-                      <Avatar shape="square" size={20} src={getClassImagePath(cls)} className="character-icon-small" />
-                      <span className="role-name">{cls}</span>
-                      <span className="role-wl-text">{allyRoleAgg[cls].wins}W-{allyRoleAgg[cls].losses}L</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="gauge-col">
-                  <Gauge value={teamsWithWinRate} color="#52c41a" textColor="#ffffff" variant="arc" mode="half" size={88} strokeWidth={8} />
-                  <div className="wl">
-                    <Text className="stat-sub">{player.teamsWithWins}W - {player.teamsWithLosses}L</Text>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="col-stats">
-                <Gauge value={teamsWithWinRate} color="#52c41a" textColor="#ffffff" variant="arc" mode="half" size={88} strokeWidth={8} />
-                <div className="wl">
-                  <Text className="stat-sub">{player.teamsWithWins}W - {player.teamsWithLosses}L</Text>
-                </div>
-              </div>
-            )}
-            <div className="col-characters">
-              {renderCharacterIcons(getTopCharacters('ally', 6), 6)}
-            </div>
-            {expandedSide === 'ally' && (
-              <div className="col-breakdown">
-                {Object.entries(player.allyCharacterStats || {}).sort((a: any,b: any)=> (b[1]?.count||0)-(a[1]?.count||0)).map(([name, s]: any) => (
-                  <div key={`ally-${name}`} className="breakdown-row">
-                    <Avatar shape="square" size={20} src={censor ? undefined : (getCharacterDefaultIconPath(name) || undefined)} className="character-icon-small" icon={censor ? <UserOutlined /> : undefined} />
-                    <span className="breakdown-name">{censor ? 'Hidden' : name}</span>
-                    <span className="breakdown-wl">{s.wins}W-{s.losses}L</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+        <div className={`rpc-columns section ${expandedSide != null ? 'expanded' : ''}`}>
+          <PlayerEncounterSection
+            variant={RecentPlayerTeam.Opponent}
+            title={t('components.desktop.recent-players.as-opponent', 'As Opponent')}
+            count={player.teamsAgainstCount}
+            expanded={!collapsed && expandedSide === RecentPlayerTeam.Opponent}
+            collapsed={collapsed}
+            winRate={teamsAgainstWinRate}
+            wins={derivedTeamsAgainstWins}
+            losses={derivedTeamsAgainstLosses}
+            roleAgg={opponentRoleAgg}
+            onClickHeader={() => {
+              setCollapsed(false);
+              setExpandedSide(expandedSide === RecentPlayerTeam.Opponent ? null : RecentPlayerTeam.Opponent); 
+            }}
+            renderCharacterIcons={!collapsed ? renderCharacterIcons(getTopCharacters(RecentPlayerTeam.Opponent, 6), 6) : null}
+            statsMap={player.opponentCharacterStats || {}}
+            censor={censor}
+          />          
+          <PlayerEncounterSection
+            variant={RecentPlayerTeam.Ally}
+            title={t('components.desktop.recent-players.as-teammate', 'As Teammate')}
+            count={player.teamsWithCount}
+            expanded={!collapsed && expandedSide === RecentPlayerTeam.Ally}
+            collapsed={collapsed}
+            winRate={teamsWithWinRate}
+            wins={derivedTeamsWithWins}
+            losses={derivedTeamsWithLosses}
+            roleAgg={allyRoleAgg}
+            onClickHeader={() => { 
+              setCollapsed(false);
+              setExpandedSide(expandedSide === RecentPlayerTeam.Ally ? null : RecentPlayerTeam.Ally); 
+            }}
+            renderCharacterIcons={!collapsed ? renderCharacterIcons(getTopCharacters(RecentPlayerTeam.Ally, 6), 6) : null}
+            statsMap={player.allyCharacterStats || {}}
+            censor={censor}
+          />
         </div>
         <div className="rpc-footer">
+          <MorphChevron expanded={!collapsed} onClick={() => {
+            if (!collapsed) setExpandedSide(null);
+            setCollapsed(v => !v);
+          }} className="collapse-chevron" />
           <Button className="delete-outline" onClick={handleRemovePlayer} icon={<DeleteOutlined />}>Delete</Button>
         </div>
       </Card>
@@ -304,99 +261,84 @@ const RecentPlayerItem: React.FC<RecentPlayerItemProps> = ({ player, censor = fa
 const RecentPlayers: React.FC = () => {
   const { t } = useTranslation();
   const { players } = useSelector((state: RootReducer) => state.recentPlayersReducer);
-  
-  // Local state for search and filters
+
   const [searchTerm, setSearchTerm] = useState('');
-  const [filter, setFilter] = useState<'all' | 'teammates' | 'opponents' | 'favorites'>('all');
-  const [sortBy, setSortBy] = useState<'recent' | 'most' | 'name'>('recent');
-  // Censor state (can be wired to global store in future)
+  const [filter, setFilter] = useState<RecentPlayerTeamFilter>(RecentPlayerTeamFilter.All);
+  const [sortBy, setSortBy] = useState<RecentPlayerSortOption>(RecentPlayerSortOption.Recent);
   const [censorCharactersWhileCurrentMatchCharacterPick, setCensorCharactersWhileCurrentMatchCharacterPick] = useState(false);
-  
-  // Process players data
-  const playersList = Object.values(players).map(player => player);
-  
-  // Apply filters and search
+  // Infinite scroll visible item count
+  const [visibleCount, setVisibleCount] = useState(30);
+  const batchSize = 30;
+
+  const playersList = Object.values(players).map(p => p);
+
   const filteredPlayers = playersList.filter(player => {
-    // Apply search filter
-    if (searchTerm && !player.name.toLowerCase().includes(searchTerm.toLowerCase())) {
-      return false;
-    }
-    
-    // Apply type filter
-    if (filter === 'teammates' && player.teamsWithCount === 0) {
-      return false;
-    }
-    if (filter === 'opponents' && player.teamsAgainstCount === 0) {
-      return false;
-    }
-    if (filter === 'favorites' && !player.isFavorited) {
-      return false;
-    }
-    
+    if (searchTerm && !player.name.toLowerCase().includes(searchTerm.toLowerCase())) return false;
+    if (filter === RecentPlayerTeamFilter.Teammates && player.teamsWithCount === 0) return false;
+    if (filter === RecentPlayerTeamFilter.Opponents && player.teamsAgainstCount === 0) return false;
+    if (filter === RecentPlayerTeamFilter.Favorites && !player.isFavorited) return false;
     return true;
   });
-  
-  // Apply sorting
+
   const sortedPlayers = [...filteredPlayers].sort((a, b) => {
-    // Always prioritize favorited players if we're not filtering by favorites specifically
-    if (filter !== 'favorites') {
+    if (filter !== RecentPlayerTeamFilter.Favorites) {
       if (a.isFavorited && !b.isFavorited) return -1;
       if (!a.isFavorited && b.isFavorited) return 1;
-      
-      // For favorites, also sort by favorite order
-      if (a.isFavorited && b.isFavorited) {
-        return b.favoriteOrder - a.favoriteOrder; // Most recently favorited first
-      }
-    } else {
-      // When filtering by favorites, sort by favorite order
-      if (sortBy === 'recent') {
-        return b.favoriteOrder - a.favoriteOrder;
-      }
+      if (a.isFavorited && b.isFavorited) return b.favoriteOrder - a.favoriteOrder;
+    } else if (sortBy === RecentPlayerSortOption.Recent) {
+      return b.favoriteOrder - a.favoriteOrder;
     }
-    
-    if (sortBy === 'recent') {
-      return b.lastSeen - a.lastSeen; // Most recent first
-    }
-    if (sortBy === 'most') {
+    if (sortBy === RecentPlayerSortOption.Recent) return b.lastSeen - a.lastSeen;
+    if (sortBy === RecentPlayerSortOption.MostEncounters) {
       const aTotal = a.teamsWithCount + a.teamsAgainstCount;
       const bTotal = b.teamsWithCount + b.teamsAgainstCount;
-      return bTotal - aTotal; // Most encounters first
+      return bTotal - aTotal;
     }
-    // Sort by name
+    if (sortBy === RecentPlayerSortOption.MostEncountersAsTeammate) return b.teamsWithCount - a.teamsWithCount;
+    if (sortBy === RecentPlayerSortOption.MostEncountersAsOpponent) return b.teamsAgainstCount - a.teamsAgainstCount;
+    // Default to name sort
     return a.name.localeCompare(b.name);
   });
-  
-  // Filter dropdown menu
+
+  // Reset visible items on filter/sort/search changes
+  useEffect(() => { setVisibleCount(batchSize); }, [searchTerm, filter, sortBy]);
+  const visiblePlayers = sortedPlayers.slice(0, visibleCount);
+
+  // Simple window-based infinite scroll
+  useEffect(() => {
+    const onScroll = () => {
+      if (visibleCount >= sortedPlayers.length) return;
+      const nearBottom = window.innerHeight + window.scrollY >= (document.body.offsetHeight - 200);
+      if (nearBottom) {
+        setVisibleCount(v => Math.min(v + batchSize, sortedPlayers.length));
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [visibleCount, sortedPlayers.length]);
+
   const filterMenu = (
-    <Menu onClick={(e) => setFilter(e.key as 'all' | 'favorites' | 'teammates' | 'opponents')} selectedKeys={[filter]}>
-      <Menu.Item key="all">{t('components.desktop.recent-players.all', 'All')}</Menu.Item>
-      <Menu.Item key="favorites">{t('components.desktop.recent-players.favorites', 'Favorites')}</Menu.Item>
-      <Menu.Item key="teammates">{t('components.desktop.recent-players.teammates', 'Teammates')}</Menu.Item>
-      <Menu.Item key="opponents">{t('components.desktop.recent-players.opponents', 'Opponents')}</Menu.Item>
+    <Menu onClick={(e) => setFilter(Number(e.key) as RecentPlayerTeamFilter)} selectedKeys={[filter.toString()]}>
+      <Menu.Item key="0">{t('components.desktop.recent-players.all', 'All')}</Menu.Item>
+      <Menu.Item key="3">{t('components.desktop.recent-players.favorites', 'Favorites')}</Menu.Item>
+      <Menu.Item key="1">{t('components.desktop.recent-players.teammates', 'Teammates')}</Menu.Item>
+      <Menu.Item key="2">{t('components.desktop.recent-players.opponents', 'Opponents')}</Menu.Item>
     </Menu>
   );
 
-  // Sort menu
   const sortMenu = (
-    <Menu
-      onClick={(e) => setSortBy(e.key as 'recent' | 'most' | 'name')}
-      selectedKeys={[sortBy]}
-    >
-      <Menu.Item key="recent" icon={<ClockCircleOutlined />}>
-        {t('components.desktop.recent-players.sort-recent', 'Recently Seen')}
-      </Menu.Item>
-      <Menu.Item key="most" icon={<TeamOutlined />}>
-        {t('components.desktop.recent-players.sort-most', 'Most Encounters')}
-      </Menu.Item>
-      <Menu.Item key="name" icon={<UserOutlined />}>
-        {t('components.desktop.recent-players.sort-name', 'Player Name')}
-      </Menu.Item>
+    <Menu onClick={(e) => setSortBy(Number(e.key) as RecentPlayerSortOption)} selectedKeys={[sortBy.toString()]}>
+      <Menu.Item key="0" icon={<ClockCircleOutlined />}>{t('components.desktop.recent-players.sort-recent', 'Recently Seen')}</Menu.Item>
+      <Menu.Item key="1" icon={<TeamOutlined />}>{t('components.desktop.recent-players.sort-most', 'Most Encounters')}</Menu.Item>
+      <Menu.Item key="2" icon={<UserOutlined />}>{t('components.desktop.recent-players.sort-name', 'Player Name')}</Menu.Item>
+      <Menu.Item key="3" icon={<TeamOutlined />}>{t('components.desktop.recent-players.sort-most-teammate', 'Most Teammate Encounters')}</Menu.Item>
+      <Menu.Item key="4" icon={<UserOutlined />}>{t('components.desktop.recent-players.sort-most-opponent', 'Most Opponent Encounters')}</Menu.Item>
     </Menu>
   );
-  
+
   return (
     <div className="recent-players-container">
-      <Card 
+      <Card
         title={<Title level={4}>{t('components.desktop.recent-players.title', 'Recent Players')}</Title>}
         className="recent-players-card"
         extra={
@@ -410,16 +352,17 @@ const RecentPlayers: React.FC = () => {
             />
             <Dropdown overlay={filterMenu} placement="bottomRight">
               <Button>
-                {filter === 'all' && t('components.desktop.recent-players.all', 'All')}
-                {filter === 'favorites' && t('components.desktop.recent-players.favorites', 'Favorites')}
-                {filter === 'teammates' && t('components.desktop.recent-players.teammates', 'Teammates')}
-                {filter === 'opponents' && t('components.desktop.recent-players.opponents', 'Opponents')}
+                <span>
+                  {filter === RecentPlayerTeamFilter.All && t('components.desktop.recent-players.all', 'All')}
+                  {filter === RecentPlayerTeamFilter.Favorites && t('components.desktop.recent-players.favorites', 'Favorites')}
+                  {filter === RecentPlayerTeamFilter.Teammates && t('components.desktop.recent-players.teammates', 'Teammates')}
+                  {filter === RecentPlayerTeamFilter.Opponents && t('components.desktop.recent-players.opponents', 'Opponents')}
+                </span>
+                <DownOutlined style={{ marginLeft: 6 }} />
               </Button>
             </Dropdown>
             <Dropdown overlay={sortMenu} placement="bottomRight">
-              <Button icon={<FilterOutlined />}>
-                {t('components.desktop.recent-players.sort', 'Sort')}
-              </Button>
+              <Button icon={<FilterOutlined />}>{t('components.desktop.recent-players.sort', 'Sort')}</Button>
             </Dropdown>
             <Space size={4}>
               <span style={{ color: 'var(--primary-color-text)', opacity: 0.85 }}>{t('components.desktop.recent-players.censor-toggle', 'Censor during pick')}</span>
@@ -430,42 +373,23 @@ const RecentPlayers: React.FC = () => {
       >
         {censorCharactersWhileCurrentMatchCharacterPick && (
           <div style={{ marginBottom: 8 }}>
-            <Alert
-              type="warning"
-              showIcon
-              message={t(
-                'components.desktop.recent-players.censor-banner',
-                'Recent player character picks are censored while players are selecting characters in the current match.'
-              )}
-            />
+            <Alert type="warning" showIcon message={t('components.desktop.recent-players.censor-banner','Recent player character picks are censored while players are selecting characters in the current match.')} />
           </div>
         )}
         {sortedPlayers.length > 0 ? (
           <List
             className="recent-players-list"
-            grid={{
-              gutter: 16,
-              xs: 1,
-              sm: 1,
-              md: 2,
-              lg: 3,
-              xl: 3,
-              xxl: 3,
-            }}
-            dataSource={sortedPlayers}
+            grid={{ gutter: 16, xs: 1, sm: 1, md: 2, lg: 3, xl: 3, xxl: 3 }}
+            dataSource={visiblePlayers}
             renderItem={(player) => <RecentPlayerItem player={player} censor={censorCharactersWhileCurrentMatchCharacterPick} />}
-            pagination={{
-              pageSize: 9,
-              simple: true,
-              position: 'bottom',
-              showSizeChanger: false,
-            }}
+            pagination={false}
+            itemLayout='vertical'
           />
         ) : (
           <div className="empty-state">
             <UserOutlined className="empty-icon" />
             <Text className="empty-text">
-              {searchTerm || filter !== 'all'
+              {searchTerm || filter !== RecentPlayerTeamFilter.All
                 ? t('components.desktop.recent-players.no-matches', 'No players match your filters.')
                 : t('components.desktop.recent-players.no-players', 'No players yet. Play some matches to see players here.')}
             </Text>
