@@ -111,6 +111,10 @@ const recentPlayersSlice = createSlice({
             player.opponentCharacterStats![characterName] = s;
           }
         }
+
+        // Sanity: enforce losses = count - wins to avoid drift
+        player.teamsWithLosses = Math.max(0, player.teamsWithCount - player.teamsWithWins);
+        player.teamsAgainstLosses = Math.max(0, player.teamsAgainstCount - player.teamsAgainstWins);
       } 
       // Otherwise create a new record
       else {
@@ -224,6 +228,10 @@ const recentPlayersSlice = createSlice({
               existingPlayer.opponentCharacterStats![characterName] = s;
             }
           }
+
+          // Sanity: enforce losses = count - wins to avoid drift
+          existingPlayer.teamsWithLosses = Math.max(0, existingPlayer.teamsWithCount - existingPlayer.teamsWithWins);
+          existingPlayer.teamsAgainstLosses = Math.max(0, existingPlayer.teamsAgainstCount - existingPlayer.teamsAgainstWins);
         } else {
           state.players[uid] = {
             uid,
