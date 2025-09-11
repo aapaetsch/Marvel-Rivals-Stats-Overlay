@@ -7,3 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - Recent Players (desktop): Implemented front-of-card UX updates and expanded state 3-column role summary, referencing root CHANGELOG [Unreleased] entry.
+- Recent Players (desktop) [#36][#39][#37]: Styling and layout refinements for container border removal, stable card height during collapse, and dark-mode pagination visibility.
+
+### Added
+- Recent Players (desktop) [#35][#52]: Cards default to collapsed; collapsed view shows win% and W/L under section labels.
+- Recent Players (desktop) [#50]: Extracted Opponent/Teammate section into `PlayerEncounterSection` reusable component.
