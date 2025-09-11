@@ -24,6 +24,7 @@ const RecentPlayerItem: React.FC<RecentPlayerItemProps> = ({ player, censor = fa
   const dispatch = useDispatch();
   const { maxFavoriteRecentPlayers } = useSelector((state: RootReducer) => state.appSettingsReducer.settings);
   const [expandedSide, setExpandedSide] = useState<'opponent' | 'ally' | null>(null);
+  const [collapsed, setCollapsed] = useState(true);
   
   // Compute primary (top overall) character and per-role top picks
   const getTopOverallCharacter = (): string => {
