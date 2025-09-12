@@ -13,6 +13,7 @@ export enum MenuKeys {
   HEROS = 'Heros-Sub',
   HEROS_TIERLIST = 'Heros-Tierlist',
   SETTINGS = 'Settings',
+  DEV_PLAYGROUND = 'Dev-Playground',
 }
 
 export interface AntMenuItem {

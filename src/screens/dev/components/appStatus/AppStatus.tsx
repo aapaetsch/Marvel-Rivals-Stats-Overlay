@@ -15,15 +15,12 @@ const AppStatus: React.FC = () => {
         <div className="left-col">
           <div className="app-status-grid-item"><GameStatusWidget /></div>
           <div className="app-status-grid-item"><EventHealthWidget /></div>
-        </div>
-        <div className="right-col">
           <div className="app-status-grid-item"><MatchSummaryWidget /></div>
           <div className="app-status-grid-item"><LocalPlayerWidget /></div>
           <div className="app-status-grid-item wide"><TeamStatsWidget /></div>
           <div className="app-status-grid-item"><AlliesWidget /></div>
           <div className="app-status-grid-item"><OpponentsWidget /></div>
         </div>
-        
       </div>
     </div>
   );
