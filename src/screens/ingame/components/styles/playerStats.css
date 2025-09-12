@@ -121,6 +121,7 @@
 
 .ultimate-border {
   position: absolute;
+  inset: 0;
   top: 0;
   left: 0;
   width: 100%;
@@ -129,7 +130,6 @@
   pointer-events: none;
   /* Using a transparent background with a solid border instead of a full background */
   background-color: transparent;
-  border: 3px solid var(--victory-color); /* Yellow border for ultimate */
   border-radius: 6px;
   box-sizing: border-box;
   transition: all 0.3s ease-in-out;
@@ -188,7 +188,7 @@
 .ultimate-percentage {
   position: absolute;
   bottom: 0;
-  right: 0;
+  right: -0.5rem!important;
   background-color: rgba(0, 0, 0, 0.7);
   border: 1px solid var(--victory-color);
   border-radius: 4px;
