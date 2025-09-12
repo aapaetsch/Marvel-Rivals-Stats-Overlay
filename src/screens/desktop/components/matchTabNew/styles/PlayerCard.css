@@ -262,13 +262,13 @@
 }
 
 .player-name-back {
-  font-size: 0.75rem;
+  font-size: 1.15rem; /* Increased by 0.25rem */
   font-weight: bold;
   color: var(--primary-color-text);
 }
 
 .character-name-back {
-  font-size: 9px;
+  font-size: 0.5rem; /* Increased by 0.25rem from ~0.5625rem */
   color: rgba(255, 255, 255, 0.7);
 }
 

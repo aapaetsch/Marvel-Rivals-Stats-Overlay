@@ -1,7 +1,7 @@
 import React from 'react';
 import { PlayerCardData } from '../types/MatchCardTypes';
 import CharacterAvatar from './CharacterAvatar';
-import TeamStatsSummary from './TeamStatsSummary';
+import KDADisplay from './KDADisplay';
 
 interface PlayerCardBackProps {
   player: PlayerCardData;
@@ -78,14 +78,15 @@ const PlayerCardBack: React.FC<PlayerCardBackProps> = ({ player, allPlayers = []
           <div className="character-name-back">{player.characterName}</div>
         </div>
       </div>
-      {/* Summary row replaced by TeamStatsSummary */}
-      <TeamStatsSummary
-        kills={player.kills}
-        deaths={player.deaths}
-        assists={player.assists}
-        finalHits={player.finalHits}
-        className="card-back-stats"
-      />
+      <div className="card-kda">
+        <KDADisplay
+          kills={player.kills}
+          deaths={player.deaths}
+          assists={player.assists}
+          finalHits={player.finalHits}
+          hideRatioSection={true}
+        />
+      </div>
       <div className="card-back-content">
         {renderFinalHitsBreakdown()}
       </div>

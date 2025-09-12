@@ -197,8 +197,8 @@ const RecentPlayerItem: React.FC<RecentPlayerItemProps> = ({ player, censor = fa
             <div className="rpc-name">
               <Text className="player-name">{player.name}</Text>
               <div className="overall-wl-under-name">
-                <Text className="overall-wr-text" style={{ marginRight: 8 }}>{overallWinRate}%</Text>
-                <Text className="overall-wl-text">{overallWins}W - {overallLosses}L</Text>
+                <Text className="has-text-default-color" style={{ marginRight: 8 }}>{overallWinRate}%</Text>
+                <Text className="has-text-default-color">{overallWins}W - {overallLosses}L</Text>
               </div>
             </div>
           </div>

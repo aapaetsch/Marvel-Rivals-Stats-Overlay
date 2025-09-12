@@ -29,7 +29,7 @@ const PlayerCard: React.FC<PlayerCardProps> = ({ player, isFlipped, onFlip, allP
       onFlip();
     }
   };
-
+  // TODO: Localize aria-label
   return (
     <div 
       className={`player-card ${getTeamClass()}`}

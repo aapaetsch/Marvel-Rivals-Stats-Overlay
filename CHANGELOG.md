@@ -5,10 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Match Stats: Preserve `map`, `gameMode`, and `gameType` when a new `match_start` event arrives so they are recorded correctly even if provided slightly before the start event.
+
 ### Changed
 - Recent Players [#36]: Removed border around the main Recent Players page card container.
 - Recent Players [#39]: Cards maintain a consistent height to avoid row gaps during expand/collapse; content collapses inside with animation.
 - Recent Players [#37]: Pagination controls/icons styled for dark themes (white icons/text).
+– Match Cards (Front/Back): Increased player and character name font sizes by 0.25rem.
+– Team Headers: Reduced vertical padding and internal spacing to make headers slightly shorter.
 
 ### Added
 - Recent Players [#35]: Cards now start collapsed by default.

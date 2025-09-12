@@ -12,8 +12,8 @@ interface TeamSectionProps {
 
 const TeamSection: React.FC<TeamSectionProps> = ({ team, flippedCards, onCardFlip, allPlayers = [] }) => {
   const getTeamLabel = () => {
-    // TODO: localize "Ally" and "Enemy"
-    return team.isPlayerTeam ? 'Ally' : 'Enemy';
+    // TODO: localize "Player Team" and "Enemy Team"
+    return team.isPlayerTeam ? 'Player Team' : 'Enemy Team';
   };
 
   const getTeamClass = () => {

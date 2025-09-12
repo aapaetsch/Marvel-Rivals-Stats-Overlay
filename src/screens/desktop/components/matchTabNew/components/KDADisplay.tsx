@@ -6,7 +6,8 @@ const KDADisplay: React.FC<KDADisplayProps> = ({
   deaths, 
   assists, 
   finalHits = 0,
-  compact = false 
+  compact = false,
+  hideRatioSection = false 
 }) => {
   const calculateKD = () => {
     if (deaths === 0) return kills > 0 ? kills.toFixed(1) : '0.0';
@@ -48,6 +49,7 @@ const KDADisplay: React.FC<KDADisplayProps> = ({
           </div>
         </div>
       </div>
+      {!hideRatioSection ? (
       <div className="kda-section">
         <div className="kda-ratios">
           <div className="ratio-item">
@@ -60,6 +62,8 @@ const KDADisplay: React.FC<KDADisplayProps> = ({
           </div>
         </div>
       </div>
+      ) : (<div className="is-hidden"></div>)
+      }
     </div>
   );
 };

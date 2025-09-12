@@ -22,7 +22,6 @@ const PlayerCardFront: React.FC<PlayerCardFrontProps> = ({ player }) => {
           <div className="character-name-back">{player.characterName}</div>
         </div>
       </div>
-
       <div className="card-kda">
         <KDADisplay
           kills={player.kills}
