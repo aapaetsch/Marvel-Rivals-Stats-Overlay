@@ -1,6 +1,7 @@
 import React from 'react';
 import { TeamData, PlayerCardData } from '../types/MatchCardTypes';
 import PlayerCard from './PlayerCard';
+import TeamStatsSummary from './TeamStatsSummary';
 
 interface TeamSectionProps {
   team: TeamData;
@@ -11,7 +12,8 @@ interface TeamSectionProps {
 
 const TeamSection: React.FC<TeamSectionProps> = ({ team, flippedCards, onCardFlip, allPlayers = [] }) => {
   const getTeamLabel = () => {
-    return team.isPlayerTeam ? 'Your Team' : 'Enemy Team';
+    // TODO: localize "Ally" and "Enemy"
+    return team.isPlayerTeam ? 'Ally' : 'Enemy';
   };
 
   const getTeamClass = () => {
@@ -37,50 +39,24 @@ const TeamSection: React.FC<TeamSectionProps> = ({ team, flippedCards, onCardFli
     healing: 0
   });
 
-  const formatNumber = (num: number) => {
-    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
-    if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
-    return num.toString();
-  };
-
+  // Note: large number format not needed after removing dmg/blk/heal summary
   return (
     <div className={`team-section ${getTeamClass()}`}>
       <div className="team-header">
         <div className="team-info">
-          <h3 className="team-label">{getTeamLabel()}</h3>
+          <h3 className="team-label">
+            {getTeamLabel()}
+            {/* TODO: Localize Winner */}
+            {team.isWinner ? <span className="team-tag winner">Winner</span> : null}
+          </h3>
         </div>
-        <div className="team-stats-summary">
-          <div className="team-stat">
-            <span className="team-stat-value">{teamStats.kills}</span>
-            <span className="team-stat-label">K</span>
-          </div>
-          <div className="team-stat">
-            <span className="team-stat-value">{teamStats.deaths}</span>
-            <span className="team-stat-label">D</span>
-          </div>
-          <div className="team-stat">
-            <span className="team-stat-value">{teamStats.assists}</span>
-            <span className="team-stat-label">A</span>
-          </div>
-          <div className="team-stat">
-            <span className="team-stat-value">{teamStats.finalHits}</span>
-            <span className="team-stat-label">FB</span>
-          </div>
-          <div className="team-stat">
-            <span className="team-stat-value">{formatNumber(teamStats.damage)}</span>
-            <span className="team-stat-label">DMG</span>
-          </div>
-          <div className="team-stat">
-            <span className="team-stat-value">{formatNumber(teamStats.blocked)}</span>
-            <span className="team-stat-label">BLK</span>
-          </div>
-          <div className="team-stat">
-            <span className="team-stat-value">{formatNumber(teamStats.healing)}</span>
-            <span className="team-stat-label">HEAL</span>
-          </div>
-        </div>
+        <TeamStatsSummary
+          kills={teamStats.kills}
+          deaths={teamStats.deaths}
+          assists={teamStats.assists}
+          finalHits={teamStats.finalHits}
+        />
       </div>
-      
       <div className="team-cards">
         {team.players.map((player) => (
           <PlayerCard
