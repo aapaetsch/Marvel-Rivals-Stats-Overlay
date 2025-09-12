@@ -47,7 +47,7 @@ export interface TeamStats {
   totalHealing: number;
 }
 
-export interface MatchStatsState {
+export interface MatchSnapshot {
   matchId: string | null;
   map: string | null;
   gameType: string | null;
@@ -63,7 +63,18 @@ export interface MatchStatsState {
   };
 }
 
+// Current match state, with per-round snapshots
+export interface MatchStatsState extends MatchSnapshot {
+  rounds: MatchSnapshot[]; // snapshots captured at round boundaries
+}
+
 export interface MatchStoreState {
   currentMatch: MatchStatsState;
   matchHistory: MatchStatsState[];
+  clearMatchTimeout: number | null; // Stores timeout ID for delayed match clearing
+  lastKillEvents?: Array<{
+    attacker: string;
+    victim: string;
+    timestamp: number;
+  }>;
 }

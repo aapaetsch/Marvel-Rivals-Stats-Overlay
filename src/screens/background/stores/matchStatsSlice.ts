@@ -1,22 +1,31 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { logger } from "lib/log";
 import { isDev } from "lib/utils";
+import { setApiKey, getPlayerByUsername, initializeApiService } from "lib/marvelRivalsApi";
+import { getPlayerStats } from "lib/recentPlayersService";
 import {
   MatchOutcome,
   MatchStatsState,
   MatchStoreState,
-  PlayerStats,  // Uncommented this line
-  TeamStats
+  PlayerStats,
+  TeamStats,
+  MatchSnapshot
 } from "../types/matchStatsTypes";
 
-// Only try to initialize the logger with overwolf in production environment
-// In development, the logger will work without initialization or use console
-if (typeof overwolf !== 'undefined') {
-  logger.init(overwolf).catch(err => console.error("Failed to initialize logger:", err));
-} else if (isDev) {
-  // In dev mode, just log to console without using overwolf
-  console.log("Running in development mode, logger will use console only");
-}
+// Import the PlayerData and RecentPlayerData types from the API service
+import { PlayerData as ApiPlayerData, RecentPlayerData } from "lib/marvelRivalsApi";
+
+// Create a thunk that will be used to complete the match and trigger the middleware
+export const completeMatchThunk = createAsyncThunk(
+  'matchStats/completeMatchThunk',
+  async (_, { dispatch, getState }) => {
+    // The middleware will handle the rest
+    // No need to return anything here as the middleware will dispatch further actions
+    return;
+  }
+);
+
+// initializeApiService();
 
 const initialMatchStatsState: MatchStatsState = {
   matchId: null,
@@ -30,11 +39,70 @@ const initialMatchStatsState: MatchStatsState = {
     matchStart: null,
     matchEnd: null,
   },
+  rounds: [],
 };
 
 const initialState: MatchStoreState = {
   currentMatch: initialMatchStatsState,
   matchHistory: [],
+  clearMatchTimeout: null,
+};
+
+// Build a deep snapshot of the current match suitable for per-round storage
+const buildRoundSnapshot = (match: MatchStatsState): MatchSnapshot => {
+  const playersCopy: Record<string, PlayerStats> = {};
+  for (const [uid, p] of Object.entries(match.players)) {
+    playersCopy[uid] = {
+      ...p,
+      killedPlayers: { ...(p.killedPlayers || {}) },
+      killedBy: { ...(p.killedBy || {}) },
+      characterSwaps: Array.isArray(p.characterSwaps) ? [...p.characterSwaps] : [],
+    } as PlayerStats;
+  }
+
+  // Compute team totals from the copied players
+  const teamTotals: Record<number, TeamStats> = {};
+  for (const player of Object.values(playersCopy)) {
+    const t = teamTotals[player.team] || {
+      finalHits: 0,
+      totalDamage: 0,
+      totalBlocked: 0,
+      totalHealing: 0,
+    };
+    t.finalHits += player.finalHits || 0;
+    t.totalDamage += player.damageDealt || 0;
+    t.totalBlocked += player.damageBlocked || 0;
+    t.totalHealing += player.totalHeal || 0;
+    teamTotals[player.team] = t;
+  }
+
+  // Compute percentages on the copied players (do not mutate original state)
+  for (const player of Object.values(playersCopy)) {
+    const team = teamTotals[player.team] || { finalHits: 0, totalDamage: 0, totalBlocked: 0, totalHealing: 0 };
+    player.pctTeamDamage = team.totalDamage > 0 ? +(((player.damageDealt || 0) / team.totalDamage) * 100).toFixed(1) : 0;
+    player.pctTeamBlocked = team.totalBlocked > 0 ? +(((player.damageBlocked || 0) / team.totalBlocked) * 100).toFixed(1) : 0;
+    player.pctTeamHealing = team.totalHealing > 0 ? +(((player.totalHeal || 0) / team.totalHealing) * 100).toFixed(1) : 0;
+  }
+
+  const snapshot: MatchSnapshot = {
+    matchId: match.matchId,
+    map: match.map,
+    gameType: match.gameType,
+    gameMode: match.gameMode,
+    outcome: match.outcome,
+    players: playersCopy,
+    teamStats: teamTotals,
+    timestamps: { ...match.timestamps },
+  };
+  return snapshot;
+};
+
+// Heuristic: determine if there was activity worth snapshotting in the current round
+const hasRoundActivity = (match: MatchStatsState): boolean => {
+  return Object.values(match.players).some((p) =>
+    (p.kills || 0) > 0 || (p.deaths || 0) > 0 || (p.assists || 0) > 0 ||
+    (p.finalHits || 0) > 0 || (p.damageDealt || 0) > 0 || (p.damageBlocked || 0) > 0 || (p.totalHeal || 0) > 0
+  );
 };
 
 const completeMatchHandler = (state: MatchStoreState) => {
@@ -127,20 +195,55 @@ const completeMatchHandler = (state: MatchStoreState) => {
     "matchStatsSlice.ts",
     "completeMatch"
   );
-
-  // Preserve final match data and reset
-  state.matchHistory.push(JSON.parse(JSON.stringify(state.currentMatch)));
-  state.currentMatch = { ...initialMatchStatsState };
+  // Preserve final match data in history
+  const matchToSave = JSON.parse(JSON.stringify(state.currentMatch));
+  state.matchHistory.push(matchToSave);
+  
+  // Log that we've saved match to history
+  logger.logInfo(
+    {
+      event: "match_saved_to_history",
+      matchId: matchToSave.matchId,
+      historyLength: state.matchHistory.length,
+      timestamp: Date.now()
+    },
+    "matchStatsSlice.ts",
+    "completeMatchHandler"
+  );
+  
+  // Instead of immediately resetting, we'll set a timeout to clear after 1 minute
+  // The actual timeout is created in the reducer and stored in the state
+  // We don't reset state.currentMatch here anymore
 };
-
 
 const matchStatsSlice = createSlice({
   name: "matchStats",
   initialState,
   reducers: {
     resetCurrentMatch(state) {
-      logger.logInfo("Resetting current match", "matchStatsSlice.ts", "resetCurrentMatch");
-      state.currentMatch = { ...initialMatchStatsState };
+      logger.logInfo("Manually resetting current match", "matchStatsSlice.ts", "resetCurrentMatch");
+      
+      // Clear any pending timeout
+      if (state.clearMatchTimeout !== null) {
+        clearTimeout(state.clearMatchTimeout);
+        state.clearMatchTimeout = null;
+      }
+      
+      // Create completely fresh match state
+      state.currentMatch = {
+        matchId: null,
+        map: null,
+        gameType: null,
+        gameMode: null,
+        outcome: MatchOutcome.Unknown,
+        players: {},
+        teamStats: {},
+        timestamps: {
+          matchStart: null,
+          matchEnd: null,
+        },
+        rounds: [],
+      };
     },
 
     processInfoUpdate(state, action: PayloadAction<any>) {
@@ -155,8 +258,8 @@ const matchStatsSlice = createSlice({
       if (info.map) state.currentMatch.map = info.map;
       if (info.game_mode) state.currentMatch.gameMode = info.game_mode;
       if (info.game_type) state.currentMatch.gameType = info.game_type;
-      if (info.match_outcome) state.currentMatch.outcome = info.match_outcome;
-
+      if (info.match_outcome) state.currentMatch.outcome = info.match_outcome;      
+      
       // Roster updates
       for (const [key, value] of Object.entries(info)) {
 
@@ -164,6 +267,7 @@ const matchStatsSlice = createSlice({
           const data = JSON.parse(value as string);
           const uid = data.uid;
           const existing = state.currentMatch.players[uid] || {};
+
           if (timestamp > existing?.lastUpdated || !existing || existing?.lastUpdated == null) {
             // Merge new roster data with any existing player state
             state.currentMatch.players[uid] = {
@@ -199,9 +303,37 @@ const matchStatsSlice = createSlice({
               killedPlayers: existing.killedPlayers || {},
               killedBy: existing.killedBy || {},
               finalHits: existing.finalHits ?? 0,
-              characterSwaps: existing.characterSwaps ?? [],
+              characterSwaps: existing.characterSwaps ?? [],              
               lastUpdated: timestamp,
-            };
+            };              
+            
+            // For newly detected players, check if we have recent data or fetch from API
+            // if (isNewPlayer && data.name) {
+            //   // Fetch player stats asynchronously
+            //   // We can't await in a reducer, so we'll dispatch in a "fire and forget" manner
+            //   getPlayerStats({ username: data.name })
+            //     .then((apiData) => {
+            //       if (apiData) {
+            //         const source = 'lastUpdated' in apiData ? "cache" : "api";
+            //         logger.logInfo(
+            //           {
+            //             event: "player_api_data_fetched",
+            //             player: data.name,
+            //             uid: data.uid,
+            //             source: source,
+            //             api_data: apiData
+            //           },
+            //           "matchStatsSlice.ts",
+            //           "fetchPlayerApiData"
+            //         );
+                    
+            //         console.log(`Received API data for player: ${data.name}`, apiData);
+            //       }
+            //     })
+            //     .catch(err => {
+            //       console.error(`Failed to fetch API data for player: ${data.name}`, err);
+            //     });
+            // }
           }
           if (existing.characterName && existing.characterName !== data.character_name) {
             // The player has switched characters
@@ -223,7 +355,12 @@ const matchStatsSlice = createSlice({
               "processInfoUpdate"
             );
             
-            existing.characterSwaps.push(swap);
+            // Ensure we push into the up-to-date object stored in state
+            const target = state.currentMatch.players[uid];
+            if (!target.characterSwaps) {
+              target.characterSwaps = [];
+            }
+            target.characterSwaps.push(swap);
           }
           // Then update the current characterName:
           existing.characterName = data.character_name;          
@@ -320,13 +457,58 @@ const matchStatsSlice = createSlice({
           case "kill_feed": 
             try {
               const data = typeof eventContent === 'string' ? JSON.parse(eventContent) : eventContent;
-              const attacker = Object.values(state.currentMatch.players).find(
-                (p) => p.name === data.attacker
+              
+              // Store the last few kill IDs to prevent duplicates (using a simple approach)
+              if (!state.lastKillEvents) {
+                state.lastKillEvents = [];
+              }
+              
+              // Check if this exact kill event was processed very recently (within 500ms)
+              const recentKill = state.lastKillEvents.find(
+                (event: { attacker: string; victim: string; timestamp: number }) => event.attacker === data.attacker && 
+                          event.victim === data.victim && 
+                          Date.now() - event.timestamp < 500
               );
-              const victim = Object.values(state.currentMatch.players).find(
-                (p) => p.name === data.victim
-              );
-              console.log("Kill feed event:", data, attacker, victim);
+              
+              if (recentKill) {
+                console.log("Duplicate kill_feed event detected, skipping:", data);
+                break;
+              }
+              
+              // Add this event to the recent events list
+              state.lastKillEvents.push({
+                attacker: data.attacker,
+                victim: data.victim,
+                timestamp: Date.now()
+              });
+              
+              // Keep only the last 10 events to prevent memory bloat
+              if (state.lastKillEvents.length > 10) {
+                state.lastKillEvents = state.lastKillEvents.slice(-10);
+              }
+              
+              // Helper function to find player by name or character name (for AI players)
+              const findPlayer = (nameToFind: string) => {
+                return Object.values(state.currentMatch.players).find((p) => {
+                  // First try exact name match (for human players)
+                  if (p.name === nameToFind) return true;
+                  
+                  // For AI players, try matching character name with/without difficulty suffix
+                  if (p.characterName) {
+                    // Remove difficulty suffixes like "-Easy", "-Normal", "-Hard"
+                    const cleanName = nameToFind.replace(/-(?:Easy|Normal|Hard)$/, '');
+                    if (p.characterName === cleanName) return true;
+                  }
+                  
+                  return false;
+                });
+              };
+              
+              const attacker = findPlayer(data.attacker);
+              const victim = findPlayer(data.victim);
+              console.log("Kill feed event:", data);
+              console.log("Found attacker:", attacker ? `${attacker.name} (${attacker.characterName})` : 'NOT FOUND');
+              console.log("Found victim:", victim ? `${victim.name} (${victim.characterName})` : 'NOT FOUND');
             
               // finalHits, plus tracking "who killed who"
               if (attacker && victim) {
@@ -371,25 +553,95 @@ const matchStatsSlice = createSlice({
               console.error("Failed to process kill_feed event:", error);
             }
             break;
-          
-
+            
           case "match_start":
-            state.currentMatch.timestamps.matchStart = Date.now();
+            // If there's a pending timeout to clear match stats, clear it as new match is starting
+            if (state.clearMatchTimeout !== null) {
+              clearTimeout(state.clearMatchTimeout);
+              state.clearMatchTimeout = null;
+            }
+            
+            // Reset match stats for a new match, but preserve any
+            // already-known match info (map, gameType, gameMode, matchId)
+            // that may have arrived slightly before the match_start event.
+            // This avoids losing these fields if Overwolf sends them earlier.
+            state.currentMatch = {
+              matchId: null,
+              map: state.currentMatch.map || null,
+              gameType: state.currentMatch.gameType || null,
+              gameMode: state.currentMatch.gameMode || null,
+              outcome: MatchOutcome.Unknown,
+              players: {},
+              teamStats: {},
+              timestamps: {
+                matchStart: Date.now(),
+                matchEnd: null,
+              },
+              rounds: [],
+            };
+            
             logger.logInfo(
               {
                 event: "match_start",
-                matchId: state.currentMatch.matchId,
-                map: state.currentMatch.map,
-                gameMode: state.currentMatch.gameMode,
-                gameType: state.currentMatch.gameType,
+                message: "Fresh match state created (preserved map/mode/type if known)",
                 timestamp: state.currentMatch.timestamps.matchStart
               },
               "matchStatsSlice.ts",
               "processEvents"
             );
             break;
-            
+
+          case "round_start":
+            // On round start, snapshot previous round stats if there was any activity
+            try {
+              if (hasRoundActivity(state.currentMatch)) {
+                const snapshot = buildRoundSnapshot(state.currentMatch);
+                state.currentMatch.rounds.push(snapshot);
+                logger.logMatchStats(
+                  {
+                    event: "round_snapshot_captured",
+                    roundsCount: state.currentMatch.rounds.length,
+                    timestamp: Date.now()
+                  },
+                  "matchStatsSlice.ts",
+                  "processEvents"
+                );
+              }
+            } catch (e) {
+              logger.logError(e as Error, "matchStatsSlice.ts", "round_start_snapshot");
+            }
+            // Do not reset stats automatically on round start; manual reset if desired.
+            logger.logInfo(
+              {
+                event: "round_start",
+                message: "Round started - stats persist across rounds",
+                matchId: state.currentMatch.matchId,
+                timestamp: Date.now()
+              },
+              "matchStatsSlice.ts",
+              "processEvents"
+            );
+            break;
+              
           case "match_end":
+            // Capture final round snapshot before computing final match
+            try {
+              if (hasRoundActivity(state.currentMatch)) {
+                const snapshot = buildRoundSnapshot(state.currentMatch);
+                state.currentMatch.rounds.push(snapshot);
+                logger.logMatchStats(
+                  {
+                    event: "final_round_snapshot_captured",
+                    roundsCount: state.currentMatch.rounds.length,
+                    timestamp: Date.now()
+                  },
+                  "matchStatsSlice.ts",
+                  "processEvents"
+                );
+              }
+            } catch (e) {
+              logger.logError(e as Error, "matchStatsSlice.ts", "match_end_snapshot");
+            }
             state.currentMatch.timestamps.matchEnd = Date.now();
             logger.logInfo(
               {
@@ -407,6 +659,9 @@ const matchStatsSlice = createSlice({
               "matchStatsSlice.ts",
               "processEvents"
             );
+            
+            // We still need to calculate final stats and add to history
+            // The completeMatchThunk will be dispatched from the background component
             completeMatchHandler(state);
             break;
 
@@ -423,11 +678,143 @@ const matchStatsSlice = createSlice({
             );
             break;
         }
-      }
+      }    
     },
-    completeMatch: completeMatchHandler
-
     
+    completeMatch: completeMatchHandler,
+    
+    // New action to set the timeout for clearing match stats
+    setMatchClearTimeout(state, action: PayloadAction<number>) {
+      // Clear any existing timeout first
+      if (state.clearMatchTimeout !== null) {
+        clearTimeout(state.clearMatchTimeout);
+      }
+      state.clearMatchTimeout = action.payload;
+    },
+    
+    // New action to clear the timeout and reset match stats
+    clearMatchTimeoutAction(state) {
+      if (state.clearMatchTimeout !== null) {
+        clearTimeout(state.clearMatchTimeout);
+        state.clearMatchTimeout = null;
+      }
+      
+      // Create completely fresh match state
+      state.currentMatch = {
+        matchId: null,
+        map: null,
+        gameType: null,
+        gameMode: null,
+        outcome: MatchOutcome.Unknown,
+        players: {},
+        teamStats: {},
+        timestamps: {
+          matchStart: null,
+          matchEnd: null,
+        },
+        rounds: [],
+      };
+      
+      logger.logInfo(
+        {
+          event: "match_stats_cleared_by_timeout",
+          timestamp: Date.now()
+        },
+        "matchStatsSlice.ts",
+        "clearMatchTimeoutAction"
+      );
+    },
+    
+    // Force immediate reset - useful for debugging or manual reset
+    forceResetMatch(state) {
+      // Clear any pending timeout
+      if (state.clearMatchTimeout !== null) {
+        clearTimeout(state.clearMatchTimeout);
+        state.clearMatchTimeout = null;
+      }
+      
+      // Create completely fresh match state
+      state.currentMatch = {
+        matchId: null,
+        map: null,
+        gameType: null,
+        gameMode: null,
+        outcome: MatchOutcome.Unknown,
+        players: {},
+        teamStats: {},
+        timestamps: {
+          matchStart: null,
+          matchEnd: null,
+        },
+        rounds: [],
+      };
+      
+      logger.logInfo(
+        {
+          event: "match_stats_force_reset",
+          timestamp: Date.now()
+        },
+        "matchStatsSlice.ts",
+        "forceResetMatch"
+      );
+    },
+
+    // Reset round stats while preserving match info - useful for manual round reset
+    resetRoundStats(state) {
+      // Reset player stats for new round while preserving match info and player roster
+      Object.values(state.currentMatch.players).forEach((player) => {
+        // Reset round-specific stats but keep player identity and character info
+        player.kills = 0;
+        player.deaths = 0;
+        player.assists = 0;
+        player.finalHits = 0;
+        player.damageDealt = 0;
+        player.damageBlocked = 0;
+        player.totalHeal = 0;
+        player.pctTeamDamage = 0;
+        player.pctTeamBlocked = 0;
+        player.pctTeamHealing = 0;
+        player.killedPlayers = {};
+        player.killedBy = {};
+        // Keep character swaps and other persistent data
+      });
+      
+      // Reset team stats
+      state.currentMatch.teamStats = {};
+      
+      logger.logInfo(
+        {
+          event: "round_stats_manual_reset",
+          message: "Round stats manually reset",
+          matchId: state.currentMatch.matchId,
+          playersReset: Object.keys(state.currentMatch.players).length,
+          timestamp: Date.now()
+        },
+        "matchStatsSlice.ts",
+        "resetRoundStats"
+      );
+    },
+    
+    // Manually capture a per-round snapshot of current stats
+    captureRoundSnapshot(state) {
+      try {
+        if (hasRoundActivity(state.currentMatch)) {
+          const snapshot = buildRoundSnapshot(state.currentMatch);
+          state.currentMatch.rounds.push(snapshot);
+          logger.logMatchStats(
+            {
+              event: "round_snapshot_captured_manual",
+              roundsCount: state.currentMatch.rounds.length,
+              timestamp: Date.now()
+            },
+            "matchStatsSlice.ts",
+            "captureRoundSnapshot"
+          );
+        }
+      } catch (e) {
+        logger.logError(e as Error, "matchStatsSlice.ts", "captureRoundSnapshot");
+      }
+    }
   },
 });
 
@@ -435,7 +822,12 @@ export const {
   resetCurrentMatch,
   processInfoUpdate,
   processEvents,
-  completeMatch
+  completeMatch,
+  setMatchClearTimeout,
+  clearMatchTimeoutAction,
+  forceResetMatch,
+  resetRoundStats,
+  captureRoundSnapshot
 } = matchStatsSlice.actions;
 
 export default matchStatsSlice.reducer;
