@@ -157,18 +157,21 @@ const characterDefaultIconMap: Record<CharacterName, string> = {};
 // @ts-ignore
 const characterLordIconMap: Record<CharacterName, string> = {};
 
+
+const postfixDefault = '_DEFAULT_Table_Icon.png';
 Object.entries(characterIconMap).forEach(([key, filename]) => {
   // derive a base name by removing known suffixes
   const base = filename
     .replace(/_?Icon\.png$/i, '')
     .replace(/_DEFAULT_Table_Icon\.png$/i, '');
-
+  
   // default table icon
-  characterDefaultIconMap[key as CharacterName] = `${base}_DEFAULT_Table_Icon.png`;
+  characterDefaultIconMap[key as CharacterName] = `${base}${postfixDefault}`;
 
   // lord icon -- most follow `${base}_Lord.png`, but some use different patterns
   characterLordIconMap[key as CharacterName] = `${base}_Lord.png`;
 });
+characterDefaultIconMap[CharacterName.PHOENIX] = 'Phoenix_DEFAULT_Table_Icon.png';
 
 // Special cases / overrides based on actual asset filenames
 characterDefaultIconMap[CharacterName.CLOAK_AND_DAGGER] = 'Cloak_Dagger_DEFAULT_Table_Icon.png';
