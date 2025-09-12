@@ -28,7 +28,7 @@ const Screen = () => {
         playerName: p.name,
         characterName: p.characterName,
         kills: p.kills,
-        finalBlows: p.finalHits, // or however you store final hits
+        finalHits: p.finalHits,
         deaths: p.deaths,
         assists: p.assists,
         damageBlocked: p.damageBlocked, // Add damage blocked here
@@ -38,7 +38,7 @@ const Screen = () => {
       }));
   }, [currentMatch.players]);
 
-  const baseTeamateProps = { kills: 0, deaths: 0, assists: 0, finalBlows: 0, damageBlocked: 0, ultCharge: 0, isTeammate: true, isUser: false};
+  const baseTeamateProps = { kills: 0, deaths: 0, assists: 0, finalHits: 0, damageBlocked: 0, ultCharge: 0, isTeammate: true, isUser: false};
   
   const teamStatsProps: TeamStatProps = {
     players: teammates != null && teammates.length > 0 ? teammates : [
@@ -61,15 +61,20 @@ const Screen = () => {
   }, []);
   const forceVisible = true;
   // Get app settings to check if this overlay should be shown
-  const { showTeamStats } = useSelector((state: RootReducer) => state.appSettingsReducer.settings);
+  const { showTeamStats, playerStatsOpacity } = useSelector((state: RootReducer) => state.appSettingsReducer.settings);
   
   // Show the component if match is in progress, forceVisible is true AND settings allow it
   const isVisible = (isMatchInProgress || forceVisible) && showTeamStats;
   
+  // Apply opacity at the container level for consistent transparency
+  const containerStyle = {
+    opacity: playerStatsOpacity / 100
+  };
+  
   return (
     <div className={`ingame ${isVisible ? '' : 'is-hidden'}`}>
       <DragHandle windowName={WINDOW_NAMES.INGAME} />
-      <div className="ingame__container">
+      <div className="ingame__container" style={containerStyle}>
         <TeammateStats {...teamStatsProps} />
       </div>
     </div>

@@ -102,7 +102,7 @@
 
 .teammate-card.is-closed {
   min-width: 40px;
-  width: 65%;
+  width: 70%;
   margin: 2px 0; /* Changed from margin: 4px auto to ensure left alignment */
   opacity: 0.7;
   overflow: hidden;
@@ -294,6 +294,21 @@
   flex-direction: column;
   justify-content: space-between;
   flex: 1;
+}
+
+/* Ensure icon/value sit side-by-side in compact view */
+.teammate-stats-grid .stat-row {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+.teammate-stats-grid .stat-icon {
+  flex: 0 0 auto;
+  margin-right: 4px;
+}
+.teammate-stats-grid .stat-value {
+  flex: 0 0 auto;
+  margin-left: 4px;
 }
 
 /* Ultra-compact layout */
