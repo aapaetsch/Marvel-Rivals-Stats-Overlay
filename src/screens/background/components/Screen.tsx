@@ -5,14 +5,22 @@ import {
   DISPLAY_OVERWOLF_HOOKS_LOGS,
 } from "app/shared/constants";
 import { useGameEventProvider, useWindow } from "overwolf-hooks";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { MARVELRIVALS_CLASS_ID, getHearthstoneGame } from "lib/games";
+import { useCallback, useEffect, useMemo, useState, useRef } from "react";
+import { MARVELRIVALS_CLASS_ID, getMarvelGame } from "lib/games";
 import store from "app/shared/store";
 import { log } from "lib/log";
 import { throttle } from "lib/utils";
+import { initPlayerDataService } from "lib/playerDataService"; // Import the player data service
+import windowManager from "lib/windowManager"; // Import the window manager
 
 // Import matchStats actions
-import { processInfoUpdate, processEvents } from "../stores/matchStatsSlice";
+import { 
+  processInfoUpdate, 
+  processEvents, 
+  setMatchClearTimeout, 
+  clearMatchTimeoutAction,
+  completeMatchThunk
+} from "../stores/matchStatsSlice";
 
 const { DESKTOP, INGAME, FINALHITSBAR, CHARSWAPBAR } = WINDOW_NAMES;
 
@@ -27,6 +35,8 @@ const BackgroundWindow = () => {
   const [finalhitsbar] = useWindow(FINALHITSBAR, DISPLAY_OVERWOLF_HOOKS_LOGS);
   const [changeswapbar] = useWindow(CHARSWAPBAR, DISPLAY_OVERWOLF_HOOKS_LOGS);
   const [gameResolutionChanged, setGameResolutionChanged] = useState(false);
+  const [gameState, setGameState] = useState<"running" | "not-running">("not-running");
+  const lastCompletedMatchIdRef = useRef<string | null>(null);
 
   // Throttle event dispatches to avoid overwhelming the Redux store with duplicate data
   const throttledInfoDispatch = useMemo(() => {
@@ -39,8 +49,17 @@ const BackgroundWindow = () => {
       // Convert current info to string for comparison
       const infoString = JSON.stringify(info);
       
-      // Only dispatch if info is different or more than 1 second has passed
-      if (infoString !== lastInfo || now - lastInfoTime >= 1000) {
+      // Check if this contains match outcome or other critical match info
+      const isCriticalMatchInfo = info?.info?.match_info?.match_outcome || 
+                                  info?.info?.match_info?.match_id ||
+                                  info?.info?.match_info?.map ||
+                                  info?.info?.match_info?.game_mode;
+      
+      // Use shorter throttle time for critical match info (500ms vs 1000ms)
+      const throttleTime = isCriticalMatchInfo ? 500 : 1000;
+      
+      // Only dispatch if info is different or enough time has passed
+      if (infoString !== lastInfo || now - lastInfoTime >= throttleTime) {
         lastInfo = infoString;
         lastInfoTime = now;
         store.dispatch(
@@ -53,6 +72,48 @@ const BackgroundWindow = () => {
     };
   }, []);
 
+  // Add a new useEffect to handle the match end timeout
+  useEffect(() => {
+    // Create a subscription to state changes to detect match end
+    const unsubscribe = store.subscribe(() => {
+      const state = store.getState();
+      const { currentMatch } = state.matchStatsReducer;
+      
+      // Check if a match just ended (matchEnd is set but we don't have an active timeout yet)
+      if (
+        currentMatch.timestamps.matchEnd !== null && 
+        state.matchStatsReducer.clearMatchTimeout === null &&
+        // Guard to ensure we only process each match once
+        (currentMatch.matchId || "__noid__") !== (lastCompletedMatchIdRef.current || "__noid__")
+      ) {
+        // Mark this match as processed
+        lastCompletedMatchIdRef.current = currentMatch.matchId || "__noid__";
+        // Dispatch the completeMatchThunk to trigger saving recent player data
+        store.dispatch(completeMatchThunk());
+        
+        // Create a timeout to clear match stats after 30 seconds (reduced from 1 minute)
+        const timeoutId = window.setTimeout(() => {
+          store.dispatch(clearMatchTimeoutAction());
+          console.log("Match stats cleared after 30-second timeout");
+        }, 30000); // Reduced from 60000ms to 30000ms
+        
+        // Store the timeout ID in the state so we can cancel it if needed
+        store.dispatch(setMatchClearTimeout(timeoutId));
+        console.log("Set up 30-second timeout to clear match stats", timeoutId);
+      }
+    });
+    
+    // Clean up the subscription when component unmounts
+    return () => unsubscribe();
+  }, []);
+
+  // Initialize the Marvel Rivals API player data service
+  useEffect(() => {
+    // Initialize the player data service with store.dispatch
+    log("Initializing Marvel Rivals API player data service", "Screen.tsx", "playerDataServiceInit");
+    initPlayerDataService(store.dispatch);
+  }, []);
+
   const eventsDispatch = useMemo(() => {
     // Store the last dispatched events to compare for duplicates
     let lastEvents: string = '';
@@ -63,16 +124,41 @@ const BackgroundWindow = () => {
       // Convert current events to string for comparison
       const eventsString = JSON.stringify(events);
       
-      // Only dispatch if events are different or more than 1 second has passed
-      if (eventsString !== lastEvents || now - lastEventsTime >= 1000) {
+      // Check if any of these events is a critical match event (start/end)
+      let isCriticalEvent = false;
+      if (events) {
+        const eventsArray = Array.isArray(events) ? events : 
+                            (events.events ? (Array.isArray(events.events) ? events.events : [events.events]) : 
+                            (events.name ? [events] : []));
+        
+        for (const event of eventsArray) {
+          const eventName = event.name || (event.data && event.data.name);
+          if (eventName === 'match_start' || eventName === 'match_end' || eventName === 'round_start' || eventName === 'round_end' || eventName === 'kill_feed') {
+            isCriticalEvent = true;
+            break;
+          }
+        }
+      }
+      
+      // For critical events, use minimal throttling (250ms), for others use 1 second
+      const throttleTime = isCriticalEvent ? 250 : 1000;
+      
+      // Only dispatch if events are different or enough time has passed
+      if (eventsString !== lastEvents || now - lastEventsTime >= throttleTime) {
         lastEvents = eventsString;
         lastEventsTime = now;
+        
+        // Process the events first
         store.dispatch(
           processEvents({
             events,
             timestamp: now,
           })
         );
+        
+        // We now rely on the store subscription below to dispatch
+        // completeMatchThunk exactly once and set the clear timeout.
+        // This avoids duplicate dispatches and race conditions here.
       }
     };
   }, []);
@@ -146,19 +232,31 @@ const BackgroundWindow = () => {
 
   const startApp = useCallback(
     async (reason: string) => {
-      //if the desktop or ingame window is not ready we don't want to start the app
-      if (!desktop || !ingame || !finalhitsbar) return;
+      //if the desktop window is not ready we don't want to start the app
+      if (!desktop) return;
       log(reason, "src/screens/background/components/Screen.tsx", "startApp");
-      const hearthstone = await getHearthstoneGame();
-      if (hearthstone) {
-        await Promise.all([start(), ingame?.restore(), finalhitsbar?.restore(), changeswapbar.restore(), desktop?.minimize()]);
+      const marvelRivals = await getMarvelGame();
+      if (marvelRivals) {
+        // Start the game event provider but don't restore windows directly
+        await start();
+        
+        // Minimize desktop window
+        await desktop?.minimize();
+        
+        // Let the window manager handle which windows to open based on settings
+        await windowManager.updateWindowsBasedOnSettings();
+        
         // Position windows after restoring them
         setTimeout(positionOverlayWindows, 1000);
       } else {
-        await Promise.all([stop(), ingame?.restore(), finalhitsbar?.restore(), changeswapbar.restore(), desktop?.restore()]);
+        // Stop event provider
+        await stop();
+        
+        // Show desktop window when game is closed
+        await desktop?.restore();
       }
     },
-    [desktop, ingame, finalhitsbar, changeswapbar, start, stop, positionOverlayWindows]
+    [desktop, start, stop, positionOverlayWindows]
   );
 
   const setFeatures = useCallback(() => {
@@ -176,6 +274,27 @@ const BackgroundWindow = () => {
       console.log(JSON.stringify(info));
     });
   }, []);
+  
+  // Add handleGameLaunch method 
+  const handleGameLaunch = useCallback(() => {
+    log("Marvel Rivals launched, initializing game features", "Screen.tsx", "handleGameLaunch");
+    
+    // Set required features for game events
+    setFeatures();
+    
+    // Start the event provider
+    start();
+    
+    // Let the window manager handle which windows to open based on settings
+    windowManager.updateWindowsBasedOnSettings().then(() => {
+      // Position windows with a small delay to ensure game is fully loaded
+      setTimeout(() => {
+        positionOverlayWindows();
+        log("Positioned overlay windows after game launch", "Screen.tsx", "handleGameLaunch");
+      }, 3000);
+    });
+    
+  }, [setFeatures, start, positionOverlayWindows]);
 
   // Listen for game resolution changes
   useEffect(() => {
@@ -205,7 +324,59 @@ const BackgroundWindow = () => {
     }
   }, [gameResolutionChanged, positionOverlayWindows]);
 
+  // Monitor settings changes and update window states accordingly
   useEffect(() => {
+    let prevSettings = store.getState().appSettingsReducer.settings;
+    
+    const unsubscribe = store.subscribe(() => {
+      const currentSettings = store.getState().appSettingsReducer.settings;
+      
+      // Check if any window-related settings changed
+      const windowSettingsChanged = 
+        prevSettings.enablePlayerStatsWindow !== currentSettings.enablePlayerStatsWindow ||
+        prevSettings.enableFinalHitsWindow !== currentSettings.enableFinalHitsWindow ||
+        prevSettings.enableCharSwapWindow !== currentSettings.enableCharSwapWindow ||
+        prevSettings.showDevWindow !== currentSettings.showDevWindow;
+      
+      if (windowSettingsChanged) {
+        log(
+          "Window resource settings changed, updating window states", 
+          "Screen.tsx", 
+          "settingsMonitor"
+        );
+        
+        // Update window states based on new settings
+        windowManager.updateWindowsBasedOnSettings();
+        
+        // Update previous settings reference
+        prevSettings = currentSettings;
+      }
+    });
+    
+    // Initial window state setup
+    windowManager.updateWindowsBasedOnSettings();
+    
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    const setupEventListeners = async () => {
+      const marvelRivals = await getMarvelGame();
+      setGameState(marvelRivals?.isRunning ? "running" : "not-running");
+      
+      // Initialize the player data service with store.dispatch
+      initPlayerDataService(store.dispatch);
+
+      if (marvelRivals?.isRunning) {
+        handleGameLaunch();
+      }
+    };
+
+    // Call setupEventListeners to check if game is running on component mount
+    setupEventListeners();
+    
     startApp("on initial load");
     const gameInfoUpdatedCallback = async (event: any) => {
       if (event.runningChanged && event.gameInfo?.classId === MARVELRIVALS_CLASS_ID) {
@@ -213,15 +384,20 @@ const BackgroundWindow = () => {
         startApp("onGameInfoUpdated");
         if (event.gameInfo.isRunning) {
           window.setTimeout(() => {setFeatures()}, 2000);
-          // Position windows after game starts
-          window.setTimeout(() => {positionOverlayWindows()}, 3000);
+          
+          // Update window states based on settings
+          window.setTimeout(async () => {
+            await windowManager.updateWindowsBasedOnSettings();
+            // Position windows after game starts and windows are updated
+            positionOverlayWindows();
+          }, 3000);
         }
       }
     }
     overwolf.games.onGameInfoUpdated.addListener(gameInfoUpdatedCallback);
 
     overwolf.games.getRunningGameInfo(function (res) {
-      if (res.isRunning) {
+      if (res?.isRunning) {
         window.setTimeout(() => {setFeatures()}, 2000);
         // Position windows if game is already running
         window.setTimeout(() => {positionOverlayWindows()}, 3000);
@@ -237,7 +413,7 @@ const BackgroundWindow = () => {
       overwolf.games.onGameInfoUpdated.removeListener(gameInfoUpdatedCallback);
       overwolf.extensions.onAppLaunchTriggered.removeListener(applaunchCallback);
     };
-  }, [setFeatures, startApp, positionOverlayWindows]);
+  }, [setFeatures, startApp, positionOverlayWindows, handleGameLaunch]);
 
   return null;
 };
