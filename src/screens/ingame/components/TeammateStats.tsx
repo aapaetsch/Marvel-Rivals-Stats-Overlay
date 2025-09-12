@@ -176,7 +176,7 @@ const TeammateCard = ({ player, index }: { player: PlayerStatsProps; index: numb
   const fontStyle = { color: playerStatsFontColor || '#FFFFFF' };
 
   // Border visual settings
-  const borderColor = teammateBorderColor || 'var(--victory-color)';
+  const borderColor = ultPercentage >= 99 ? 'var(--victory-color)' : (teammateBorderColor || 'var(--victory-color)');
   const borderOpacity = ultPercentage > 0 ? 0.95 : 0.3;
 
   return (
@@ -206,7 +206,7 @@ const TeammateCard = ({ player, index }: { player: PlayerStatsProps; index: numb
         {isTeammateUltra() ? (
           <div className="teammate-ultra">
             <div className="ultra-row ultra-char-ult">
-              <div className="ultra-character-name">{(player.characterName || '').split(' ')[0]}</div>
+              <div className="ultra-character-name">{(player.characterName || '******')}</div>
               <div className="ultimate-percentage"><span>{ultPercentage}%</span></div>
             </div>
             <div className="ultra-row ultra-stats">
@@ -224,7 +224,7 @@ const TeammateCard = ({ player, index }: { player: PlayerStatsProps; index: numb
             </div>
             <div className="ultra-row ultra-stats secondary">
               <span className="stat-icon">{icons.kd}</span>
-              <span className="stat-value">{calculateKD()}</span>
+              <span className="stat-value" style={{marginRight: '0.5rem'}}>{calculateKD()}</span>
               <span className="ultra-sep" />
               <span className="stat-icon">{icons.kda}</span>
               <span className="stat-value kda">{calculateKDA()}</span>

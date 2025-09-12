@@ -21,3 +21,9 @@ export interface PlayerStatsRowProps {
   label: string;
   value: number | string;
 }
+
+export interface TeamateOptionsArrays {
+  show: boolean[];
+  compact: boolean[];
+  ultra: boolean[];
+}
