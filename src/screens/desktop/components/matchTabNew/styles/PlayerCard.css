@@ -55,7 +55,7 @@
 }
 
 .player-name {
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: bold;
   color: var(--primary-color-text);
   white-space: nowrap;
@@ -262,13 +262,13 @@
 }
 
 .player-name-back {
-  font-size: 11px;
+  font-size: 1.15rem; /* Increased by 0.25rem */
   font-weight: bold;
   color: var(--primary-color-text);
 }
 
 .character-name-back {
-  font-size: 9px;
+  font-size: 0.75rem; /* Increased by 0.25rem from ~0.5625rem */
   color: rgba(255, 255, 255, 0.7);
 }
 
@@ -290,27 +290,35 @@
 .fh-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 4px;
+  gap: 8px;
 }
 
 .fh-item {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: center; /* center values under labels */
+  text-align: center;
 }
 
 .fh-label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.8);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  white-space: nowrap; /* Keep 'Final Hits' on one line */
 }
 
 .fh-value {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 800;
   color: var(--primary-color-text);
+}
+
+/* Center both summary items */
+.fh-grid .fh-item:first-child,
+.fh-grid .fh-item:last-child {
+  align-items: center;
 }
 
 .final-hits-summary {
@@ -336,91 +344,59 @@
   overflow-y: auto;
 }
 
-.final-hits-compact {
+
+/* New combined final hits/deaths list */
+.final-hits-list {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px; /* Tighter gap to fit up to 6 rows */
 }
 
-.final-hits-section {
+.final-hit-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  padding: 3px 6px; /* Reduce vertical padding to shorten rows */
   background: rgba(255, 255, 255, 0.03);
-  border-radius: 4px;
-  padding: 6px;
+  border-radius: 6px;
 }
 
-.section-header {
+.final-hit-row .row-center {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 4px;
-  padding-bottom: 2px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  gap: 8px;
+  min-width: 0; /* enable text ellipsis */
+  justify-self: center;
 }
 
-.section-title {
-  font-size: 9px;
-  color: rgba(255, 255, 255, 0.8);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: bold;
+.final-hit-row .row-avatar img,
+.final-hit-row .row-avatar canvas {
+  border-radius: 3px;
 }
 
-.section-total {
-  font-size: 12px;
-  font-weight: bold;
-}
-
-.section-total.given {
-  color: #4ade80;
-}
-
-.section-total.received {
-  color: #f87171;
-}
-
-.top-interactions {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-
-.interaction-line {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1px 0;
-}
-
-.player-name-short {
-  font-size: 12px;
+.final-hit-row .row-name {
+  font-size: 12px; /* Slightly smaller to help fit 6 rows */
   color: rgba(255, 255, 255, 0.9);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 80px;
+  max-width: 90px;
 }
 
-.interaction-count {
-  font-size: 12px;
-  font-weight: bold;
-  min-width: 12px;
+.final-hit-row .row-deaths {
+  font-size: 13px; /* Slightly smaller to reduce row height */
+  font-weight: 800;
+  color: #f87171; /* red for deaths */
+  text-align: left;
+  justify-self: start;
+}
+
+.final-hit-row .row-finalhits {
+  font-size: 13px; /* Slightly smaller to reduce row height */
+  font-weight: 800;
+  color: #4ade80; /* green for FH */
   text-align: right;
-}
-
-.interaction-line.given .interaction-count {
-  color: #4ade80;
-}
-
-.interaction-line.received .interaction-count {
-  color: #f87171;
-}
-
-.more-indicator {
-  font-size: 7px;
-  color: rgba(255, 255, 255, 0.5);
-  text-align: center;
-  font-style: italic;
-  margin-top: 2px;
+  justify-self: end;
 }
 
 .no-final-hits {

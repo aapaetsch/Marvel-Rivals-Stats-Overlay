@@ -10,36 +10,26 @@ interface PlayerCardFrontProps {
 const PlayerCardFront: React.FC<PlayerCardFrontProps> = ({ player }) => {
   return (
     <div className="player-card-front">
-      <div className="card-header">
-        <div className="player-name-back" title={player.name}>
-          {player.name}
-        </div>
-      </div>
-
-      <div className="card-avatar">
-        <CharacterAvatar 
+      <div className="card-back-header">
+        <CharacterAvatar
           characterName={player.characterName}
           playerName={player.name}
           size={32}
           className="back-avatar"
         />
-      </div>
-
-      <div className="card-character">
-        <div className="character-name-back" title={player.characterName}>
-          {player.characterName}
+        <div className="player-back-info">
+          <div className="player-name-back">{player.name}</div>
+          <div className="character-name-back">{player.characterName}</div>
         </div>
       </div>
-
       <div className="card-kda">
-        <KDADisplay 
+        <KDADisplay
           kills={player.kills}
           deaths={player.deaths}
           assists={player.assists}
           finalHits={player.finalHits}
         />
       </div>
-
     </div>
   );
 };

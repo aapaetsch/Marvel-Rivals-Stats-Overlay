@@ -1,5 +1,5 @@
 ﻿import React, { useState, useEffect, useMemo } from 'react';
-import { List, Avatar, Row, Col, Card, Typography, Space, Button, Dropdown, Menu, Input, Tooltip, message, Badge, Alert, Switch } from 'antd';
+import { List, Avatar, Card, Typography, Space, Button, Dropdown, Menu, Input, Tooltip, message, Badge, Alert, Switch } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { RootReducer } from 'app/shared/rootReducer';
@@ -197,8 +197,8 @@ const RecentPlayerItem: React.FC<RecentPlayerItemProps> = ({ player, censor = fa
             <div className="rpc-name">
               <Text className="player-name">{player.name}</Text>
               <div className="overall-wl-under-name">
-                <Text className="overall-wr-text" style={{ marginRight: 8 }}>{overallWinRate}%</Text>
-                <Text className="overall-wl-text">{overallWins}W - {overallLosses}L</Text>
+                <Text className="has-text-default-color" style={{ marginRight: 8 }}>{overallWinRate}%</Text>
+                <Text className="has-text-default-color">{overallWins}W - {overallLosses}L</Text>
               </div>
             </div>
           </div>

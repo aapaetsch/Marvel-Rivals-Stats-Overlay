@@ -1,6 +1,7 @@
 import React from 'react';
 import { PlayerCardData } from '../types/MatchCardTypes';
 import CharacterAvatar from './CharacterAvatar';
+import KDADisplay from './KDADisplay';
 
 interface PlayerCardBackProps {
   player: PlayerCardData;
@@ -9,70 +10,55 @@ interface PlayerCardBackProps {
 
 const PlayerCardBack: React.FC<PlayerCardBackProps> = ({ player, allPlayers = [] }) => {
   const renderFinalHitsBreakdown = () => {
-    const killedPlayers = Object.entries(player.killedPlayers || {});
-    const killedBy = Object.entries(player.killedBy || {});
+    const killedPlayers = player.killedPlayers || {};
+    const killedBy = player.killedBy || {};
 
-    const totalGiven = killedPlayers.reduce((sum, [, count]) => sum + count, 0);
-    const totalReceived = killedBy.reduce((sum, [, count]) => sum + count, 0);
+    const opponentUids = Array.from(new Set([
+      ...Object.keys(killedPlayers),
+      ...Object.keys(killedBy)
+    ]));
 
-    // Get top interactions (max 2 each to save space)
-    const topKilled = killedPlayers
-      .sort(([,a], [,b]) => b - a);
-    const topKilledBy = killedBy
-      .sort(([,a], [,b]) => b - a);
-
-    // Get opponent player names for display
-    const getPlayerName = (uid: string) => {
-      const foundPlayer = allPlayers.find(p => p.uid === uid);
-      return foundPlayer ? foundPlayer.name : `Player ${uid.slice(-4)}`;
-    };
-
-    if (totalGiven === 0 && totalReceived === 0) {
+    if (opponentUids.length === 0) {
       return (
         <div className="no-final-hits">
+          {/* TODO: Localize */}
           <p>No final hits data</p>
         </div>
       );
     }
 
+    const rows = opponentUids.map(uid => {
+      const opp = allPlayers.find(p => p.uid === uid);
+      // TODO: Localize "Player" fallback and "UNKNOWN" character
+      return {
+        uid,
+        name: opp?.name || `Player ${uid.slice(-4)}`,
+        characterName: opp?.characterName || 'UNKNOWN',
+        deathsTo: killedBy[uid] || 0,
+        finalHitsOn: killedPlayers[uid] || 0,
+      };
+    })
+    // Sort by deaths descending as requested
+    .sort((a, b) => b.deathsTo - a.deathsTo);
+
     return (
       <div className="final-hits-breakdown">
-        <div className="final-hits-compact">
-          {totalGiven > 0 && (
-            <div className="final-hits-section">
-              {topKilled.length > 0 && (
-                <div className="top-interactions">
-                  {topKilled.map(([playerUid, count]) => (
-                    <div key={`killed-${playerUid}`} className="interaction-line given">
-                      <span className="player-name-short">{getPlayerName(playerUid)}</span>
-                      <span className="interaction-count">{count}</span>
-                    </div>
-                  ))}
-                  {/* {killedPlayers.length > 2 && (
-                    <div className="more-indicator">+{killedPlayers.length - 2} more</div>
-                  )} */}
-                </div>
-              )}
+        <div className="final-hits-list">
+          {rows.map(row => (
+            <div key={row.uid} className="final-hit-row">
+              <span className="row-deaths" title="Deaths">{row.deathsTo}</span>
+              <div className="row-center">
+                <CharacterAvatar 
+                  characterName={row.characterName}
+                  playerName={row.name}
+                  size={22}
+                  className="row-avatar"
+                />
+                <span className="row-name" title={row.name}>{row.name}</span>
+              </div>
+              <span className="row-finalhits" title="Final Hits">{row.finalHitsOn}</span>
             </div>
-          )}
-
-          {totalReceived > 0 && (
-            <div className="final-hits-section">
-              {topKilledBy.length > 0 && (
-                <div className="top-interactions">
-                  {topKilledBy.map(([playerUid, count]) => (
-                    <div key={`killedby-${playerUid}`} className="interaction-line received">
-                      <span className="player-name-short">{getPlayerName(playerUid)}</span>
-                      <span className="interaction-count">{count}</span>
-                    </div>
-                  ))}
-                  {killedBy.length > 2 && (
-                    <div className="more-indicator">+{killedBy.length - 2} more</div>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
+          ))}
         </div>
       </div>
     );
@@ -92,18 +78,14 @@ const PlayerCardBack: React.FC<PlayerCardBackProps> = ({ player, allPlayers = []
           <div className="character-name-back">{player.characterName}</div>
         </div>
       </div>
-      {/* Summary row: Final Hits and Deaths */}
-      <div className="final-hits-summary-row">
-        <div className="fh-grid">
-          <div className="fh-item">
-            <div className="fh-label">Final Hits</div>
-            <div className="fh-value">{player.finalHits}</div>
-          </div>
-          <div className="fh-item">
-            <div className="fh-label">Deaths</div>
-            <div className="fh-value">{player.deaths}</div>
-          </div>
-        </div>
+      <div className="card-kda">
+        <KDADisplay
+          kills={player.kills}
+          deaths={player.deaths}
+          assists={player.assists}
+          finalHits={player.finalHits}
+          hideRatioSection={true}
+        />
       </div>
       <div className="card-back-content">
         {renderFinalHitsBreakdown()}

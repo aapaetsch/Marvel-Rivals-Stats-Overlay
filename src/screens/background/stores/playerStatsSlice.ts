@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { 
   PlayerStatsState, 
   PlayerStatsFilterType, 
@@ -9,7 +9,18 @@ import {
   CumulativeStats,
   PlayerStatsData
 } from '../../desktop/types/playerStatsTypes';
+import { initializeApiService, PlayerData, setApiKey } from '../../../lib/marvelRivalsApi';
+import { getPlayerStats } from '../../../lib/recentPlayersService';
+import { logger } from '../../../lib/log';
 
+// Marvel Rivals API key - in production, this should be stored securely
+// const MARVEL_RIVALS_API_KEY = 'YOUR_API_KEY_HERE';
+
+// Initialize API key when in production environment
+// if (typeof overwolf !== 'undefined') {
+//   setApiKey(MARVEL_RIVALS_API_KEY);
+// }
+initializeApiService();
 // Generate some dummy data for the ranked history
 const generateRankedHistoryData = (): RankedHistoryPoint[] => {
   const data: RankedHistoryPoint[] = [];
@@ -84,6 +95,38 @@ const createCumulativeStats = (): CumulativeStats => {
   };
 };
 
+// Async thunk to fetch current user's player data from the API
+export const fetchCurrentPlayerData = createAsyncThunk(
+  'playerStats/fetchCurrentPlayerData',
+  async (username: string, { rejectWithValue }) => {
+    try {
+      logger.logInfo(
+        { event: "fetch_current_player_data", player: username },
+        "playerStatsSlice.ts",
+        "fetchCurrentPlayerData"
+      );
+      
+      const playerData = await getPlayerStats({ username });
+      
+      if (!playerData) {
+        return rejectWithValue("Failed to fetch player data");
+      }
+      
+      return playerData;
+    } catch (error) {
+      logger.logInfo(
+        { 
+          event: "fetch_current_player_data_error", 
+          error: error instanceof Error ? error.message : String(error) 
+        },
+        "playerStatsSlice.ts",
+        "fetchCurrentPlayerData"
+      );
+      return rejectWithValue(error instanceof Error ? error.message : "Failed to fetch player data");
+    }
+  }
+);
+
 // Initial state with dummy data
 const initialState: PlayerStatsState = {
   data: {
@@ -102,6 +145,44 @@ const initialState: PlayerStatsState = {
 const playerStatsSlice = createSlice({
   name: 'playerStats',
   initialState,
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchCurrentPlayerData.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchCurrentPlayerData.fulfilled, (state, action) => {
+        state.isLoading = false;
+        
+        // If we have player data already, update it with the API data
+        if (state.data) {
+          state.data.externalApiData = {
+            ...action.payload,
+            lastUpdated: Date.now()
+          };
+        }
+        
+        logger.logInfo(
+          { 
+            event: "player_api_data_success", 
+            username: action.payload.username,
+            hasRankInfo: !!action.payload.rank
+          },
+          "playerStatsSlice.ts",
+          "fetchCurrentPlayerData.fulfilled"
+        );
+      })
+      .addCase(fetchCurrentPlayerData.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+        
+        logger.logInfo(
+          { event: "player_api_data_failed", error: action.payload },
+          "playerStatsSlice.ts",
+          "fetchCurrentPlayerData.rejected"
+        );
+      });
+  },
   reducers: {
     setActiveFilter: (state, action: PayloadAction<PlayerStatsFilterType>) => {
       state.activeFilter = action.payload;

@@ -27,6 +27,8 @@ export interface TeamData {
   teamNumber: number;
   players: PlayerCardData[];
   isPlayerTeam: boolean;
+  // Derived flag to indicate which team won the match
+  isWinner?: boolean;
 }
 
 export interface MatchCardState {
@@ -52,6 +54,7 @@ export interface KDADisplayProps {
   assists: number;
   finalHits?: number;
   compact?: boolean;
+  hideRatioSection?: boolean;
 }
 
 export interface PlayerStatsProps {

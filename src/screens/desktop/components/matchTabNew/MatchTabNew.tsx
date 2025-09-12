@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { RootReducer } from 'app/shared/rootReducer';
@@ -8,17 +8,96 @@ import MatchCardGrid from './components/MatchCardGrid';
 import './styles/MatchTabNew.css';
 import './styles/PlayerCard.css';
 import './styles/CardFlipAnimation.css';
+import { Segmented } from 'antd';
 
 const MatchTabNew: React.FC = () => {
   const { t } = useTranslation();
   const { currentMatch } = useSelector((state: RootReducer) => state.matchStatsReducer);
+  const [nowTs, setNowTs] = useState<number>(Date.now());
+
+  // Update a tick every second to refresh duration while match is ongoing
+  useEffect(() => {
+    if (currentMatch?.timestamps?.matchStart && !currentMatch?.timestamps?.matchEnd) {
+      const id = setInterval(() => setNowTs(Date.now()), 1000);
+      return () => clearInterval(id);
+    }
+  }, [currentMatch?.timestamps?.matchStart, currentMatch?.timestamps?.matchEnd]);
   const { flippedCards, toggleCard, resetAllCards } = useCardFlip();
+  // Round selection: 'match' (default cumulative) or specific round index
+  const [roundSelection, setRoundSelection] = useState<'match' | number>('match');
 
-  // Transform Redux data to card format
+  // Build a source players map based on selection
+  const selectedPlayersMap = useMemo(() => {
+    const rounds = currentMatch?.rounds || [];
+    if (!currentMatch?.players) return {} as any;
+
+    if (roundSelection === 'match' || rounds.length === 0) {
+      return currentMatch.players;
+    }
+
+    const idx = roundSelection as number;
+    const snap = rounds[idx];
+    if (!snap?.players) return currentMatch.players;
+
+    // First round: use snapshot as-is
+    if (idx === 0) return snap.players;
+
+    const prev = rounds[idx - 1];
+    const prevPlayers = prev?.players || {};
+
+    // Compute delta between current and previous snapshot
+    const uidMap: Record<string, true> = {};
+    Object.keys(snap.players).forEach((k) => { uidMap[k] = true; });
+    Object.keys(prevPlayers).forEach((k) => { uidMap[k] = true; });
+    const deltaPlayers: Record<string, any> = {};
+
+    const diffNum = (a?: number, b?: number) => Math.max(0, (a || 0) - (b || 0));
+    const diffMap = (am?: Record<string, number>, bm?: Record<string, number>) => {
+      const keyMap: Record<string, true> = {};
+      Object.keys(am || {}).forEach((k) => { keyMap[k] = true; });
+      Object.keys(bm || {}).forEach((k) => { keyMap[k] = true; });
+      const out: Record<string, number> = {};
+      for (const k in keyMap) {
+        const v = diffNum(am?.[k], bm?.[k]);
+        if (v > 0) out[k] = v;
+      }
+      return out;
+    };
+
+    for (const uid in uidMap) {
+      const cur = (snap.players as any)[uid] || {};
+      const pre = (prevPlayers as any)[uid] || {};
+
+      deltaPlayers[uid] = {
+        uid: cur.uid || pre.uid || uid,
+        name: cur.name || pre.name || 'Player',
+        characterName: cur.characterName || pre.characterName,
+        characterId: cur.characterId || pre.characterId,
+        team: cur.team ?? pre.team ?? 1,
+        isLocal: cur.isLocal ?? pre.isLocal ?? false,
+        isTeammate: cur.isTeammate ?? pre.isTeammate ?? false,
+        kills: diffNum(cur.kills, pre.kills),
+        deaths: diffNum(cur.deaths, pre.deaths),
+        assists: diffNum(cur.assists, pre.assists),
+        finalHits: diffNum(cur.finalHits, pre.finalHits),
+        damageDealt: diffNum(cur.damageDealt, pre.damageDealt),
+        damageBlocked: diffNum(cur.damageBlocked, pre.damageBlocked),
+        totalHeal: diffNum(cur.totalHeal, pre.totalHeal),
+        killedPlayers: diffMap(cur.killedPlayers, pre.killedPlayers),
+        killedBy: diffMap(cur.killedBy, pre.killedBy),
+      };
+    }
+
+    return deltaPlayers;
+  }, [currentMatch?.players, currentMatch?.rounds, roundSelection]);
+
+  // Transform selected data to card format
   const transformPlayerData = useMemo((): PlayerCardData[] => {
-    if (!currentMatch?.players) return [];
+    const players = selectedPlayersMap || {};
+    const list = Object.values(players) as any[];
+    if (!list.length) return [];
 
-    return Object.values(currentMatch.players).map(player => ({
+    return list.map((player: any) => ({
       uid: player.uid,
       name: player.name,
       characterName: player.characterName,
@@ -36,7 +115,7 @@ const MatchTabNew: React.FC = () => {
       killedPlayers: player.killedPlayers || {},
       killedBy: player.killedBy || {}
     }));
-  }, [currentMatch?.players]);
+  }, [selectedPlayersMap]);
 
   // Generate dummy data if no real data available
   const generateDummyData = (): PlayerCardData[] => {
@@ -120,6 +199,23 @@ const MatchTabNew: React.FC = () => {
       isPlayerTeam: players.some(p => p.isTeammate)
     }));
 
+    // Mark winner team
+    const outcome = currentMatch?.outcome;
+    const playerTeam = grouped.find(g => g.isPlayerTeam);
+    const enemyTeam = grouped.find(g => !g.isPlayerTeam);
+    if (outcome && playerTeam && enemyTeam) {
+      if (outcome === 'Victory') {
+        playerTeam.isWinner = true;
+        enemyTeam.isWinner = false;
+      } else if (outcome === 'Defeat') {
+        playerTeam.isWinner = false;
+        enemyTeam.isWinner = true;
+      } else {
+        playerTeam.isWinner = false;
+        enemyTeam.isWinner = false;
+      }
+    }
+
     // Ensure player's team is first (top), enemy team second (bottom)
     grouped.sort((a, b) => {
       if (a.isPlayerTeam === b.isPlayerTeam) {
@@ -130,22 +226,17 @@ const MatchTabNew: React.FC = () => {
     });
 
     return grouped;
-  }, [playerData]);
+  }, [playerData, currentMatch?.outcome]);
 
-  // Calculate match summary stats
-  const matchStats = useMemo(() => {
-    const totalKills = playerData.reduce((sum, p) => sum + p.kills, 0);
-    const totalDeaths = playerData.reduce((sum, p) => sum + p.deaths, 0);
-    const totalDamage = playerData.reduce((sum, p) => sum + p.damageDealt, 0);
-    const totalHealing = playerData.reduce((sum, p) => sum + p.totalHeal, 0);
-
-    return {
-      totalKills,
-      totalDeaths,
-      totalDamage: (totalDamage / 1000).toFixed(1) + 'K',
-      totalHealing: (totalHealing / 1000).toFixed(1) + 'K'
-    };
-  }, [playerData]);
+  const formatDuration = (start?: number | null, end?: number | null) => {
+    if (!start) return '00:00';
+    const effectiveEnd = end ?? nowTs;
+    const ms = Math.max(0, effectiveEnd - start);
+    const s = Math.floor(ms / 1000);
+    const mm = Math.floor(s / 60).toString().padStart(2, '0');
+    const ss = (s % 60).toString().padStart(2, '0');
+    return `${mm}:${ss}`;
+  };
 
   if (!playerData.length) {
     return (
@@ -158,40 +249,42 @@ const MatchTabNew: React.FC = () => {
     );
   }
 
+  // Build title details without dangling separators
+  const titleParts = [
+    currentMatch?.gameType || undefined,
+    currentMatch?.gameMode || undefined,
+    currentMatch?.map || undefined,
+  ].filter(Boolean) as string[];
+
   return (
     <div className="match-tab-new">
       <div className="match-tab-new-header">
-        <h2 className="match-tab-title">
-          {t('components.desktop.match-tab-new.title', 'Match Overview - Card View')}
-        </h2>
-      </div>
-      <div className="match-info-summary">
-        <div className="match-stat">
-          <span className="match-stat-label">
-            {t('components.desktop.match-tab-new.total-kills', 'Total Kills')}
-          </span>
-          <span className="match-stat-value">{matchStats.totalKills}</span>
+        <div className="match-title-row">
+          <h2 className="match-tab-title">
+            <span className="current-match-label">Current Match</span>
+            <span className="title-sep"> - </span>
+            <span className="title-details">
+              {titleParts.length ? titleParts.join(' - ') : 'Type - Mode - Map'}
+            </span>
+          </h2>
         </div>
-        <div className="match-stat">
-          <span className="match-stat-label">
-            {t('components.desktop.match-tab-new.total-deaths', 'Total Deaths')}
-          </span>
-          <span className="match-stat-value">{matchStats.totalDeaths}</span>
-        </div>
-        <div className="match-stat">
-          <span className="match-stat-label">
-            {t('components.desktop.match-tab-new.total-damage', 'Total Damage')}
-          </span>
-          <span className="match-stat-value">{matchStats.totalDamage}</span>
-        </div>
-        <div className="match-stat">
-          <span className="match-stat-label">
-            {t('components.desktop.match-tab-new.total-healing', 'Total Healing')}
-          </span>
-          <span className="match-stat-value">{matchStats.totalHealing}</span>
+        <div className="match-tab-controls">
+          <Segmented
+            value={roundSelection}
+            onChange={(val) => setRoundSelection(val as any)}
+            options={(() => {
+              const rounds = currentMatch?.rounds || [];
+              const base: { label: string; value: 'match' }[] = [{ label: 'Match', value: 'match' }];
+              const roundOpts = rounds.map((_: any, i: number) => ({ label: `Round ${i + 1}`, value: i }));
+              return [...base, ...roundOpts];
+            })()}
+            size="small"
+          />
+          <div className="match-duration">
+            {formatDuration(currentMatch?.timestamps?.matchStart, currentMatch?.timestamps?.matchEnd)}
+          </div>
         </div>
       </div>
-
       <MatchCardGrid 
         teams={teamData}
         flippedCards={flippedCards}

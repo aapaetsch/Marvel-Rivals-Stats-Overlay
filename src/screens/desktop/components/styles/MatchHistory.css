@@ -116,7 +116,7 @@
 }
 
 .character-avatar {
-  margin-bottom: 4px;
+  margin-bottom: 0;
   background-color: var(--neutral-0);
   border-radius: var(--border-radius);
 }
