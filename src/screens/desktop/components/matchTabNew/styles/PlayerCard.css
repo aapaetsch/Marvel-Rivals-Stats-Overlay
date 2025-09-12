@@ -268,7 +268,7 @@
 }
 
 .character-name-back {
-  font-size: 0.5rem; /* Increased by 0.25rem from ~0.5625rem */
+  font-size: 0.75rem; /* Increased by 0.25rem from ~0.5625rem */
   color: rgba(255, 255, 255, 0.7);
 }
 
@@ -356,7 +356,7 @@
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  padding: 4px 6px; /* Reduce vertical padding to shorten rows */
+  padding: 3px 6px; /* Reduce vertical padding to shorten rows */
   background: rgba(255, 255, 255, 0.03);
   border-radius: 6px;
 }
