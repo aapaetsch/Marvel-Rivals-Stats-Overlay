@@ -12,3 +12,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Recent Players (desktop) [#35][#52]: Cards default to collapsed; collapsed view shows win% and W/L under section labels.
 - Recent Players (desktop) [#50]: Extracted Opponent/Teammate section into `PlayerEncounterSection` reusable component.
+- App Settings: Added `forceShowCardViewCover` setting for development testing of card view cover functionality.
