@@ -20,3 +20,15 @@
 .match-players-panel .match-table-wrapper {
   border: none;
 }
+
+/* When the live-match cover is visible prevent scrolling of the match info area */
+.match-info-container.no-scroll {
+  overflow: hidden;
+  height: 100%;
+}
+
+/* Also ensure the inner scroller doesn't scroll when cover active */
+.match-info-container.no-scroll .match-info-collapse,
+.match-info-container.no-scroll .desktop__main-scroller {
+  overflow: hidden !important;
+}
