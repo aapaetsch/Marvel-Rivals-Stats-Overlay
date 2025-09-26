@@ -80,14 +80,14 @@ const getMenuItems = (t: any, isLiveMatch: boolean = false): AntMenuItem[] => {
     label: t('components.desktop.menu.players'),
     children: [
       {
-        key: MenuKeys.FAVORITES,
-        icon:<LiaUserTagSolid />,
-        label: t('components.desktop.menu.favourites'),
-      },
-      {
         key: MenuKeys.RECENT,
         icon: <LiaUserInjuredSolid />,
         label: t('components.desktop.menu.recent'),
+      },
+      {
+        key: MenuKeys.FAVORITES,
+        icon:<LiaUserTagSolid />,
+        label: t('components.desktop.menu.favourites'),
       },
     ],
   },

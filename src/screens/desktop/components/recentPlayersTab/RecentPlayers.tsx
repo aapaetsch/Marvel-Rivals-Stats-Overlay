@@ -374,14 +374,22 @@ const RecentPlayers: React.FC = () => {
           </div>
         )}
         {sortedPlayers.length > 0 ? (
-          <List
-            className="recent-players-list"
-            grid={{ gutter: 16, xs: 1, sm: 1, md: 2, lg: 3, xl: 3, xxl: 3 }}
-            dataSource={visiblePlayers}
-            renderItem={(player) => <RecentPlayerItem player={player} censor={censorCharactersWhileCurrentMatchCharacterPick} />}
-            pagination={false}
-            itemLayout='vertical'
-          />
+          /* Replace Ant List grid with a 3-column round-robin layout so each column grows independently */
+          <div className="recent-players-columns">
+            {(() => {
+              const cols: RecentPlayer[][] = [[], [], []];
+              for (let i = 0; i < visiblePlayers.length; i++) {
+                cols[i % 3].push(visiblePlayers[i]);
+              }
+              return cols.map((col, idx) => (
+                <div className="recent-players-column" key={`col-${idx}`}>
+                  {col.map((player) => (
+                    <RecentPlayerItem key={player.uid} player={player} censor={censorCharactersWhileCurrentMatchCharacterPick} />
+                  ))}
+                </div>
+              ));
+            })()}
+          </div>
         ) : (
           <div className="empty-state">
             <UserOutlined className="empty-icon" />

@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Recent Players [#36]: Removed border around the main Recent Players page card container.
-- Recent Players [#39]: Cards maintain a consistent height to avoid row gaps during expand/collapse; content collapses inside with animation.
+- Recent Players [#39]: Switched Recent Players to a 3-column vertical layout (round-robin distribution) so expanding a player card only affects its column. Preserves left→right by-row ordering and prevents empty whitespace under sibling cards when expanding/collapsing.
 - Recent Players [#37]: Pagination controls/icons styled for dark themes (white icons/text).
 – Match Cards (Front/Back): Increased player and character name font sizes by 0.25rem.
 – Team Headers: Reduced vertical padding and internal spacing to make headers slightly shorter.

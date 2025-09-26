@@ -27,11 +27,38 @@
   margin-top: 8px;
 }
 
+/* New 3-column vertical layout: render three independent columns that grow vertically.
+   Columns are left-to-right by row because we distribute players round-robin across columns. */
+.recent-players-columns {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.recent-players-column {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Responsive: collapse to single column on narrow screens */
+@media (max-width: 992px) {
+  .recent-players-columns {
+    display: block;
+  }
+  .recent-players-column {
+    width: 100%;
+  }
+}
+
 /* Player item styling */
 .recent-player-item {
   padding: 0 !important;
   background: transparent;
-  margin-bottom: 8px;
+  /* Grid gap handles spacing between items; remove bottom margin so the card height
+     is solely determined by its content. */
+  margin-bottom: 0;
+  width: 100%;
 }
 
 .recent-player-item:hover {
@@ -173,8 +200,13 @@
   align-items: stretch;
 }
 
-.recent-player-card:not(.collapsed) .rpc-columns {
-  min-height: 220px; /* keep overall height consistent between collapsed/expanded */
+/* Previously we used a fixed min-height to equalize collapsed/expanded cards.
+  That behavior was removed to allow cards to size independently so expanding
+  one card doesn't cause empty space in sibling cards. */
+
+/* Make sure each card aligns to the start of the grid cell and sizes to content */
+.recent-player-card {
+  align-self: start;
 }
 
 .recent-player-card.collapsed .rpc-columns .rpc-col {
