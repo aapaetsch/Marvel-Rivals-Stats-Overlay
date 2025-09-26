@@ -7,7 +7,7 @@
   --border-radius-small: 2px;
   
   /* Common font settings */
-  --font-family: 'Roboto', sans-serif;
+  --font-family: 'Refrigerator Deluxe Heavy', 'Roboto', sans-serif;
   --font-size: 14px;
   --font-size-small: 12px;
   --font-size-medium: 16px;
@@ -67,6 +67,12 @@ body.theme-dark {
   
   /* Service colors */
   --discord-color: #7289da;
+  
+  /* Scrollbar colors for dark theme */
+  --scrollbar-track: rgba(255,255,255,0.02);
+  --scrollbar-thumb: rgba(255,255,255,0.06);
+  /* On hover in dark mode we want the thumb to lighten (increase alpha) */
+  --scrollbar-thumb-hover: rgba(255,255,255,0.14);
 }
 
 /* Light Theme */
@@ -104,6 +110,12 @@ body.theme-light {
   
   /* Service colors */
   --discord-color: #7289da;
+  
+  /* Scrollbar colors for light theme */
+  --scrollbar-track: rgba(0,0,0,0.04);
+  --scrollbar-thumb: rgba(0,0,0,0.08);
+  /* On hover in light mode we want the thumb to darken (increase alpha) */
+  --scrollbar-thumb-hover: rgba(0,0,0,0.18);
 }
 
 /* Minimalistic Black Theme */
@@ -141,6 +153,11 @@ body.theme-minimalistic-black {
   
   /* Service colors */
   --discord-color: #ffffff;
+  
+  /* Scrollbar colors for minimalistic black theme */
+  --scrollbar-track: rgba(255,255,255,0.02);
+  --scrollbar-thumb: rgba(255,255,255,0.08);
+  --scrollbar-thumb-hover: rgba(255,255,255,0.16);
   
   /* Override specific components for minimalistic look */
   --ant-primary-color: #ffffff;
