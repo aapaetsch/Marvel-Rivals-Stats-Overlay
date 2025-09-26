@@ -3,8 +3,7 @@ import { Segmented, Space, Typography, Divider } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootReducer } from 'app/shared/rootReducer';
 import { updateSettings } from 'features/appSettings/appSettingsSlice';
-import { isMatchLive, hasAnyMatchData } from 'lib/matchStatusUtils';
-import ForceShowCover from 'features/appSettings/forceShowCover';
+import { isMatchLive, hasAnyMatchData, ForceShowCover } from 'lib/matchStatusUtils';
 
 const { Text } = Typography;
 

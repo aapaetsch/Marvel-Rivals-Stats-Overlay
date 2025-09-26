@@ -1,5 +1,11 @@
 import { MatchStatsState } from 'screens/background/types/matchStatsTypes';
-import ForceShowCover from '../features/appSettings/forceShowCover';
+
+
+export enum ForceShowCover {
+  Auto = 'auto', // Default behavior: show cover when no live match
+  Show = 'show', // Always show cover
+  Hide = 'hide', // Never show cover
+}
 
 /**
  * Determines if a match is currently live (in progress)

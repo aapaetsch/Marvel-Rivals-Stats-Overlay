@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import ForceShowCover from './forceShowCover';
+import { ForceShowCover } from '../../lib/matchStatusUtils';
 // Define the types for app settings
 
 export enum Themes {
