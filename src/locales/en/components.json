@@ -13,8 +13,8 @@
       "menu": {
         "home": "Home",
         "match": "Match",
-        "current_match": "Current Match",
-        "current_match_cards": "Card View",
+        "current_match": "Match Table",
+        "current_match_cards": "Live Match",
         "match_history": "Match History",
         "stats": "Stats",
         "player_stats": "Player Stats",
@@ -135,7 +135,13 @@
         "total-damage": "Total Damage",
         "total-healing": "Total Healing",
         "no-data": "No Match Data Available",
-        "no-data-desc": "Start a match to see player statistics in card view."
+        "no-data-desc": "Start a match to see player statistics in card view.",
+        "cover-no-match-title": "No Live Match",
+        "cover-no-match-desc": "Start a Marvel Rivals match to see live player statistics and team data in card view.",
+        "cover-ended-title": "Match Ended",
+        "cover-ended-desc": "The match has ended. Cards will show the final match data until you return to the lobby.",
+        "cover-notice": "Cards below show the final match statistics",
+        "refresh": "Refresh"
       },
       "match-history": {
         "title": "Match History",

@@ -13,6 +13,27 @@
   border: 0.05em solid var(--primary-color);
 }
 
+/* Themed segmented for dev controls to match settings area */
+.themed-segmented {
+  background-color: var(--neutral-3) !important;
+  border-color: var(--neutral-4) !important;
+}
+.themed-segmented .ant-segmented-item-selected {
+  background-color: var(--primary-color) !important;
+  color: var(--text-on-primary, #ffffff) !important;
+}
+
+.themed-segmented .ant-segmented-item-selected .ant-segmented-item-label {
+  color: var(--text-on-primary, #ffffff) !important;
+}
+
+.themed-segmented .ant-segmented-thumb {
+  background-color: var(--primary-color) !important;
+}
+.themed-segmented .ant-segmented-item:not(.ant-segmented-item-selected) {
+  color: var(--primary-color-text) !important;
+}
+
 /* Layout Content Background */
 .ant-layout-content {
   background-color: var(--background-color) !important;
