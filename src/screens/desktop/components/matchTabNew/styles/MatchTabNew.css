@@ -2,7 +2,15 @@
 .match-tab-new {
   padding: 20px;
   background: var(--background-color);
-  min-height: 100vh;
+  /* min-height: 100vh; */
+  position: relative; /* allow absolute cover to fill the whole tab */
+}
+
+/* Cards container with relative positioning for cover overlay */
+.match-cards-container {
+  position: relative;
+  flex: 1;
+  min-height: 360px; /* ensure area exists so cover renders before cards populate */
 }
 
 .match-tab-new-header {

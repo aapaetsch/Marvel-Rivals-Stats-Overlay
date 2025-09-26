@@ -1,0 +1,47 @@
+/* Styles for the Live Match cover overlay */
+.card-view-cover {
+  position: absolute;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(6px);
+  /* Make overlay mask less transparent for better legibility */
+  background: rgba(0,0,0,0.75);
+}
+
+.card-view-cover-content {
+  max-width: 720px;
+  width: 90%;
+}
+
+.cover-text {
+  text-align: center;
+}
+
+.cover-title {
+  margin: 0 0 8px 0;
+  color: var(--primary-color-text);
+}
+
+.cover-description {
+  margin: 0;
+  color: var(--neutral-text);
+}
+
+.cover-notice {
+  position: absolute;
+  bottom: 8px;
+  width: 100%;
+  text-align: center;
+  color: var(--neutral-text);
+}
+
+.refresh-button {
+  margin-top: 12px;
+}
+
+.card-view-cover:focus {
+  outline: none;
+}

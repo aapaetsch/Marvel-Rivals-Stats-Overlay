@@ -1,13 +1,35 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
+import ForceShowCover from './forceShowCover';
 // Define the types for app settings
+
+export enum Themes {
+  Dark = 'dark',
+  Light = 'light',
+  MinimalisticBlack = 'minimalistic-black',
+  // backward-compatible aliases used in some components
+  DARK = 'dark',
+  LIGHT = 'light',
+  MINIMALISTIC_BLACK = 'minimalistic-black',
+};
+
+export enum OverlayThemes {
+  Default = 'default',
+};
 
 export interface GeneralSettings {
   language: string;
-  theme: 'dark' | 'light' | 'minimalistic-black';
+  theme: Themes;
   startWithWindows: boolean;
   notifications: boolean;
   showStoreViewer: boolean;
+  showDevWindow: boolean;
+  // Recent players storage/cleanup settings
+  maxRecentPlayers: number;
+  maxFavoriteRecentPlayers: number;
+  autoCleanupRecentPlayers: boolean;
+  recentPlayersCleanupDays: number;
+  // Tracks whether specific declared windows are currently in positioning/drag mode
+  positioningModeWindows: { [windowName: string]: boolean };
 }
 
 export interface OverlaySettings {
@@ -20,7 +42,11 @@ export interface OverlaySettings {
   playerStatsFontColor: string; // Font color property
   teammateBorderColor: string; // Teammate border color property
   playerStatsBackgroundColor: string; // Background color property
-  overlayTheme: 'default' | 'minimal-black' | 'neon-blue' | 'jungle-green'; // Theme options
+  overlayTheme: OverlayThemes; // Theme options
+  // Window resource management flags (control whether auxiliary windows are enabled)
+  enablePlayerStatsWindow: boolean;
+  enableFinalHitsWindow: boolean;
+  enableCharSwapWindow: boolean;
   // Custom overlay positions with game mode specifics
   customPositions: {
     [overlayKey in 'playerStats' | 'finalHitsBar' | 'charSwapBar']: {
@@ -44,6 +70,13 @@ export interface OverlaySettings {
   compactTeammate4: boolean;
   showTeammate5: boolean;
   compactTeammate5: boolean;  showPlayerSwapNotification: boolean;
+  // Ultra compact teammate card options (smaller footprint)
+  ultraCompactOwnPlayerCard: boolean;
+  ultraCompactTeammate1: boolean;
+  ultraCompactTeammate2: boolean;
+  ultraCompactTeammate3: boolean;
+  ultraCompactTeammate4: boolean;
+  ultraCompactTeammate5: boolean;
   playerSwapNotificationDuration: number;
   allySwapColor: string;
   enemySwapColor: string;
@@ -53,6 +86,12 @@ export interface OverlaySettings {
   yourFinalHitsColor: string;
   opponentFinalHitsColor: string;
   finalHitsBackgroundColor: string;
+  // Card View Cover Control
+  // Dev override for card view cover visibility. Values:
+  // 'auto'  -> normal behavior (show when no live match)
+  // 'show'  -> force show cover
+  // 'hide'  -> force hide cover
+  forceShowCardViewCover: ForceShowCover;
 }
 export interface AppSettings extends GeneralSettings, OverlaySettings {
 }
@@ -66,10 +105,18 @@ export interface AppSettingsState {
 const initialState: AppSettingsState = {
   settings: {
     language: 'en',
-    theme: 'dark',
+    theme: Themes.MinimalisticBlack,
     startWithWindows: true,
     notifications: true,
     showStoreViewer: false,
+    showDevWindow: false,
+    // Recent players defaults
+    maxRecentPlayers: 100,
+    maxFavoriteRecentPlayers: 15,
+    autoCleanupRecentPlayers: false,
+    recentPlayersCleanupDays: 30,
+  // Window positioning mode tracking (which declared windows are in 'positioning'/'drag' mode)
+  positioningModeWindows: {},
     showTeamStats: true,
     showKillFeed: true,
     opacity: 80,
@@ -77,7 +124,7 @@ const initialState: AppSettingsState = {
     showPlayerStats: true,
     playerStatsOpacity: 100,
     playerStatsBackgroundColor: '#000000', // Default background color
-    overlayTheme: 'default', // Default theme
+    overlayTheme: OverlayThemes.Default, // Default theme
     // Default custom overlay positions including game modes
     customPositions: {
       playerStats: {
@@ -103,6 +150,10 @@ const initialState: AppSettingsState = {
       }
     },
     lockOverlayPositions: false,
+    // Window resource management defaults
+    enablePlayerStatsWindow: true,
+    enableFinalHitsWindow: true,
+    enableCharSwapWindow: true,
     showOwnPlayerCard: true,
     compactOwnPlayerCard: false,
     showTeammate1: true,
@@ -115,6 +166,12 @@ const initialState: AppSettingsState = {
     compactTeammate4: false,
     showTeammate5: true,
     compactTeammate5: false,
+    ultraCompactOwnPlayerCard: false,
+    ultraCompactTeammate1: false,
+    ultraCompactTeammate2: false,
+    ultraCompactTeammate3: false,
+    ultraCompactTeammate4: false,
+    ultraCompactTeammate5: false,
     // Player Swap Notification
     showPlayerSwapNotification: true,
     playerSwapNotificationDuration: 5,
@@ -128,7 +185,10 @@ const initialState: AppSettingsState = {
     opponentFinalHitsColor: "",
     finalHitsBackgroundColor: "",
     playerStatsFontColor: "",
-    teammateBorderColor: ""
+    teammateBorderColor: "",
+  // Card View Cover Control (tri-state)
+  // Use ForceShowCover enum for clarity
+  forceShowCardViewCover: ForceShowCover.Auto,
   },
   loaded: false,
 };
@@ -172,6 +232,7 @@ const appSettingsSlice = createSlice({
 export const {
   updateSetting,
   updateSettings,
+  setSettings,
   setLoaded,
   resetSettings,
 } = appSettingsSlice.actions;

@@ -5,6 +5,8 @@ import { RootReducer } from 'app/shared/rootReducer';
 import { PlayerCardData, TeamData } from './types/MatchCardTypes';
 import { useCardFlip } from './hooks/useCardFlip';
 import MatchCardGrid from './components/MatchCardGrid';
+import { shouldShowCardViewCover, hasAnyMatchData } from 'lib/matchStatusUtils';
+import LiveMatchCover from './components/LiveMatchCover';
 import './styles/MatchTabNew.css';
 import './styles/PlayerCard.css';
 import './styles/CardFlipAnimation.css';
@@ -13,6 +15,7 @@ import { Segmented } from 'antd';
 const MatchTabNew: React.FC = () => {
   const { t } = useTranslation();
   const { currentMatch } = useSelector((state: RootReducer) => state.matchStatsReducer);
+  const { forceShowCardViewCover } = useSelector((state: RootReducer) => state.appSettingsReducer.settings);
   const [nowTs, setNowTs] = useState<number>(Date.now());
 
   // Update a tick every second to refresh duration while match is ongoing
@@ -22,7 +25,12 @@ const MatchTabNew: React.FC = () => {
       return () => clearInterval(id);
     }
   }, [currentMatch?.timestamps?.matchStart, currentMatch?.timestamps?.matchEnd]);
-  const { flippedCards, toggleCard, resetAllCards } = useCardFlip();
+  
+  const { flippedCards, toggleCard } = useCardFlip();
+  
+  // Determine if cover should be shown
+  const showCover = shouldShowCardViewCover(currentMatch, forceShowCardViewCover);
+  const hasMatchData = hasAnyMatchData(currentMatch);
   // Round selection: 'match' (default cumulative) or specific round index
   const [roundSelection, setRoundSelection] = useState<'match' | number>('match');
 
@@ -258,9 +266,16 @@ const MatchTabNew: React.FC = () => {
 
   return (
     <div className="match-tab-new">
+      {showCover && (
+          <LiveMatchCover 
+          hasAnyMatchData={hasMatchData}
+          onRefresh={() => window.location.reload()}
+        />
+      )}
       <div className="match-tab-new-header">
         <div className="match-title-row">
           <h2 className="match-tab-title">
+            {/* TODO: Localization */}
             <span className="current-match-label">Current Match</span>
             <span className="title-sep"> - </span>
             <span className="title-details">
@@ -285,12 +300,14 @@ const MatchTabNew: React.FC = () => {
           </div>
         </div>
       </div>
-      <MatchCardGrid 
-        teams={teamData}
-        flippedCards={flippedCards}
-        onCardFlip={toggleCard}
-        allPlayers={playerData}
-      />
+      <div className="match-cards-container">
+        <MatchCardGrid 
+          teams={teamData}
+          flippedCards={flippedCards}
+          onCardFlip={toggleCard}
+          allPlayers={playerData}
+        />
+      </div>
     </div>
   );
 };

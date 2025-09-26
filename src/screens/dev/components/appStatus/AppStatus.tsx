@@ -7,6 +7,7 @@ import AlliesWidget from './widgets/AlliesWidget';
 import OpponentsWidget from './widgets/OpponentsWidget';
 import EventHealthWidget from './widgets/EventHealthWidget';
 import './styles/AppStatus.css';
+import CardViewCoverOverride from './CardViewCoverOverride';
 
 const AppStatus: React.FC = () => {
   return (
@@ -20,6 +21,14 @@ const AppStatus: React.FC = () => {
           <div className="app-status-grid-item wide"><TeamStatsWidget /></div>
           <div className="app-status-grid-item"><AlliesWidget /></div>
           <div className="app-status-grid-item"><OpponentsWidget /></div>
+          <div className="app-status-grid-item wide">
+            <div className="status-card">
+              <div className="status-card-header">Card View Cover Override</div>
+              <div className="status-card-body">
+                <CardViewCoverOverride />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
