@@ -40,6 +40,8 @@ body.theme-dark {
   --primary-color-medium: #2980b9;
   --primary-color-dark: #1f618d;
   --primary-color-text: #ecf0f1;
+  /* Text color to use on top of primary-colored backgrounds */
+  --text-on-primary: #ffffff;
   
   /* Secondary colors */
   --secondary-color: #e74c3c;
@@ -74,7 +76,9 @@ body.theme-light {
   --primary-color-light: #3498db;
   --primary-color-medium: #1f618d;
   --primary-color-dark: #154360;
-  --primary-color-text: #ecf0f1;
+  --primary-color-text: #383939;
+  /* Text color to use on top of primary-colored backgrounds */
+  --text-on-primary: #ffffff;
   
   /* Secondary colors */
   --secondary-color: #c0392b;
