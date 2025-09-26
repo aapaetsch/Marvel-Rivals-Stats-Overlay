@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Empty, Button } from 'antd';
 import { PlayCircleOutlined, ReloadOutlined } from '@ant-design/icons';
-import './LiveMatchCover.css';
+import '../styles/LiveMatchCover.css';
 
 interface LiveMatchCoverProps {
   hasAnyMatchData: boolean; // Whether there's any match data available (to distinguish no match vs ended match)
