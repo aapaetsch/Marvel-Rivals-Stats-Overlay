@@ -87,7 +87,7 @@ body.theme-minimalistic-black .app-status-root .ant-descriptions-item-label,
 body.theme-minimalistic-black .app-status-root .ant-descriptions-item-content,
 body.theme-minimalistic-black .app-status-root .status-card,
 body.theme-minimalistic-black .app-status-root .status-card * {
-  color: #ffffff !important;
+  color: #ffffff;
 }
 
 /* Simple mini table for ally/opponent lists */

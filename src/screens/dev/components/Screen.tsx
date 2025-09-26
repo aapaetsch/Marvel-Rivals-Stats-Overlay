@@ -6,6 +6,7 @@ import { RootReducer } from 'app/shared/rootReducer';
 import LogReplayer from './LogReplayer';
 import DevStoreViewer from 'screens/desktop/components/DevStoreViewer';
 import DevWindowHeader from './DevWindowHeader';
+// DevControls removed; controls moved to App Status
 import 'screens/desktop/components/styles/themes.css';
 import './styles/DevScreen.css';
 import AppStatus from './appStatus/AppStatus';
@@ -23,7 +24,7 @@ const DevScreen: React.FC = () => {
     <div className="dev-window-root">
       <DevWindowHeader />
       <Tabs
-        defaultActiveKey="replay"
+        defaultActiveKey="appstatus"
         destroyInactiveTabPane
         className="dev-tabs"
         items={[
