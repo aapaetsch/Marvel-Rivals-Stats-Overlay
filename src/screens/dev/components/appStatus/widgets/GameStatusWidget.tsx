@@ -19,7 +19,7 @@ type RunningGameInfo = {
 
 const { Title, Text } = Typography;
 
-const GameStatusWidget: React.FC = () => {
+const GameStatusWidget: React.FC<{ matchHeight?: number }> = ({ matchHeight }) => {
   const [info, setInfo] = useState<RunningGameInfo | null>(null);
   const [isRunning, setIsRunning] = useState<boolean>(false);
 
@@ -47,8 +47,10 @@ const GameStatusWidget: React.FC = () => {
     return () => window.clearInterval(t);
   }, []);
 
+  const computedStyle = !isRunning && matchHeight ? { minHeight: `${matchHeight}px` } : undefined;
+
   return (
-    <div className="status-card">
+    <div className="status-card" style={computedStyle}>
       <div className="status-card-header">
         <Space>
           <Badge status={isRunning ? 'success' : 'default'} />

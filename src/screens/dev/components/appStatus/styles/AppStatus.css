@@ -66,6 +66,10 @@
   border-bottom: 1px solid var(--ant-border-color-base, #333);
   background: var(--neutral-1, #232323);
 }
+.status-card-header .ant-typography,
+.status-card-body {
+  line-height: 1.15;
+}
 .status-card-body {
   padding: 12px;
 }

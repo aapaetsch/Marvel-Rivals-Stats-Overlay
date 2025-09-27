@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Typography } from 'antd';
 import GameStatusWidget from './widgets/GameStatusWidget';
 import MatchSummaryWidget from './widgets/MatchSummaryWidget';
@@ -13,12 +13,29 @@ import CardViewCoverOverride from './CardViewCoverOverride';
 const { Title } = Typography;
 
 const AppStatus: React.FC = () => {
+  const eventRef = useRef<HTMLDivElement | null>(null);
+  const [eventHeight, setEventHeight] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    const el = eventRef.current;
+    if (!el) return;
+    const measure = () => setEventHeight(Math.ceil(el.getBoundingClientRect().height));
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   return (
     <div className="app-status-root dev-window">
       <div className="left-col grid grid-cols-12 gap-3">
-        {/* First row */}
-        <div className="app-status-grid-item col-span-6"><GameStatusWidget /></div>
-        <div className="app-status-grid-item col-span-6"><EventHealthWidget /></div>
+        {/* Keep refs to measure EventHealth height and pass to GameStatus */}
+        <div className="app-status-grid-item col-span-6">
+          <GameStatusWidget matchHeight={eventHeight} />
+        </div>
+        <div ref={eventRef} className="app-status-grid-item col-span-6">
+          <EventHealthWidget />
+        </div>
 
         {/* Second row */}
         <div className="app-status-grid-item col-span-4"><LocalPlayerWidget /></div>
