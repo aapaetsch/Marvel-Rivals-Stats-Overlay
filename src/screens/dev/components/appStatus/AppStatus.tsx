@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Typography } from 'antd';
 import GameStatusWidget from './widgets/GameStatusWidget';
 import MatchSummaryWidget from './widgets/MatchSummaryWidget';
 import LocalPlayerWidget from './widgets/LocalPlayerWidget';
@@ -9,24 +10,50 @@ import EventHealthWidget from './widgets/EventHealthWidget';
 import './styles/AppStatus.css';
 import CardViewCoverOverride from './CardViewCoverOverride';
 
+const { Title } = Typography;
+
 const AppStatus: React.FC = () => {
+  const eventRef = useRef<HTMLDivElement | null>(null);
+  const [eventHeight, setEventHeight] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    const el = eventRef.current;
+    if (!el) return;
+    const measure = () => setEventHeight(Math.ceil(el.getBoundingClientRect().height));
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   return (
     <div className="app-status-root dev-window">
-      <div className="app-status-2col">
-        <div className="left-col">
-          <div className="app-status-grid-item"><GameStatusWidget /></div>
-          <div className="app-status-grid-item"><EventHealthWidget /></div>
-          <div className="app-status-grid-item"><MatchSummaryWidget /></div>
-          <div className="app-status-grid-item"><LocalPlayerWidget /></div>
-          <div className="app-status-grid-item wide"><TeamStatsWidget /></div>
-          <div className="app-status-grid-item"><AlliesWidget /></div>
-          <div className="app-status-grid-item"><OpponentsWidget /></div>
-          <div className="app-status-grid-item wide">
-            <div className="status-card">
-              <div className="status-card-header">Card View Cover Override</div>
-              <div className="status-card-body">
-                <CardViewCoverOverride />
-              </div>
+      <div className="left-col grid grid-cols-12 gap-3">
+        {/* Keep refs to measure EventHealth height and pass to GameStatus */}
+        <div className="app-status-grid-item col-span-6">
+          <GameStatusWidget matchHeight={eventHeight} />
+        </div>
+        <div ref={eventRef} className="app-status-grid-item col-span-6">
+          <EventHealthWidget />
+        </div>
+
+        {/* Second row */}
+        <div className="app-status-grid-item col-span-4"><LocalPlayerWidget /></div>
+        <div className="app-status-grid-item col-span-4"><AlliesWidget /></div>
+        <div className="app-status-grid-item col-span-4"><OpponentsWidget /></div>
+
+        {/* Third row */}
+        <div className="app-status-grid-item col-span-3 row-span-2"><MatchSummaryWidget /></div>
+        <div className="app-status-grid-item col-span-9"><TeamStatsWidget /></div>
+
+        {/* Fourth row */}
+        <div className="app-status-grid-item col-span-9">
+          <div className="status-card">
+            <div className="status-card-header">
+              <Title level={4} style={{ margin: 0 }}>Card View Cover Override</Title>
+            </div>
+            <div className="status-card-body">
+              <CardViewCoverOverride />
             </div>
           </div>
         </div>
