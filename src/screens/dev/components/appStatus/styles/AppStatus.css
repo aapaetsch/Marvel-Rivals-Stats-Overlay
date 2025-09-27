@@ -1,3 +1,27 @@
+/* Utility grid classes (Tailwind-like, local scope) */
+.grid { display: grid; }
+.grid-cols-12 { grid-template-columns: repeat(12, 1fr); }
+.gap-3 { gap: 0.75rem; }
+
+/* Column span helpers */
+.col-span-1 { grid-column: span 1; }
+.col-span-2 { grid-column: span 2; }
+.col-span-3 { grid-column: span 3; }
+.col-span-4 { grid-column: span 4; }
+.col-span-5 { grid-column: span 5; }
+.col-span-6 { grid-column: span 6; }
+.col-span-7 { grid-column: span 7; }
+.col-span-8 { grid-column: span 8; }
+.col-span-9 { grid-column: span 9; }
+.col-span-10 { grid-column: span 10; }
+.col-span-11 { grid-column: span 11; }
+.col-span-12 { grid-column: span 12; }
+
+/* Row span helpers */
+.row-span-1 { grid-row: span 1; }
+.row-span-2 { grid-row: span 2; }
+.row-span-3 { grid-row: span 3; }
+
 /* Container layout */
 .app-status-root {
   padding: 12px;
@@ -9,9 +33,8 @@
   gap: 12px;
 }
 .left-col {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 12px;
+  width: 100%;
+  /* layout is handled via .grid and .grid-cols-12 utilities */
 }
 .right-col {
   display: grid;
@@ -25,6 +48,10 @@
   .app-status-2col {
     grid-template-columns: 1fr;
   }
+  .grid-cols-12 { grid-template-columns: 1fr; }
+  /* make spans flow naturally on narrow screens */
+  .col-span-1, .col-span-2, .col-span-3, .col-span-4, .col-span-5, .col-span-6, .col-span-7, .col-span-8, .col-span-9, .col-span-10, .col-span-11, .col-span-12 { grid-column: auto; }
+  .row-span-2 { grid-row: auto; }
 }
 
 /* Card */
