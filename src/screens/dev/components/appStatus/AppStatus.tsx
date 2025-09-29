@@ -7,7 +7,7 @@ import TeamStatsWidget from './widgets/TeamStatsWidget';
 import AlliesWidget from './widgets/AlliesWidget';
 import OpponentsWidget from './widgets/OpponentsWidget';
 import EventHealthWidget from './widgets/EventHealthWidget';
-import MatchHistoryDataWidget from './widgets/MatchHistoryDataWidget';
+import ControlTestDataWidget from './widgets/ControlTestDataWidget';
 import './styles/AppStatus.css';
 import CardViewCoverOverride from './CardViewCoverOverride';
 
@@ -60,7 +60,7 @@ const AppStatus: React.FC = () => {
         </div>
         {/* Fifth row */}
         <div className="app-status-grid-item col-span-3">
-          <MatchHistoryDataWidget />
+          <ControlTestDataWidget />
         </div>
       </div>
     </div>
