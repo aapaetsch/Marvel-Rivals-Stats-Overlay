@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootReducer } from 'app/shared/rootReducer';
 import MatchTableComponent, { PlayerDataItem } from '../shared/MatchTableComponent';
+import { matchTableTestPlayers } from 'screens/dev/testdata/matchTableTestData';
 
 const MatchTable: React.FC = () => {
   const { currentMatch } = useSelector((state: RootReducer) => state.matchStatsReducer);
@@ -64,7 +65,9 @@ const MatchTable: React.FC = () => {
 
     return [...teammates, ...opponents];
   };
-  const tableData = players.length > 0 ? players : generateDummyPlayers();
+  // If using test data globally, prefer that dataset; otherwise fallback to real players or generated dummies.
+  const useTableTest = useSelector((state: RootReducer) => state.appSettingsReducer.settings.useMatchTableTestData);
+  const tableData = useTableTest ? matchTableTestPlayers : (players.length > 0 ? players : generateDummyPlayers());
   
   return (
     <MatchTableComponent 
