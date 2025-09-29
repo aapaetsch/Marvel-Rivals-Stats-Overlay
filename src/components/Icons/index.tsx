@@ -14,6 +14,7 @@ import {
   GiStarfighter,
   GiFloatingPlatforms,
   GiBackstab,
+  GiDeadlyStrike,
   GiHealing,
   GiShieldBash,
   GiBackwardTime,
@@ -23,6 +24,10 @@ import {
   GiDarkSquad,
   GiGamepad,
   GiHomeGarage,
+  GiInfo,
+  GiCheckeredFlag,
+  GiCrossMark,
+  GiLaserWarning 
 } from 'react-icons/gi';
 
 import { 
@@ -50,8 +55,6 @@ import {
   PiUserListBold 
 } from 'react-icons/pi';
 
-import YellowLightning from '../../screens/ingame/components/YellowLightning';
-
 // Define an interface for the icons collection
 export interface IconsCollection {
   // Combat
@@ -62,6 +65,8 @@ export interface IconsCollection {
   damageDealt: React.ReactElement;
   healing: React.ReactElement;
   damageBlocked: React.ReactElement;
+  kd?: React.ReactElement;
+  kda?: React.ReactElement;
   
   // Navigation icons
   home: React.ReactElement;
@@ -80,10 +85,18 @@ export interface IconsCollection {
   // Character icons
   heros: React.ReactElement;
   heroTierlist: React.ReactElement;
-  
-  // Misc
-  lightning: React.ReactElement;
+
+  // Tag Icons
+  successTag: React.ReactElement;
+  infoTag: React.ReactElement;
+  warningTag: React.ReactElement;
+  errorTag: React.ReactElement;
 }
+
+// Small badge component similar to the ult% pill
+const UltLikeBadge: React.FC<{ text: string; accent?: boolean }> = ({ text, accent }) => (
+  <span className={`ult-like-badge${accent ? ' accent' : ''}`}>{text}</span>
+);
 
 // Create the icons object with all icon components
 export const icons: IconsCollection = {
@@ -91,10 +104,12 @@ export const icons: IconsCollection = {
   kill: <GiCrossedSwords />,
   death: <GiBrokenHeart />,
   assist: <FaHandshake />,
-  finalHits: <GiBackstab />,
+  finalHits: <GiDeadlyStrike />,
   damageDealt: <GiSwordman />,
   healing: <GiHealing />,
   damageBlocked: <GiShieldBash />,
+  kd: <UltLikeBadge text="KD" />,
+  kda: <UltLikeBadge text="KDA" accent />,
 
   
   // Navigation icons
@@ -114,9 +129,12 @@ export const icons: IconsCollection = {
   // Character icons
   heros: <GiKing />,
   heroTierlist: <GiFloatingPlatforms />,
-  
-  // Misc
-  lightning: <YellowLightning />
+
+  // Tag Icons
+  successTag: <GiCheckeredFlag />,
+  infoTag: <GiInfo />,
+  warningTag: <GiLaserWarning />,
+  errorTag: <GiCrossMark />,
 };
 
 // Default export

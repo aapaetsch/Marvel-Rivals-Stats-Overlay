@@ -1,0 +1,73 @@
+.rr-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--border-radius-large); /* larger corner radius */
+  font-weight: 600;
+  /* Use the raw tag background; do not attempt to lighten the interior via overlay */
+  background: var(--tag-bg, var(--neutral-4));
+  color: var(--tag-text, var(--primary-color-text));
+  /* Stronger, darker border — controlled by per-theme --tag-border hex variables */
+  border: 2px solid var(--tag-border, #111111);
+  cursor: default;
+  user-select: none;
+  transition: background 120ms linear, color 120ms linear, opacity 120ms linear;
+}
+
+.rr-tag--small {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.45rem;
+  gap: 0.35rem;
+}
+
+.rr-tag--medium {
+  font-size: 0.875rem;
+}
+
+.rr-tag--large {
+  font-size: 1rem;
+  padding: 0.35rem 0.8rem;
+}
+
+.rr-tag__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rr-tag__icon svg {
+  width: 1em;
+  height: 1em;
+}
+
+.rr-tag.disabled,
+.rr-tag[aria-disabled="true"] {
+  opacity: 0.45;
+  pointer-events: none;
+  background: var(--disabled-color);
+  color: #fff;
+  border: 2px solid rgba(0,0,0,0.12);
+}
+
+/* Type-specific default style fallbacks (will be overridden by inline color if provided) */
+.rr-tag--primary { --tag-bg: var(--tag-bg-primary, var(--primary-color)); --tag-text: var(--tag-text-primary, var(--primary-color-text)); --tag-border: var(--tag-border-primary, var(--primary-color-dark)); }
+.rr-tag--success { --tag-bg: var(--tag-bg-success, var(--success-color)); --tag-text: var(--tag-text-success, var(--primary-color-text)); --tag-border: var(--tag-border-success, var(--success-color)); }
+.rr-tag--warning { --tag-bg: var(--tag-bg-warning, var(--secondary-color)); --tag-text: var(--tag-text-warning, var(--secondary-color-text)); --tag-border: var(--tag-border-warning, var(--secondary-color-dark)); }
+.rr-tag--danger { --tag-bg: var(--tag-bg-danger, var(--error-color)); --tag-text: var(--tag-text-danger, #fff); --tag-border: var(--tag-border-danger, var(--error-color)); }
+.rr-tag--info { --tag-bg: var(--tag-bg-info, var(--primary-color-light)); --tag-text: var(--tag-text-info, var(--primary-color-text)); --tag-border: var(--tag-border-info, var(--primary-color-medium)); }
+.rr-tag--neutral { --tag-bg: var(--tag-bg-neutral, var(--neutral-4)); --tag-text: var(--tag-text-neutral, var(--neutral-0)); --tag-border: var(--tag-border-neutral, var(--neutral-1)); }
+
+/* Outlined variant: transparent fill, colored border, label uses border color */
+.rr-tag--outlined {
+  background: transparent !important;
+  color: var(--tag-border, #111111) !important;
+  border: 2px solid var(--tag-border, #111111) !important;
+  box-shadow: none !important;
+}
+
+/* Small visual tweak on hover/focus for outlined tags */
+.rr-tag--outlined:hover,
+.rr-tag--outlined:focus {
+  background: rgba(255,255,255,0.03);
+}
