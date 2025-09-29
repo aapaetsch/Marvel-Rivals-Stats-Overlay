@@ -2,20 +2,33 @@
   cursor: pointer;
   display: inline-block;
   position: relative;
-  width: 24px;
-  height: 24px;
-  padding: 8px;
+  width: 40px; /* increased size so chevron feels larger */
+  height: 40px;
+  padding: 4px;
+  padding-top: 6px; 
   color: var(--primary-color-text);
 }
 
 .morph-chevron .chevron-single {
-  width: 16px;
-  height: 16px;
+  width: 24px; /* larger svg to match increased container */
+  height: 24px;
   transform-origin: center;
-  /* Uses CSS transform for instant flip animation (no transition) */
 }
 
-/* Use static positioning for expanded state */
-.morph-chevron.expanded .chevron-single {
-  transform: rotate(180deg);
+/* Bold stroke handled via SVG strokeWidth */
+.morph-chevron .chevron-arm {
+  /* slightly stronger shadow to balance thicker stroke */
+  filter: drop-shadow(0 0 1.5px rgba(0,0,0,0.25));
+}
+
+/* Each arm is now an explicit SVG line; no transform-based origin required. JS updates y1 values directly during animation. */
+.morph-chevron .chevron-arm {
+  shape-rendering: geometricPrecision;
+  transition: stroke 150ms ease; /* keep stroke color transitions smooth when theme changes */
+}
+
+/* Remove the old rotate/scale animations that broke the center connection */
+.morph-chevron.animating.expanding .chevron-arm,
+.morph-chevron.animating.collapsing .chevron-arm {
+  animation: none;
 }
