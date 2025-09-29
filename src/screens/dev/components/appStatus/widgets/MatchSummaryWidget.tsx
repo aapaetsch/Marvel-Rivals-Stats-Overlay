@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Typography, Descriptions } from 'antd';
-import Tag, { TagType } from 'components/Tag';
+import Tag from 'components/Tag';
+import { TagType } from 'components/Tag/TagTypes';
 import { RootReducer } from 'app/shared/rootReducer';
 import { MatchOutcome, PlayerStats } from 'screens/background/types/matchStatsTypes';
 

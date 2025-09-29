@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Switch, Typography, Space } from 'antd';
-import Tag, { TagType } from 'components/Tag';
+import Tag from 'components/Tag';
+import { TagType } from 'components/Tag/TagTypes';
 import { RootReducer } from 'app/shared/rootReducer';
 import { updateSettings } from 'features/appSettings/appSettingsSlice';
 

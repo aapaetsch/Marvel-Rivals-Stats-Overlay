@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Badge, Descriptions, Space, Typography } from 'antd';
-import Tag, { TagType } from 'components/Tag';
+import Tag from 'components/Tag';
+import { TagType } from 'components/Tag/TagTypes';
 
 const { Title, Text } = Typography;
 
