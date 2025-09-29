@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { Typography, Descriptions, Tag } from 'antd';
+import { Typography, Descriptions } from 'antd';
+import Tag, { TagType } from 'components/Tag';
 import { RootReducer } from 'app/shared/rootReducer';
 import { MatchOutcome, PlayerStats } from 'screens/background/types/matchStatsTypes';
 
@@ -38,6 +39,15 @@ const MatchSummaryWidget: React.FC = () => {
         ? 'gold'
         : 'default';
 
+  // Map legacy color strings to TagType so the tag is theme-aware
+  const outcomeTagType = outcomeColor === 'green'
+    ? TagType.Success
+    : outcomeColor === 'red'
+      ? TagType.Danger
+      : outcomeColor === 'gold'
+        ? TagType.Warning
+        : TagType.Neutral;
+
   return (
     <div className="status-card">
       <div className="status-card-header">
@@ -50,7 +60,7 @@ const MatchSummaryWidget: React.FC = () => {
           <Descriptions.Item label="Mode">{match.gameMode || '—'}</Descriptions.Item>
           <Descriptions.Item label="Type">{match.gameType || '—'}</Descriptions.Item>
           <Descriptions.Item label="Outcome">
-            <Tag color={outcomeColor} style={{color: 'black'}}>{match.outcome}</Tag>
+            <Tag type={outcomeTagType}>{match.outcome}</Tag>
           </Descriptions.Item>
           <Descriptions.Item label="Players">{playersCount || 0}</Descriptions.Item>
           <Descriptions.Item label="Teams">{teams.join(', ') || '—'}</Descriptions.Item>
