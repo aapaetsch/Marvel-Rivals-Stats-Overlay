@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Badge, Descriptions, Space, Typography, Tag } from 'antd';
+import { Badge, Descriptions, Space, Typography } from 'antd';
+import Tag, { TagType } from 'components/Tag';
 
 const { Title, Text } = Typography;
 
@@ -85,7 +86,7 @@ const EventHealthWidget: React.FC = () => {
           <>
             <Descriptions size="small" column={1} labelStyle={{ width: 140 }}>
               <Descriptions.Item label="Overall">
-                <Tag color={ok ? 'green' : 'orange'} style={{ color: 'black' }}>{ok ? 'Operational' : 'Partial/Disabled'}</Tag>
+                <Tag type={ok ? TagType.Success : TagType.Warning} noIcon>{ok ? 'Operational' : 'Partial/Disabled'}</Tag>
               </Descriptions.Item>
               <Descriptions.Item label="Features Enabled">{summary.featuresOk}/{data.features.length}</Descriptions.Item>
               <Descriptions.Item label="Keys Enabled">{summary.enabledKeys}/{summary.totalKeys}</Descriptions.Item>
@@ -94,7 +95,7 @@ const EventHealthWidget: React.FC = () => {
               <Text strong>Important Keys:</Text>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 6 }}>
                 {summary.important.map((k) => (
-                  <Tag key={k.name} color={k.ok ? 'green' : 'volcano'} style={{ color: 'black' }}>{k.name}</Tag>
+                  <Tag key={k.name} type={k.ok ? TagType.Success : TagType.Danger} noIcon>{k.name}</Tag>
                 ))}
               </div>
             </div>
