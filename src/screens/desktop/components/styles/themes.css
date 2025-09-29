@@ -29,17 +29,60 @@
   --gray-12: #141414;
   --gray-13: #000000;
 
+  --victory-color: #27ae60;
+  --defeat-color: #c0392b;
+  --draw-color: #f39c12;
+
+  --discord-color: #7289da;
+
+  --tag-bg-primary: var(--primary-color);
+  --tag-text-primary: var(--primary-color-text, var(--text-on-primary));
+  /* Prefer existing dark variant, fallback to muted border */
+  --tag-border-primary: var(--primary-color-dark, rgba(0,0,0,0.12));
+
+  /* Success */
+  --tag-bg-success: var(--success-color);
+  --tag-text-success: var(--primary-color-text, #fff);
+  --tag-border-success: var(--victory-color, rgba(0,0,0,0.12));
+
+  /* Warning */
+  --tag-bg-warning: var(--secondary-color);
+  --tag-text-warning: var(--secondary-color-text, var(--text-on-primary));
+  --tag-border-warning: var(--secondary-color-dark, rgba(0,0,0,0.12));
+
+  /* Danger */
+  --tag-bg-danger: var(--error-color, #b00020);
+  --tag-text-danger: var(--primary-color-text, #fff);
+  --tag-border-danger: var(--error-color, rgba(0,0,0,0.12));
+
+  /* Info */
+  --tag-bg-info: var(--primary-color-light);
+  --tag-text-info: var(--primary-color-text, #fff);
+  --tag-border-info: var(--primary-color-medium, rgba(0,0,0,0.12));
+
+  /* Neutral */
+  --tag-bg-neutral: var(--neutral-4, var(--neutral-3));
+  --tag-text-neutral: var(--neutral-0, #111);
+  --tag-border-neutral: var(--neutral-1, rgba(0,0,0,0.08));
 }
 
 /* Dark Theme (Default) */
 body.theme-dark {
   background-color: #000000;
+  --tag-inner-overlay: rgba(255,255,255,0.06);
   /* Main colors */
   --primary-color: #3498db;
   --primary-color-light: #5dade2;
   --primary-color-medium: #2980b9;
   --primary-color-dark: #1f618d;
   --primary-color-text: #ecf0f1;
+  /* Strong darker borders (hex) */
+  --tag-border-primary: #1a5278; /* darker than --primary-color-dark */
+  --tag-border-success: #219452; /* darker victory color */
+  --tag-border-warning: #c44133; /* darker secondary */
+  --tag-border-danger: #95001b; /* darker error */
+  --tag-border-info: #4f93c0; /* darker info */
+  --tag-border-neutral: #1e1e1e;
   /* Text color to use on top of primary-colored backgrounds */
   --text-on-primary: #ffffff;
   
@@ -77,12 +120,20 @@ body.theme-dark {
 
 /* Light Theme */
 body.theme-light {
+  --tag-inner-overlay: rgba(255,255,255,0.02);
   /* Main colors */
   --primary-color: #2980b9;
   --primary-color-light: #3498db;
   --primary-color-medium: #1f618d;
   --primary-color-dark: #154360;
   --primary-color-text: #383939;
+  /* Strong darker borders (hex) */
+  --tag-border-primary: #113951;
+  --tag-border-success: #219452;
+  --tag-border-warning: #a33024;
+  --tag-border-danger: #a33024;
+  --tag-border-info: #2c81ba;
+  --tag-border-neutral: #c5c5c5;
   /* Text color to use on top of primary-colored backgrounds */
   --text-on-primary: #ffffff;
   
@@ -121,6 +172,7 @@ body.theme-light {
 /* Minimalistic Black Theme */
 body.theme-minimalistic-black {
   background-color: #000000;
+  --tag-inner-overlay: rgba(255,255,255,0.08);
   /* Main colors */
   --primary-color: #ffffff;
   --primary-color-light: #f0f0f0;
@@ -128,6 +180,13 @@ body.theme-minimalistic-black {
   --primary-color-dark: #d0d0d0;
   --primary-color-text: #ffffff;
   --text-on-primary: #000000;
+  /* Strong darker borders for minimal black */
+  --tag-border-primary: #b9b9b9;
+  --tag-border-success: #7db07a;
+  --tag-border-warning: #b9b9b9;
+  --tag-border-danger: #9b9b9b;
+  --tag-border-info: #b9b9b9;
+  --tag-border-neutral: #060606;
   
   /* Secondary colors */
   --secondary-color: #ffffff;
@@ -158,6 +217,15 @@ body.theme-minimalistic-black {
   --scrollbar-track: rgba(255,255,255,0.02);
   --scrollbar-thumb: rgba(255,255,255,0.08);
   --scrollbar-thumb-hover: rgba(255,255,255,0.16);
+
+  /* Tag Color Theme Specific Overrides */
+  --tag-bg-info: var(--primary-color);
+  --tag-text-info: var(--text-on-primary, #000);
+  --tag-border-info: var(--neutral-2);
+  --tag-border-neutral: var(--neutral-2);
+  --tag-border-warning: var(--neutral-2);
+  --tag-text-neutral: var(--text-on-primary, #000);
+  
   
   /* Override specific components for minimalistic look */
   --ant-primary-color: #ffffff;
@@ -292,3 +360,4 @@ body.theme-minimalistic-black .ant-select-item-option-selected,
 body.theme-minimalistic-black .ant-select-item-option-active {
   background-color: #181818 !important;
 }
+
