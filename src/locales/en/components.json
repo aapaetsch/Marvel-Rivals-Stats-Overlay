@@ -166,6 +166,9 @@
       "match-detail": {
         "match-id": "Match ID",
         "match-time": "Match Time",
+        "player-name": "Name",
+        "kd": "KD",
+        "kda": "KDA",
         "map": "Map",
         "outcome": "Outcome",
         "player": "Player",

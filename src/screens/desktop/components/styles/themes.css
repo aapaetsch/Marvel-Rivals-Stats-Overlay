@@ -214,7 +214,7 @@ body.theme-minimalistic-black {
   --discord-color: #ffffff;
   
   /* Scrollbar colors for minimalistic black theme */
-  --scrollbar-track: rgba(255,255,255,0.02);
+  --scrollbar-track: rgba(25, 16, 16, 0.02);
   --scrollbar-thumb: rgba(255,255,255,0.08);
   --scrollbar-thumb-hover: rgba(255,255,255,0.16);
 
@@ -224,7 +224,7 @@ body.theme-minimalistic-black {
   --tag-border-info: var(--neutral-2);
   --tag-border-neutral: var(--neutral-2);
   --tag-border-warning: var(--neutral-2);
-  --tag-text-neutral: var(--text-on-primary, #000);
+  --tag-text-neutral: var(--neutral-text, #000);
   
   
   /* Override specific components for minimalistic look */

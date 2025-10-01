@@ -128,6 +128,9 @@
       "match-detail": {
         "match-id": "Maç Kimliği",
         "match-time": "Maç Zamanı",
+        "player-name": "İsim",
+        "kd": "KD",
+        "kda": "KDA",
         "map": "Harita",
         "outcome": "Sonuç",
         "player": "Oyuncu",

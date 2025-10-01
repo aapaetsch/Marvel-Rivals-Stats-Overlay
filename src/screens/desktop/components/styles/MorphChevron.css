@@ -2,16 +2,16 @@
   cursor: pointer;
   display: inline-block;
   position: relative;
-  width: 40px; /* increased size so chevron feels larger */
-  height: 40px;
-  padding: 4px;
-  padding-top: 6px; 
+  width: 24px; /* reduced width to cut left/right dead space */
+  height: 24px;
+  padding: 2px;
+  padding-top: 4px;
   color: var(--primary-color-text);
 }
 
 .morph-chevron .chevron-single {
-  width: 24px; /* larger svg to match increased container */
-  height: 24px;
+  width: 18px;
+  height: 18px;
   transform-origin: center;
 }
 

@@ -7,7 +7,7 @@
   font-weight: 600;
   /* Use the raw tag background; do not attempt to lighten the interior via overlay */
   background: var(--tag-bg, var(--neutral-4));
-  color: var(--tag-text, var(--primary-color-text));
+  color: var(--tag-text, var(--primary-color-text)) !important;
   /* Stronger, darker border — controlled by per-theme --tag-border hex variables */
   border: 2px solid var(--tag-border, #111111);
   cursor: default;
@@ -51,12 +51,57 @@
 }
 
 /* Type-specific default style fallbacks (will be overridden by inline color if provided) */
-.rr-tag--primary { --tag-bg: var(--tag-bg-primary, var(--primary-color)); --tag-text: var(--tag-text-primary, var(--primary-color-text)); --tag-border: var(--tag-border-primary, var(--primary-color-dark)); }
-.rr-tag--success { --tag-bg: var(--tag-bg-success, var(--success-color)); --tag-text: var(--tag-text-success, var(--primary-color-text)); --tag-border: var(--tag-border-success, var(--success-color)); }
-.rr-tag--warning { --tag-bg: var(--tag-bg-warning, var(--secondary-color)); --tag-text: var(--tag-text-warning, var(--secondary-color-text)); --tag-border: var(--tag-border-warning, var(--secondary-color-dark)); }
-.rr-tag--danger { --tag-bg: var(--tag-bg-danger, var(--error-color)); --tag-text: var(--tag-text-danger, #fff); --tag-border: var(--tag-border-danger, var(--error-color)); }
-.rr-tag--info { --tag-bg: var(--tag-bg-info, var(--primary-color-light)); --tag-text: var(--tag-text-info, var(--primary-color-text)); --tag-border: var(--tag-border-info, var(--primary-color-medium)); }
-.rr-tag--neutral { --tag-bg: var(--tag-bg-neutral, var(--neutral-4)); --tag-text: var(--tag-text-neutral, var(--neutral-0)); --tag-border: var(--tag-border-neutral, var(--neutral-1)); }
+.rr-tag--primary { 
+  --tag-bg: var(--tag-bg-primary, var(--primary-color)); 
+  --tag-text: var(--tag-text-primary, var(--primary-color-text)); 
+  --tag-border: var(--tag-border-primary, var(--primary-color-dark)); 
+}
+.rr-tag--success { 
+  --tag-bg: var(--tag-bg-success, var(--success-color)); 
+  --tag-text: var(--tag-text-success, var(--primary-color-text)); 
+  --tag-border: var(--tag-border-success, var(--success-color)); 
+}
+.rr-tag--warning { 
+  --tag-bg: var(--tag-bg-warning, var(--secondary-color)); 
+  --tag-text: var(--tag-text-warning, var(--secondary-color-text)); 
+  --tag-border: var(--tag-border-warning, var(--secondary-color-dark)); 
+}
+.rr-tag--danger { 
+  --tag-bg: var(--tag-bg-danger, var(--error-color)); 
+  --tag-text: var(--tag-text-danger, #fff); 
+  --tag-border: var(--tag-border-danger, var(--error-color)); 
+}
+.rr-tag--info { 
+  --tag-bg: var(--tag-bg-info, var(--primary-color-light)); 
+  --tag-text: var(--tag-text-info, var(--primary-color-text)); 
+  --tag-border: var(--tag-border-info, var(--primary-color-medium)); 
+}
+.rr-tag--neutral { 
+  --tag-bg: var(--tag-bg-neutral, var(--neutral-4)); 
+  --tag-text: var(--tag-text-neutral, var(--neutral-0)); 
+  --tag-border: var(--tag-border-neutral, var(--neutral-1)); 
+}
+
+.rr-tag--primary .rr-tag__icon,
+.rr-tag--primary .rr-tag__label,
+.rr-tag--success .rr-tag__icon,
+.rr-tag--success .rr-tag__label,
+.rr-tag--warning .rr-tag__icon,
+.rr-tag--warning .rr-tag__label,
+.rr-tag--danger .rr-tag__icon,
+.rr-tag--danger .rr-tag__label,
+.rr-tag--info .rr-tag__icon,
+.rr-tag--info .rr-tag__label,
+.rr-tag--neutral .rr-tag__icon,
+.rr-tag--neutral .rr-tag__label,
+.rr-tag--neutral .rr-tag__icon *,
+.rr-tag--info .rr-tag__icon *,
+.rr-tag--danger .rr-tag__icon *,
+.rr-tag--warning .rr-tag__icon *,
+.rr-tag--success .rr-tag__icon *,
+.rr-tag--primary .rr-tag__icon * {
+  color: var(--tag-text) !important;
+}
 
 /* Outlined variant: transparent fill, colored border, label uses border color */
 .rr-tag--outlined {

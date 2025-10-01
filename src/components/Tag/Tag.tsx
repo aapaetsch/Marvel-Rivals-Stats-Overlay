@@ -1,20 +1,9 @@
 import React from 'react';
 import icons from '../Icons';
 import './Tag.css';
-import { TagType, TagSize } from './TagTypes';
+import { TagType, TagProps } from './TagTypes';
 
-interface TagProps {
-  children: React.ReactNode;
-  size?: TagSize;
-  type?: TagType;
-  color?: string; // custom background color (hex, rgb, var())
-  icon?: React.ReactElement;
-  noIcon?: boolean; // when true, don't render an icon
-  variant?: 'filled' | 'outlined';
-  disabled?: boolean;
-  onClick?: (e: React.MouseEvent) => void;
-  className?: string;
-}
+
 
 // Choose sensible defaults for type -> color and icon mapping
 const DEFAULT_TYPE_STYLES: Record<

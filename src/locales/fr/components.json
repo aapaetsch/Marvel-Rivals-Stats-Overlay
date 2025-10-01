@@ -128,6 +128,9 @@
       "match-detail": {
         "match-id": "ID Partie",
         "match-time": "Heure de la Partie",
+        "player-name": "Nom",
+        "kd": "KD",
+        "kda": "KDA",
         "map": "Carte",
         "outcome": "Résultat",
         "player": "Joueur",

@@ -27,7 +27,9 @@ import {
   GiInfo,
   GiCheckeredFlag,
   GiCrossMark,
-  GiLaserWarning 
+  GiLaserWarning,
+  GiPodiumWinner,
+  GiCheckMark
 } from 'react-icons/gi';
 
 import { 
@@ -91,6 +93,10 @@ export interface IconsCollection {
   infoTag: React.ReactElement;
   warningTag: React.ReactElement;
   errorTag: React.ReactElement;
+
+  winnerPodium: React.ReactElement;
+  checkMark: React.ReactElement;
+  crossMark: React.ReactElement;
 }
 
 // Small badge component similar to the ult% pill
@@ -110,7 +116,6 @@ export const icons: IconsCollection = {
   damageBlocked: <GiShieldBash />,
   kd: <UltLikeBadge text="KD" />,
   kda: <UltLikeBadge text="KDA" accent />,
-
   
   // Navigation icons
   home: <GiHomeGarage />,
@@ -135,6 +140,11 @@ export const icons: IconsCollection = {
   infoTag: <GiInfo />,
   warningTag: <GiLaserWarning />,
   errorTag: <GiCrossMark />,
+
+  winnerPodium: <GiPodiumWinner />,
+  checkMark: <GiCheckMark />,
+  crossMark: <GiCrossMark />
+
 };
 
 // Default export
