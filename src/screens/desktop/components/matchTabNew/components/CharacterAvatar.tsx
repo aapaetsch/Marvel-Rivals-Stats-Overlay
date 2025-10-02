@@ -1,7 +1,7 @@
 import React from 'react';
 import { Avatar } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
-import { getCharacterIconPath } from 'lib/characterIcons';
+import { getCharacterDefaultIconPath } from 'lib/characterIcons';
 
 interface CharacterAvatarProps {
   characterName: string;
@@ -16,7 +16,7 @@ const CharacterAvatar: React.FC<CharacterAvatarProps> = ({
   size = 40,
   className = ''
 }) => {
-  const characterIconPath = characterName ? getCharacterIconPath(characterName) : null;
+  const characterIconPath = characterName ? getCharacterDefaultIconPath(characterName) : null;
 
   return (
     <div className={`character-avatar ${className}`}>

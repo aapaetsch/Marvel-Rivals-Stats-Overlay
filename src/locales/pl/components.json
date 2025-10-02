@@ -128,18 +128,21 @@
       "match-detail": {
         "match-id": "ID Meczu",
         "match-time": "Czas Meczu",
+        "player-name": "Nazwa",
+        "kd": "KD",
+        "kda": "KDA",
         "map": "Mapa",
         "outcome": "Wynik",
         "player": "Gracz",
         "character": "Postać",
-        "kills": "Z",
-        "deaths": "Ś",
+        "kills": "K",
+        "deaths": "D",
         "assists": "A",
-        "final-hits": "OT",
+        "final-hits": "CF",
         "damage": "Obrażenia",
         "healing": "Leczenie",
-        "blocked": "Zablokowano",
-        "teammates": "Sojusznicy",
+        "blocked": "Zablokowane",
+        "teammates": "Towarzysze",
         "opponents": "Przeciwnicy"
       }
     }

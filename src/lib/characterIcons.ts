@@ -5,6 +5,7 @@
  * Use this to reference characters throughout the app for consistency
  */
 export enum CharacterName {
+  ANGELA = "Angela",
   ADAM_WARLOCK = "Adam Warlock",
   BLACK_PANTHER = "Black Panther",
   BLACK_WIDOW = "Black Widow",
@@ -52,6 +53,7 @@ export enum CharacterName {
 
 // Maps character names to their icon file names
 const characterIconMap: Record<CharacterName, string> = {
+  [CharacterName.ANGELA]: "Angela_DEFAULT_Table_Icon.png",
   [CharacterName.ADAM_WARLOCK]: "Adam_Warlock_Icon.png",
   [CharacterName.BLACK_PANTHER]: "Black_Panther_Icon.png",
   [CharacterName.BLACK_WIDOW]: "Black_Widow_Icon.png",
@@ -99,7 +101,7 @@ const characterIconMap: Record<CharacterName, string> = {
 
 export const approximateName = (characterName: string): CharacterName => {
   const s = characterName.toLowerCase().replace(/_/g, ' ').trim();
-
+  if (/angela/.test(s)) return CharacterName.ANGELA;
   // Specific checks for multiword/overlapping names should come first
   if (/cloak|dagger/.test(s)) return CharacterName.CLOAK_AND_DAGGER;
   if (/captain.*america|captain america|captain$|america/.test(s)) return CharacterName.CAPTAIN_AMERICA;
@@ -179,6 +181,10 @@ characterLordIconMap[CharacterName.CLOAK_AND_DAGGER] = 'Cloak%26Dagger_Lord.png'
 
 // Bruce Banner's lord file includes a different suffix
 characterLordIconMap[CharacterName.BRUCE_BANNER] = 'Bruce_Banner_Lord_Icon.png';
+// Ensure specific characters have explicit default-table icon entries (fixes missing mappings)
+characterDefaultIconMap[CharacterName.BLADE] = 'Blade_DEFAULT_Table_Icon.png';
+characterDefaultIconMap[CharacterName.ANGELA] = 'Angela_DEFAULT_Table_Icon.png';
+characterDefaultIconMap[CharacterName.ULTRON] = 'Ultron_DEFAULT_Table_Icon.png';
 function getCharacterIconPathFromIconSet(characterName: CharacterName | string | null, iconSet: 'default' | 'lord' | 'white' = 'default'): string | null {
   if (!characterName) return null;
   const approxCharName = approximateName(characterName);
@@ -205,13 +211,27 @@ function getCharacterIconPathFromIconSet(characterName: CharacterName | string |
   }
   
   if (iconSetMap[approxCharName]) {
-    return `/heroheadshots/regular/${characterDefaultIconMap[approximateName(characterName)]}`;
+    // Choose filename based on requested icon set
+    let filename: string | undefined;
+    if (iconSet === 'default') {
+      filename = characterDefaultIconMap[approxCharName];
+    } else if (iconSet === 'lord') {
+      filename = characterLordIconMap[approxCharName];
+    } else {
+      filename = iconSetMap[approxCharName];
+    }
+    if (filename) return `/heroheadshots/regular/${filename}`;
   }
   
-  // Try exact match
-  if (iconSetMap[characterName as CharacterName]) {
-    return `/heroheadshots/regular/${iconSetMap[characterName as CharacterName]}`;
+  // As a last-ditch fallback, try the default icon map if it exists
+  if (characterDefaultIconMap[approxCharName]) {
+    return `/heroheadshots/regular/${characterDefaultIconMap[approxCharName]}`;
   }
+   
+   // Try exact match
+   if (iconSetMap[characterName as CharacterName]) {
+     return `/heroheadshots/regular/${iconSetMap[characterName as CharacterName]}`;
+   }
   
   // Special case for Cloak & Dagger
   if (typeof characterName === 'string' && 

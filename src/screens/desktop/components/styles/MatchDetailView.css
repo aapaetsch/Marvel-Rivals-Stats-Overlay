@@ -92,17 +92,104 @@
   height: 1.15rem;
 }
 
-/* Tab styles */
-.ant-tabs-nav .ant-tabs-tab {
-  color: var(--primary-color-medium);
+/* Team section styles */
+.team-section {
+  display: block;
+  padding: 8px 0;
 }
 
-.ant-tabs-nav .ant-tabs-tab-active {
-  color: var(--primary-color-text);
+/* Compact table styles when used in the match detail expanded view */
+.match-detail-container .match-detail-table .ant-table-cell {
+  font-size: 12px !important;
+  padding: 4px 6px !important;
 }
 
-.ant-tabs-ink-bar {
-  background-color: var(--primary-color);
+.match-detail-container .match-detail-table .ant-table-thead > tr > th {
+  font-size: 15px !important;
+  padding: 10px 12px !important;
+}
+
+.match-detail-container .match-detail-table .character-icon {
+  width: 26px !important;
+  height: 26px !important;
+}
+
+.match-detail-container .match-detail-table .character-avatar-placeholder {
+  width: 26px !important;
+  height: 26px !important;
+  line-height: 26px !important;
+}
+
+.match-detail-container .match-detail-table .column-number {
+  font-size: 13px !important;
+  padding-left: 4px !important;
+  padding-right: 4px !important;
+}
+
+.match-detail-container .match-detail-table .local-player-star {
+  font-size: 11px !important;
+}
+
+/* Final hits compact sizing inside the expanded detail view */
+.match-detail-container .match-detail-table .final-hits-details {
+  padding: 4px !important;
+}
+.match-detail-container .match-detail-table .final-hits-cell {
+  font-size: 11px !important;
+  padding: 3px 4px !important;
+}
+
+/* Reduce spacing around table wrapper so the expanded area feels denser */
+.match-detail-container .match-table-wrapper {
+  margin-bottom: 6px;
+}
+
+/* Tighten row heights explicitly for compact tables */
+.match-detail-container .match-detail-table .ant-table-tbody > tr > td {
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+}
+.match-detail-container .match-detail-table .ant-table-tbody > tr {
+  line-height: 1.1 !important;
+}
+
+/* Team row coloring for stacked match-detail tables */
+.match-detail-container .match-detail-table .local-player-row > td {
+  background-color: rgba(var(--match-table-row-team), 0.12) !important;
+}
+
+.match-detail-container .match-detail-table .teammate-row > td {
+  background-color: rgba(var(--match-table-row-team), 0.08) !important;
+}
+
+.match-detail-container .match-detail-table .opponent-row > td {
+  background-color: rgba(var(--match-table-row-oponent), 0.08) !important;
+}
+
+/* Make the separator row clearly blank and a bit taller to separate teams visually */
+.match-detail-container .match-detail-table .team-separator td {
+  height: 18px !important;
+  background: transparent !important;
+  border-bottom: none !important;
+  padding: 6px !important;
+}
+
+/* Keep the left accent border for team rows but make it slightly thinner */
+.match-detail-container .match-detail-table .teammate-row td:first-child {
+  border-left: 3px solid rgba(var(--match-table-row-team), 1) !important;
+  padding-left: 8px !important;
+}
+
+.match-detail-container .match-detail-table .opponent-row td:first-child {
+  border-left: 3px solid rgba(var(--match-table-row-oponent), 1) !important;
+  padding-left: 8px !important;
+}
+
+/* Subtle hover while preserving team tint */
+.match-detail-container .match-detail-table .teammate-row:hover > td,
+.match-detail-container .match-detail-table .opponent-row:hover > td,
+.match-detail-container .match-detail-table .local-player-row:hover > td {
+  background-color: rgba(255, 255, 255, 0.03) !important;
 }
 
 /* Responsive adjustments */

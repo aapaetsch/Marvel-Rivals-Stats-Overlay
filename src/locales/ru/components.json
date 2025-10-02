@@ -128,18 +128,21 @@
       "match-detail": {
         "match-id": "ID Матча",
         "match-time": "Время Матча",
+        "player-name": "Имя",
+        "kd": "KD",
+        "kda": "KDA",
         "map": "Карта",
         "outcome": "Результат",
         "player": "Игрок",
         "character": "Персонаж",
-        "kills": "У",
-        "deaths": "С",
-        "assists": "П",
-        "final-hits": "ФУ",
+        "kills": "K",
+        "deaths": "П",
+        "assists": "A",
+        "final-hits": "ФБ",
         "damage": "Урон",
-        "healing": "Лечение",
-        "blocked": "Блок",
-        "teammates": "Союзники",
+        "healing": "Исцеление",
+        "blocked": "Заблокировано",
+        "teammates": "Товарищи",
         "opponents": "Противники"
       }
     }

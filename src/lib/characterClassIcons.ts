@@ -62,6 +62,7 @@ export const CHARACTER_CLASS_RECORD: Record<CharacterName, CharacterClass> = {
   [CharacterName.IRON_MAN]: CharacterClass.DUELIST,
   [CharacterName.DUELIST]: CharacterClass.DUELIST,
   // Vanguards
+  [CharacterName.ANGELA]: CharacterClass.VANGUARD,
   [CharacterName.THE_THING]: CharacterClass.VANGUARD,
   [CharacterName.THOR]: CharacterClass.VANGUARD,
   [CharacterName.VENOM]: CharacterClass.VANGUARD,

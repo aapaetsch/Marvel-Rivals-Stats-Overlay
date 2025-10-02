@@ -128,19 +128,22 @@
       "match-detail": {
         "match-id": "ID da Partida",
         "match-time": "Hora da Partida",
+        "player-name": "Nome",
+        "kd": "KD",
+        "kda": "KDA",
         "map": "Mapa",
         "outcome": "Resultado",
         "player": "Jogador",
         "character": "Personagem",
-        "kills": "E",
-        "deaths": "M",
+        "kills": "K",
+        "deaths": "D",
         "assists": "A",
-        "final-hits": "GF",
+        "final-hits": "CF",
         "damage": "Dano",
         "healing": "Cura",
         "blocked": "Bloqueado",
-        "teammates": "Aliados",
-        "opponents": "Oponentes"
+        "teammates": "Colegas",
+        "opponents": "Adversários"
       }
     }
   }

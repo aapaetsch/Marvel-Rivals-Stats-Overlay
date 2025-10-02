@@ -1,0 +1,144 @@
+/* MatchHistoryFilters.css - Styling for match history filter controls */
+
+.match-history-filters {
+  width: 100%;
+}
+
+.match-history-filters .ant-form-item {
+  margin-bottom: 28px; /* increased spacing to avoid label overlap */
+}
+
+.match-history-filters .ant-form-item-label {
+  padding-top: 8px !important;
+  padding-bottom: 0px !important; /* more room between label and control */
+}
+
+.match-history-filters .ant-form-item-label > label {
+  color: var(--primary-color-text);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Ensure the control area has a bit of breathing room from the label */
+.match-history-filters .ant-form-item-control {
+  margin-top: 6px;
+}
+
+/* Increase vertical spacing for multi-line labels or controls to prevent overlap */
+.match-history-filters .ant-form-item .ant-form-item-label > label {
+  display: block;
+  line-height: 1.2;
+}
+
+.match-history-filters .ant-select,
+.match-history-filters .ant-picker {
+  width: 100%;
+}
+
+.match-history-filters .ant-select-selector,
+.match-history-filters .ant-picker {
+  background-color: var(--neutral-1) !important;
+  border-color: var(--neutral-0) !important;
+  color: var(--primary-color-text) !important;
+}
+
+.match-history-filters .ant-select-selector:hover,
+.match-history-filters .ant-picker:hover {
+  border-color: var(--primary-color-light) !important;
+}
+
+.match-history-filters .ant-select-selection-placeholder,
+.match-history-filters .ant-picker-input > input::placeholder {
+  color: var(--primary-color-medium) !important;
+}
+
+.match-history-filters .ant-select-selection-item {
+  color: var(--primary-color-text) !important;
+}
+
+.match-history-filters .ant-picker-input > input {
+  color: var(--primary-color-text) !important;
+}
+
+.match-history-filters .ant-btn-primary {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: var(--primary-color-text) !important;
+  font-weight: 600;
+}
+
+.match-history-filters .ant-btn-primary:hover {
+  background-color: var(--primary-color-light) !important;
+  border-color: var(--primary-color-light) !important;
+}
+
+/* Outlined reset button style */
+.reset-button-outlined {
+  border: 1px solid var(--primary-color-medium) !important;
+  background: transparent !important;
+  color: var(--primary-color-text) !important;
+  font-weight: 600;
+}
+
+.reset-button-outlined:hover {
+  background-color: rgba(var(--primary-color), 0.06) !important;
+}
+
+/* Dropdown styling */
+.ant-select-dropdown {
+  background-color: var(--neutral-2) !important;
+  border: 1px solid var(--primary-color-medium) !important;
+}
+
+.ant-select-item {
+  color: var(--primary-color-text) !important;
+}
+
+.ant-select-item-option-selected {
+  background-color: var(--primary-color) !important;
+  color: var(--primary-color-text) !important;
+}
+
+.ant-select-item-option-active {
+  background-color: var(--neutral-1) !important;
+}
+
+/* Date picker dropdown */
+.ant-picker-dropdown {
+  background-color: var(--neutral-2) !important;
+  border: 1px solid var(--primary-color-medium) !important;
+}
+
+.ant-picker-panel-container {
+  background-color: var(--neutral-2) !important;
+}
+
+.ant-picker-header,
+.ant-picker-body {
+  color: var(--primary-color-text) !important;
+}
+
+.ant-picker-cell {
+  color: var(--primary-color-text) !important;
+}
+
+.ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner {
+  background-color: var(--primary-color) !important;
+  color: var(--primary-color-text) !important;
+}
+
+.ant-picker-cell:hover:not(.ant-picker-cell-selected):not(.ant-picker-cell-range-start):not(.ant-picker-cell-range-end) .ant-picker-cell-inner {
+  background-color: var(--neutral-1) !important;
+}
+
+/* Clear button styling */
+.match-history-filters .ant-select-clear,
+.match-history-filters .ant-picker-clear {
+  background-color: var(--neutral-2);
+  color: var(--primary-color-medium);
+}
+
+.match-history-filters .ant-select-clear:hover,
+.match-history-filters .ant-picker-clear:hover {
+  color: var(--primary-color-text);
+}

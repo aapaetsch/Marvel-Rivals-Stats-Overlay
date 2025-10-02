@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Form, Select, DatePicker, Button, Space } from 'antd';
+import React from 'react';
+import { Form, Select, DatePicker, Button } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { getAllCharacterNames, CharacterName } from 'lib/characterIcons';
-import dayjs from 'dayjs';
+import '../styles/MatchHistoryFilters.css';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -15,12 +15,12 @@ const MatchHistoryFilters: React.FC<MatchHistoryFiltersProps> = ({ onFilterChang
   const { t } = useTranslation();
   const [form] = Form.useForm();
   
-  // Game types and modes (could be fetched from an API or config)
-  const gameTypes = ['Ranked', 'Casual', 'Custom'];
-  const gameModes = ['Zone Control', 'Team Deathmatch', 'Escort', 'Assault'];
+  // Game types and modes matching actual game data
+  const gameTypes = ['Ranked', 'Unranked', 'Practice', 'Custom'];
+  const gameModes = ['Payload', 'Domination', 'Skirmish', 'Control', 'Escort', 'Assault'];
   
-  // Get all character names for the character filter
-  const characterNames = getAllCharacterNames();
+  // Get all character names for the character filter (excluding DUELIST placeholder)
+  const characterNames = getAllCharacterNames().filter(name => name !== CharacterName.DUELIST);
   
   // Handle form changes
   const handleFormChange = () => {
@@ -105,9 +105,11 @@ const MatchHistoryFilters: React.FC<MatchHistoryFiltersProps> = ({ onFilterChang
       
       <Form.Item>
         <Button 
-          type="primary" 
+          type="default"
+          ghost
           onClick={handleReset}
           block
+          className="reset-button-outlined has-margin-top-5"
         >
           {t('components.desktop.match-history.filters.reset', 'Reset Filters')}
         </Button>

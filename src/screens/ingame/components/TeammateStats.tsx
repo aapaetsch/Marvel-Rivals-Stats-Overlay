@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Avatar } from "antd";
 import { UserOutlined } from '@ant-design/icons';
 import { PlayerStatsProps, TeamateOptionsArrays, TeamStatProps } from "../types/teamateStatsTypes";
-import { getCharacterIconPath } from "lib/characterIcons";
+import { getCharacterDefaultIconPath } from "lib/characterIcons";
 import { icons } from 'components';
 import "./styles/playerStats.css";
 import { useSelector } from 'react-redux';
@@ -114,7 +114,7 @@ const UltBorderOverlay: React.FC<{
 
 // Teammate Card component
 const TeammateCard = ({ player, index }: { player: PlayerStatsProps; index: number }) => {
-  const characterIconPath = player.characterName ? getCharacterIconPath(player.characterName) : null;
+  const characterIconPath = player.characterName ? getCharacterDefaultIconPath(player.characterName) : null;
   // Get settings from Redux store
   const { 
     showTeammate1, showTeammate2, showTeammate3, showTeammate4, showTeammate5, 
