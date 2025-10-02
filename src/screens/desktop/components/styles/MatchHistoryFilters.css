@@ -9,7 +9,8 @@
 }
 
 .match-history-filters .ant-form-item-label {
-  padding-bottom: 8px; /* more room between label and control */
+  padding-top: 8px !important;
+  padding-bottom: 0px !important; /* more room between label and control */
 }
 
 .match-history-filters .ant-form-item-label > label {
@@ -27,7 +28,6 @@
 .match-history-filters .ant-form-item .ant-form-item-label > label {
   display: block;
   line-height: 1.2;
-  margin-bottom: 8px;
 }
 
 .match-history-filters .ant-select,

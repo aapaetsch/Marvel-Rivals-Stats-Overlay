@@ -181,6 +181,10 @@ characterLordIconMap[CharacterName.CLOAK_AND_DAGGER] = 'Cloak%26Dagger_Lord.png'
 
 // Bruce Banner's lord file includes a different suffix
 characterLordIconMap[CharacterName.BRUCE_BANNER] = 'Bruce_Banner_Lord_Icon.png';
+// Ensure specific characters have explicit default-table icon entries (fixes missing mappings)
+characterDefaultIconMap[CharacterName.BLADE] = 'Blade_DEFAULT_Table_Icon.png';
+characterDefaultIconMap[CharacterName.ANGELA] = 'Angela_DEFAULT_Table_Icon.png';
+characterDefaultIconMap[CharacterName.ULTRON] = 'Ultron_DEFAULT_Table_Icon.png';
 function getCharacterIconPathFromIconSet(characterName: CharacterName | string | null, iconSet: 'default' | 'lord' | 'white' = 'default'): string | null {
   if (!characterName) return null;
   const approxCharName = approximateName(characterName);
