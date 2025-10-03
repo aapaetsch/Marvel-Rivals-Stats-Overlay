@@ -29,7 +29,8 @@ import {
   GiCrossMark,
   GiLaserWarning,
   GiPodiumWinner,
-  GiCheckMark
+  GiCheckMark,
+  GiCardRandom
 } from 'react-icons/gi';
 
 import { 
@@ -97,6 +98,7 @@ export interface IconsCollection {
   winnerPodium: React.ReactElement;
   checkMark: React.ReactElement;
   crossMark: React.ReactElement;
+  randomCard: React.ReactElement;
 }
 
 // Small badge component similar to the ult% pill
@@ -143,8 +145,8 @@ export const icons: IconsCollection = {
 
   winnerPodium: <GiPodiumWinner />,
   checkMark: <GiCheckMark />,
-  crossMark: <GiCrossMark />
-
+  crossMark: <GiCrossMark />,
+  randomCard: <GiCardRandom />
 };
 
 // Default export

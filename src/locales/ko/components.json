@@ -13,7 +13,9 @@
       "menu": {
         "home": "홈",
         "match": "매치",
-        "current_match": "현재 매치",
+        "live_match": "라이브 매치",
+        "current_match": "매치 테이블",
+        "current_match_cards": "카드 뷰",
         "match_history": "매치 기록",
         "stats": "통계",
         "player_stats": "플레이어 통계",
@@ -77,6 +79,12 @@
         "feedback": "피드백 보내기",
         "save": "설정 저장",
         "reset": "기본값으로 초기화"
+      },
+      "live-match": {
+        "title": "라이브 매치",
+        "card-view": "카드 뷰",
+        "table-view": "테이블 뷰",
+        "info-view": "매치 정보"
       },
       "match-info": {
         "title": "매치 정보",

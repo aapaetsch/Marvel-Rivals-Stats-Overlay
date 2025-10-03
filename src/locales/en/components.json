@@ -13,8 +13,9 @@
       "menu": {
         "home": "Home",
         "match": "Match",
+        "live_match": "Live Match",
         "current_match": "Match Table",
-        "current_match_cards": "Live Match",
+        "current_match_cards": "Card View",
         "match_history": "Match History",
         "stats": "Stats",
         "player_stats": "Player Stats",
@@ -126,6 +127,12 @@
         "you": "You",
         "inProgress": "In Progress",
         "duration": "Duration"
+      },
+      "live-match": {
+        "title": "Live Match",
+        "card-view": "Card View",
+        "table-view": "Table View",
+        "info-view": "Match Info"
       },
       "match-tab-new": {
         "title": "Match Overview - Card View",

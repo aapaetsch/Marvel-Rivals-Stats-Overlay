@@ -13,7 +13,9 @@
       "menu": {
         "home": "Startseite",
         "match": "Spiel",
-        "current_match": "Aktuelles Spiel",
+        "live_match": "Live-Spiel",
+        "current_match": "Spieltabelle",
+        "current_match_cards": "Kartenansicht",
         "match_history": "Spielverlauf",
         "stats": "Statistiken",
         "player_stats": "Spielerstatistiken",
@@ -75,6 +77,12 @@
         "import-warning": "Warnung: Das Importieren von Einstellungen überschreibt Ihre aktuellen Einstellungen.",
         "app-info": "App-Informationen",
         "advanced": "Erweitert"
+      },
+      "live-match": {
+        "title": "Live-Spiel",
+        "card-view": "Kartenansicht",
+        "table-view": "Tabellenansicht",
+        "info-view": "Spielinfo"
       },
       "match-info": {
         "title": "Spielinformationen",
