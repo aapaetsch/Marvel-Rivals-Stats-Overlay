@@ -13,8 +13,9 @@
       "menu": {
         "home": "Inicio",
         "match": "Partida",
-        "current_match": "Partida Actual",
-        "current_match_cards": "Tarjetas de Partida en Vivo",
+        "live_match": "Partida en Vivo",
+        "current_match": "Tabla de Partida",
+        "current_match_cards": "Vista de Tarjetas",
         "match_history": "Historial de Partidas",
         "stats": "Estadísticas",
         "player_stats": "Estadísticas del Jugador",
@@ -78,6 +79,12 @@
         "feedback": "Enviar Comentarios",
         "save": "Guardar Configuración",
         "reset": "Restablecer a Predeterminada"
+      },
+      "live-match": {
+        "title": "Partida en Vivo",
+        "card-view": "Vista de Tarjetas",
+        "table-view": "Vista de Tabla",
+        "info-view": "Info de Partida"
       },
       "match-info": {
         "title": "Información de la Partida",

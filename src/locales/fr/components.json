@@ -13,7 +13,9 @@
       "menu": {
         "home": "Accueil",
         "match": "Partie",
-        "current_match": "Partie en Cours",
+        "live_match": "Partie en Direct",
+        "current_match": "Tableau de Partie",
+        "current_match_cards": "Vue Cartes",
         "match_history": "Historique des Parties",
         "stats": "Statistiques",
         "player_stats": "Statistiques Joueur",
@@ -73,10 +75,16 @@
         "advanced": "Avancé",
         "about": "À propos",
         "check-updates": "Rechercher des Mises à Jour",
-        "support": "Obtenir de l’Aide",
+        "support": "Obtenir de l'Aide",
         "feedback": "Envoyer des Commentaires",
         "save": "Enregistrer les Paramètres",
         "reset": "Réinitialiser"
+      },
+      "live-match": {
+        "title": "Partie en Direct",
+        "card-view": "Vue Cartes",
+        "table-view": "Vue Tableau",
+        "info-view": "Info Partie"
       },
       "match-info": {
         "title": "Informations de la Partie",

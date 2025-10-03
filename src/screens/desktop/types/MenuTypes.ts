@@ -4,6 +4,7 @@ export enum MenuKeys {
   PLAYER_STATS = 'Stats-Player',
   SQUAD_STATS = 'Stats-Squad',
   MATCH = 'Match-Sub',
+  LIVE_MATCH = 'Match-Live',
   CURRENT_MATCH = 'Match-Current',
   CURRENT_MATCH_CARDS = 'Match-Current-Cards',
   MATCH_HISTORY = 'Match-History',

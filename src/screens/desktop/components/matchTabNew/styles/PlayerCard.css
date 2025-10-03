@@ -19,15 +19,16 @@
   outline-offset: 2px;
 }
 
-/* Team-based card styling */
+/* Team-based card styling - using proper team colors */
 .player-card.team-friendly {
-  --card-bg-color: #1a472a;
-  --card-border-color: rgba(77, 171, 107, 0.3);
+  /* card backgrounds and borders match table RGB colors */
+  --card-bg-color: rgba(var(--match-table-row-team), 0.08);
+  --card-border-color: rgba(var(--match-table-row-team), 0.4);
 }
 
 .player-card.team-enemy {
-  --card-bg-color: #472a1a;
-  --card-border-color: rgba(171, 77, 77, 0.3);
+  --card-bg-color: rgba(var(--match-table-row-oponent), 0.08);
+  --card-border-color: rgba(var(--match-table-row-oponent), 0.4);
 }
 
 /* Card faces */
@@ -74,10 +75,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .character-avatar {
   position: relative;
+  display: flex;
+  line-height: 0;
 }
 
 .character-icon {
@@ -85,22 +89,132 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   object-fit: cover;
   display: block;
+  max-width: 100%;
+  height: auto;
 }
 
 .character-avatar-fallback {
   border: 1px solid rgba(255, 255, 255, 0.2);
+  display: block;
 }
 
-.card-character {
+/* Most Used Characters Section */
+.most-used-characters {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 6px;
+  margin: 4px 0;
+}
+
+.most-used-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   text-align: center;
+  margin-bottom: 2px;
 }
 
-.character-name {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.8);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.most-used-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.most-used-row-top {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  justify-items: center;
+}
+
+.most-used-row-bottom {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  justify-items: center;
+}
+
+/* Larger slots for the top 3 most-used characters */
+.most-used-row-top .most-used-avatar-slot {
+  width: 32px;
+  height: 32px;
+}
+
+/* Keep smaller slots for the bottom row */
+.most-used-row-bottom .most-used-avatar-slot {
+  width: 24px;
+  height: 24px;
+}
+
+/* Ensure the avatar wrapper fills the slot and centers the image, preventing visible background mask */
+.most-used-avatar-slot .character-avatar {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+/* Let the image size be controlled by the inline size prop, but ensure it does not exceed the slot */
+.most-used-avatar-slot .character-icon {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  display: block;
+  margin-right: 0;
+}
+
+/* Ensure Ant Design fallback avatar fills the slot */
+.most-used-avatar-slot .character-avatar .ant-avatar {
+  width: 100% !important;
+  height: 100% !important;
+  line-height: 1 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Empty slot sizes should match the row sizes */
+.most-used-row-top .most-used-avatar-slot.empty .empty-slot {
+  width: 32px;
+  height: 32px;
+}
+
+.most-used-row-bottom .most-used-avatar-slot.empty .empty-slot {
+  width: 24px;
+  height: 24px;
+}
+
+/* Placeholder avatar styling (fallback avatars shown for empty slots) */
+.most-used-avatar-slot.empty .most-used-avatar.placeholder .ant-avatar,
+.most-used-avatar-slot.empty .most-used-avatar.placeholder .character-icon {
+  border-radius: 4px;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.02);
+  opacity: 0.7;
+}
+
+/* Ensure placeholder fills the slot */
+.most-used-avatar-slot.empty .most-used-avatar.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Ensure images inside placeholder scale properly */
+.most-used-avatar-slot.empty .most-used-avatar.placeholder .character-icon {
+  max-width: 90%;
+  max-height: 90%;
 }
 
 /* KDA Display */
@@ -252,10 +366,26 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.back-avatar .character-icon {
-  width: 32px;
-  height: 32px;
+.back-avatar {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; /* prevent any background from showing outside the image */
+  line-height: 0; /* eliminate inline element gaps */
+  background: transparent; /* ensure no background behind the avatar */
 }
+
+.back-avatar .character-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 0;
+  display: block;
+  object-fit: cover; /* crop to fill */
+  border-radius: 6px;
+}
+
 
 .player-back-info {
   flex-grow: 1;
@@ -369,9 +499,17 @@
   justify-self: center;
 }
 
+.final-hit-row .row-avatar {
+  display: flex;
+  line-height: 0;
+  width: 16px;
+  height: 16px;
+}
+
 .final-hit-row .row-avatar img,
 .final-hit-row .row-avatar canvas {
   border-radius: 3px;
+  display: block;
 }
 
 .final-hit-row .row-name {

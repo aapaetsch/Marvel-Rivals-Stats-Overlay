@@ -17,7 +17,6 @@ import { GiFloatingPlatforms, GiKing, GiStarfighter, GiOpenGate, GiClosedDoors }
 import { MdOutlineWorkHistory } from 'react-icons/md';
 import { LiaUsersSolid, LiaUserTagSolid, LiaUserInjuredSolid, LiaUserGraduateSolid } from 'react-icons/lia';
 import { PiUserListBold } from 'react-icons/pi';
-import { HiOutlineViewGrid } from 'react-icons/hi';
 import { AntMenuItem, MenuKeys } from '../types/MenuTypes';
 import { isDev } from 'lib/utils';
 import { isMatchLive } from 'lib/matchStatusUtils';
@@ -36,19 +35,14 @@ const getMenuItems = (t: any, isLiveMatch: boolean = false): AntMenuItem[] => {
     label: t('components.desktop.menu.match'),
     children: [
       {
-        key: MenuKeys.CURRENT_MATCH_CARDS,
+        key: MenuKeys.LIVE_MATCH,
         icon: (
           <div className="menu-icon-wrapper">
-            <HiOutlineViewGrid />
+            <IoGameControllerOutline />
             {isLiveMatch && <span className="live-match-indicator" />}
           </div>
         ),
-        label: t('components.desktop.menu.current_match_cards'),
-      },
-      {
-        key: MenuKeys.CURRENT_MATCH,
-        icon: <IoGameControllerOutline />,
-        label: t('components.desktop.menu.current_match'),
+        label: t('components.desktop.menu.live_match'),
       },
       {
         key: MenuKeys.MATCH_HISTORY,

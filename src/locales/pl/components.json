@@ -13,7 +13,9 @@
       "menu": {
         "home": "Strona Główna",
         "match": "Mecz",
-        "current_match": "Bieżący Mecz",
+        "live_match": "Mecz na Żywo",
+        "current_match": "Tabela Meczu",
+        "current_match_cards": "Widok Kart",
         "match_history": "Historia Meczów",
         "stats": "Statystyki",
         "player_stats": "Statystyki Gracza",
@@ -77,6 +79,12 @@
         "feedback": "Prześlij Opinię",
         "save": "Zapisz Ustawienia",
         "reset": "Przywróć Domyślne"
+      },
+      "live-match": {
+        "title": "Mecz na Żywo",
+        "card-view": "Widok Kart",
+        "table-view": "Widok Tabeli",
+        "info-view": "Info o Meczu"
       },
       "match-info": {
         "title": "Informacje o Meczu",

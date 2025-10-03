@@ -1,45 +1,96 @@
-import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Segmented } from 'antd';
 import { useTranslation } from 'react-i18next';
+import { GiCardRandom } from 'react-icons/gi';
+import { BsTable } from 'react-icons/bs';
+import { InfoCircleOutlined } from '@ant-design/icons';
+import MatchCardGrid from '../matchTabNew/components/MatchCardGrid';
+import MatchTable from '../matchTab/MatchTable';
+import MatchInfoCard from '../matchTab/MatchInfoCard';
+import LiveMatchCover from '../matchTabNew/components/LiveMatchCover';
+import { useSelector } from 'react-redux';
 import { RootReducer } from 'app/shared/rootReducer';
-import { PlayerCardData, TeamData } from './types/MatchCardTypes';
-import { useCardFlip } from './hooks/useCardFlip';
-import MatchCardGrid from './components/MatchCardGrid';
 import { shouldShowCardViewCover, hasAnyMatchData } from 'lib/matchStatusUtils';
-import LiveMatchCover from './components/LiveMatchCover';
-import './styles/MatchTabNew.css';
-import './styles/PlayerCard.css';
-import './styles/CardFlipAnimation.css';
+import { useCardFlip } from '../matchTabNew/hooks/useCardFlip';
+import { PlayerCardData, TeamData } from '../matchTabNew/types/MatchCardTypes';
+import './styles/LiveMatch.css';
 
-const MatchTabNew: React.FC = () => {
+type ViewMode = 'cards' | 'table' | 'info';
+
+/**
+ * LiveMatch component that combines card view and table view with a toggle
+ */
+const LiveMatch: React.FC = () => {
   const { t } = useTranslation();
+  const [viewMode, setViewMode] = useState<ViewMode>('cards');
+  const [roundSelection, setRoundSelection] = useState<'match' | number>('match');
+  const [nowTs, setNowTs] = useState<number>(Date.now());
   const { currentMatch } = useSelector((state: RootReducer) => state.matchStatsReducer);
   const { forceShowCardViewCover } = useSelector((state: RootReducer) => state.appSettingsReducer.settings);
+  const { flippedCards, toggleCard } = useCardFlip();
 
-  // Determine if cover should be shown
-  const showCover = shouldShowCardViewCover(currentMatch, forceShowCardViewCover);
+  // Check if data is available and if cover should be shown
   const hasMatchData = hasAnyMatchData(currentMatch);
-  
-  // Build a source players map based on selection
+  const showCover = shouldShowCardViewCover(currentMatch, forceShowCardViewCover);
+
+  // Update a tick every second to refresh duration while match is ongoing
+  useEffect(() => {
+    if (currentMatch?.timestamps?.matchStart && !currentMatch?.timestamps?.matchEnd) {
+      const id = setInterval(() => setNowTs(Date.now()), 1000);
+      return () => clearInterval(id);
+    }
+  }, [currentMatch?.timestamps?.matchStart, currentMatch?.timestamps?.matchEnd]);
+
+  // When the cover is visible, hide overflow-y on the global main scroller to prevent page scroll
+  React.useEffect(() => {
+    const scroller = document.querySelector('.desktop__main-scroller') as HTMLElement | null;
+    if (!scroller) return;
+    const prevOverflowY = scroller.style.overflowY;
+    if (showCover) {
+      scroller.style.overflowY = 'hidden';
+    } else {
+      scroller.style.overflowY = prevOverflowY || '';
+    }
+    return () => {
+      if (scroller) scroller.style.overflowY = prevOverflowY || '';
+    };
+  }, [showCover]);
+
+  // Build title details without dangling separators
+  const titleParts = [
+    currentMatch?.gameType || undefined,
+    currentMatch?.gameMode || undefined,
+    currentMatch?.map || undefined,
+  ].filter(Boolean) as string[];
+
+  const formatDuration = (start?: number | null, end?: number | null) => {
+    if (!start) return '00:00';
+    const effectiveEnd = end ?? nowTs;
+    const ms = Math.max(0, effectiveEnd - start);
+    const s = Math.floor(ms / 1000);
+    const mm = Math.floor(s / 60).toString().padStart(2, '0');
+    const ss = (s % 60).toString().padStart(2, '0');
+    return `${mm}:${ss}`;
+  };
+
+  // Build a source players map based on selection (shared logic for both views)
   const selectedPlayersMap = useMemo(() => {
     const rounds = currentMatch?.rounds || [];
     if (!currentMatch?.players) return {} as any;
 
-    if (rounds.length === 0) {
+    if (roundSelection === 'match' || rounds.length === 0) {
       return currentMatch.players;
     }
 
-    const idx = rounds.length - 1;
+    const idx = roundSelection as number;
     const snap = rounds[idx];
     if (!snap?.players) return currentMatch.players;
 
-    // First round: use snapshot as-is
     if (idx === 0) return snap.players;
 
     const prev = rounds[idx - 1];
     const prevPlayers = prev?.players || {};
 
-    // Compute delta between current and previous snapshot
     const uidMap: Record<string, true> = {};
     Object.keys(snap.players).forEach((k) => { uidMap[k] = true; });
     Object.keys(prevPlayers).forEach((k) => { uidMap[k] = true; });
@@ -83,7 +134,7 @@ const MatchTabNew: React.FC = () => {
     }
 
     return deltaPlayers;
-  }, [currentMatch?.players, currentMatch?.rounds]);
+  }, [currentMatch?.players, currentMatch?.rounds, roundSelection]);
 
   // Transform selected data to card format
   const transformPlayerData = useMemo((): PlayerCardData[] => {
@@ -111,7 +162,7 @@ const MatchTabNew: React.FC = () => {
     }));
   }, [selectedPlayersMap]);
 
-  // Generate dummy data if no real data available
+  // Generate dummy data if no real data available (copied from MatchTabNew)
   const generateDummyData = (): PlayerCardData[] => {
     const characters = [
       'IRON MAN', 'SPIDER-MAN', 'HULK', 'STORM', 'BLACK PANTHER', 'DOCTOR STRANGE',
@@ -122,12 +173,10 @@ const MatchTabNew: React.FC = () => {
       const isTeammate = i < 6;
       const enemyPlayers = Array.from({ length: 6 }, (_, j) => `dummy_${j + 6}`);
       const teammateUids = Array.from({ length: 6 }, (_, j) => `dummy_${j}`);
-      
-      // Generate some sample final hits data
+
       const killedPlayers: Record<string, number> = {};
       const killedBy: Record<string, number> = {};
-      
-      // Add some random final hits against opponents
+
       if (Math.random() > 0.3) {
         const targets = isTeammate ? enemyPlayers : teammateUids;
         const numTargets = Math.floor(Math.random() * 3) + 1;
@@ -136,8 +185,7 @@ const MatchTabNew: React.FC = () => {
           killedPlayers[targetUid] = Math.floor(Math.random() * 3) + 1;
         }
       }
-      
-      // Add some deaths from opponents
+
       if (Math.random() > 0.4) {
         const attackers = isTeammate ? enemyPlayers : teammateUids;
         const numAttackers = Math.floor(Math.random() * 2) + 1;
@@ -171,7 +219,8 @@ const MatchTabNew: React.FC = () => {
   // Use real data if available, otherwise use dummy data
   const playerData = transformPlayerData.length > 0 ? transformPlayerData : generateDummyData();
 
-  // Group players by team
+
+  // Group players by team for card view
   const teamData = useMemo((): TeamData[] => {
     const teams: { [key: number]: PlayerCardData[] } = {};
     
@@ -185,7 +234,6 @@ const MatchTabNew: React.FC = () => {
     const grouped: TeamData[] = Object.entries(teams).map(([teamNumber, players]) => ({
       teamNumber: parseInt(teamNumber),
       players: players.sort((a, b) => {
-        // Put local player first, then sort by name
         if (a.isLocal) return -1;
         if (b.isLocal) return 1;
         return a.name.localeCompare(b.name);
@@ -193,7 +241,6 @@ const MatchTabNew: React.FC = () => {
       isPlayerTeam: players.some(p => p.isTeammate)
     }));
 
-    // Mark winner team
     const outcome = currentMatch?.outcome;
     const playerTeam = grouped.find(g => g.isPlayerTeam);
     const enemyTeam = grouped.find(g => !g.isPlayerTeam);
@@ -210,10 +257,8 @@ const MatchTabNew: React.FC = () => {
       }
     }
 
-    // Ensure player's team is first (top), enemy team second (bottom)
     grouped.sort((a, b) => {
       if (a.isPlayerTeam === b.isPlayerTeam) {
-        // If both are same type, keep stable order by team number
         return a.teamNumber - b.teamNumber;
       }
       return a.isPlayerTeam ? -1 : 1;
@@ -222,38 +267,101 @@ const MatchTabNew: React.FC = () => {
     return grouped;
   }, [playerData, currentMatch?.outcome]);
 
-  // Use local card flip state when this component is used standalone
-  const { flippedCards, toggleCard } = useCardFlip();
-
-  if (!playerData.length) {
-    return (
-      <div className="match-tab-new">
-        <div className="no-match-data">
-          <h3>{t('components.desktop.match-tab-new.no-data', 'No Match Data Available')}</h3>
-          <p>{t('components.desktop.match-tab-new.no-data-desc', 'Start a match to see player statistics in card view.')}</p>
+  const renderContent = () => {
+    if (viewMode === 'cards') {
+      return (
+        <div className="live-match-cards-view">
+          <MatchCardGrid 
+            teams={teamData}
+            flippedCards={flippedCards}
+            onCardFlip={toggleCard}
+            allPlayers={playerData}
+          />
         </div>
+      );
+    }
+
+    if (viewMode === 'table') {
+      return (
+        <div className="live-match-table-container">
+          <MatchTable />
+        </div>
+      );
+    }
+
+    // Match Info view
+    return (
+      <div className="live-match-info-container">
+        <MatchInfoCard />
       </div>
     );
-  }
+  };
 
   return (
-    <div className="match-tab-new">
+    <div className="live-match-container">
       {showCover && (
-          <LiveMatchCover 
+        <LiveMatchCover
           hasAnyMatchData={hasMatchData}
           onRefresh={() => window.location.reload()}
         />
       )}
-      <div className="match-cards-container">
-        <MatchCardGrid 
-          teams={teamData}
-          flippedCards={flippedCards}
-          onCardFlip={toggleCard}
-          allPlayers={playerData}
-        />
+      
+      <div className="live-match-header">
+        <div className="live-match-header-left">
+          <h2 className="live-match-title">
+            {t('components.desktop.live-match.title', 'Live Match')}
+          </h2>
+          {titleParts.length > 0 && (
+            <span className="live-match-details">
+              {titleParts.join(' - ')}
+            </span>
+          )}
+          <span className="live-match-duration">
+            {formatDuration(currentMatch?.timestamps?.matchStart, currentMatch?.timestamps?.matchEnd)}
+          </span>
+        </div>
+        <div className="live-match-header-right">
+          <Segmented
+            value={roundSelection}
+            onChange={(val) => setRoundSelection(val as any)}
+            options={(() => {
+              const rounds = currentMatch?.rounds || [];
+              const base: { label: string; value: 'match' }[] = [{ label: 'Match', value: 'match' }];
+              const roundOpts = rounds.map((_: any, i: number) => ({ label: `Round ${i + 1}`, value: i }));
+              return [...base, ...roundOpts];
+            })()}
+            size="small"
+          />
+          <Segmented
+            value={viewMode}
+            onChange={(value) => setViewMode(value as ViewMode)}
+            options={[
+              {
+                label: t('components.desktop.live-match.card-view', 'Card View'),
+                value: 'cards',
+                icon: <GiCardRandom />,
+              },
+              {
+                label: t('components.desktop.live-match.table-view', 'Table View'),
+                value: 'table',
+                icon: <BsTable />,
+              },
+              {
+                label: t('components.desktop.live-match.info-view', 'Match Info'),
+                value: 'info',
+                icon: <InfoCircleOutlined />,
+              },
+            ]}
+            size="middle"
+          />
+        </div>
+      </div>
+
+      <div className="live-match-content">
+        {renderContent()}
       </div>
     </div>
   );
 };
 
-export default MatchTabNew;
+export default LiveMatch;

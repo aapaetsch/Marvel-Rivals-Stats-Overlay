@@ -1,0 +1,133 @@
+.live-match-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Sticky header at the top */
+.live-match-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.85rem 1rem; /* increased padding for more breathing room */
+  background: var(--neutral-2); /* neutral gray background for header */
+  border: 1px solid rgba(255,255,255,0.04); /* subtle edge for polish */
+  border-radius: 10px; /* rounder corners */
+  margin-bottom: 0.5rem;
+  gap: 1rem;
+  /* subtle divider so header reads as a separate band */
+  box-shadow: inset 0 -1px 0 rgba(255,255,255,0.03);
+}
+
+.live-match-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.live-match-header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.live-match-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-color-text);
+  white-space: nowrap;
+}
+
+.live-match-details {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--primary-color-text);
+  opacity: 0.85;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.live-match-duration {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--primary-color-text);
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+.live-match-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.5rem 1rem 1rem 1rem; /* give some breathing room inside the content */
+  min-height: 360px; /* ensure visible area for cards */
+}
+
+/* Table view specific styles */
+.live-match-table-container {
+  width: 100%;
+  height: 100%;
+}
+
+/* Segmented control styling */
+.live-match-header .ant-segmented {
+  background: var(--neutral-3);
+}
+
+.live-match-header .ant-segmented-item {
+  color: var(--primary-color-text);
+}
+
+.live-match-header .ant-segmented-item-selected {
+  background: var(--primary-color);
+  color: var(--primary-color-text);
+}
+
+.live-match-header .ant-segmented-item:hover {
+  background: var(--neutral-4);
+}
+
+/* When hovering an unselected segmented option, use the primary dark color for text and icons */
+.live-match-header .ant-segmented-item:not(.ant-segmented-item-selected):hover {
+  color: var(--primary-color-dark);
+}
+
+/* Ensure icons inside the segmented item also adopt the primary dark color on hover */
+.live-match-header .ant-segmented-item:not(.ant-segmented-item-selected):hover .ant-segmented-item-icon,
+.live-match-header .ant-segmented-item:not(.ant-segmented-item-selected):hover svg,
+.live-match-header .ant-segmented-item:not(.ant-segmented-item-selected):hover .anticon {
+  color: var(--primary-color-dark);
+  fill: var(--primary-color-dark);
+}
+
+/* Ensure icons are properly aligned */
+.live-match-header .ant-segmented-item-icon {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 0.5rem;
+}
+
+/* Card view specific container */
+.live-match-cards-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* more gap between team sections */
+}
+
+/* Ensure team-section containers stretch so cards are visible */
+.live-match-cards-view .team-section {
+  width: 100%;
+}
+
+/* Ensure cards area has padding inside team section */
+.team-cards {
+  padding-top: 0.75rem; /* gap between header and cards */
+}

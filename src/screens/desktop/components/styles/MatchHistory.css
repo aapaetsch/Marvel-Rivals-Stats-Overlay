@@ -119,8 +119,8 @@
   margin-bottom: 0;
   background-color: var(--neutral-0);
   border-radius: var(--border-radius);
-  width: 40px !important;
-  height: 40px !important;
+  width: 40px;
+  height: 40px;
 }
 
 

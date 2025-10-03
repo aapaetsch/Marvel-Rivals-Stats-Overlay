@@ -39,23 +39,24 @@ const TeamSection: React.FC<TeamSectionProps> = ({ team, flippedCards, onCardFli
     healing: 0
   });
 
-  // Note: large number format not needed after removing dmg/blk/heal summary
   return (
     <div className={`team-section ${getTeamClass()}`}>
       <div className="team-header">
-        <div className="team-info">
+        <div className="team-header-left">
           <h3 className="team-label">
             {getTeamLabel()}
-            {/* TODO: Localize Winner */}
             {team.isWinner ? <span className="team-tag winner">Winner</span> : null}
           </h3>
         </div>
-        <TeamStatsSummary
-          kills={teamStats.kills}
-          deaths={teamStats.deaths}
-          assists={teamStats.assists}
-          finalHits={teamStats.finalHits}
-        />
+        <div className="team-header-right">
+          <TeamStatsSummary
+            kills={teamStats.kills}
+            deaths={teamStats.deaths}
+            assists={teamStats.assists}
+            finalHits={teamStats.finalHits}
+            isPlayerTeam={team.isPlayerTeam}
+          />
+        </div>
       </div>
       <div className="team-cards">
         {team.players.map((player) => (

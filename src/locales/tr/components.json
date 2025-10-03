@@ -13,7 +13,9 @@
       "menu": {
         "home": "Ana Sayfa",
         "match": "Maç",
-        "current_match": "Mevcut Maç",
+        "live_match": "Canlı Maç",
+        "current_match": "Maç Tablosu",
+        "current_match_cards": "Kart Görünümü",
         "match_history": "Maç Geçmişi",
         "stats": "İstatistikler",
         "player_stats": "Oyuncu İstatistikleri",
@@ -77,6 +79,12 @@
         "feedback": "Geri Bildirim Gönder",
         "save": "Ayarları Kaydet",
         "reset": "Varsayılana Sıfırla"
+      },
+      "live-match": {
+        "title": "Canlı Maç",
+        "card-view": "Kart Görünümü",
+        "table-view": "Tablo Görünümü",
+        "info-view": "Maç Bilgisi"
       },
       "match-info": {
         "title": "Maç Bilgileri",

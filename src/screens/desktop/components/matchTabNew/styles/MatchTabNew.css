@@ -118,109 +118,178 @@
 .team-section {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 1rem;
+  padding: 0.75rem; /* full padded area so header and cards sit on the colored background */
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.04);
+}
+
+/* remove block backgrounds; use subtle accent bar in header to indicate team */
+.team-section-friendly {
+  background: rgba(var(--match-table-row-team), 0.06);
+  border-color: rgba(var(--match-table-row-team), 0.12);
+}
+
+.team-section-enemy {
+  background: rgba(var(--match-table-row-oponent), 0.06);
+  border-color: rgba(var(--match-table-row-oponent), 0.12);
 }
 
 .team-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 14px; /* Slightly shorter header */
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 6px 10px; /* compact header spacing */
+  border-radius: 0;
+  border: none; /* no border so header blends with background */
+  position: relative;
+}
+
+.team-section-friendly .team-header,
+.team-section-enemy .team-header {
+  background: transparent; /* header sits on the team-section background */
+}
+
+.team-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.team-header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto; /* push stats to the far right */
 }
 
 .team-info {
   display: flex;
-  flex-direction: column;
-  gap: 2px; /* Reduce vertical spacing a bit */
+  align-items: center;
+  gap: 0.5rem; /* slightly tighter gap */
 }
 
 .team-stats-summary {
   display: flex;
-  gap: 16px;
+  gap: 0.75rem;
   align-items: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary-color-text);
+}
+
+.team-stats-summary .ant-tag {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.04);
+  color: var(--primary-color-text);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.team-stat-tag .team-stat-label {
+  margin-right: 6px;
+  opacity: 0.85;
+}
+
+.team-ratio-tag {
+  background: rgba(255,255,255,0.02);
+  color: var(--primary-color-text);
+  border: 1px solid rgba(255,255,255,0.04);
 }
 
 .team-stat {
-  display: flex;
-  flex-direction: column;
+  display: inline-flex;
   align-items: center;
-  gap: 2px;
+  gap: 0.25rem;
 }
 
-.team-stat-value {
-  font-size: 14px;
-  font-weight: bold;
-  color: var(--primary-color-text);
+.team-stat-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0 4px;
 }
 
-.team-stat-label {
-  font-size: 10px;
-  color: rgba(255, 255, 255, 0.6);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+.team-stat-inline .team-stat-label {
+  font-weight: 700;
+  font-size: 0.8rem;
 }
 
-.team-section-friendly .team-header {
-  background: rgba(77, 171, 107, 0.1);
-  border-color: rgba(77, 171, 107, 0.3);
-}
-
-.team-section-enemy .team-header {
-  background: rgba(171, 77, 77, 0.1);
-  border-color: rgba(171, 77, 77, 0.3);
-}
-
-.team-label {
-  font-size: 18px;
-  font-weight: bold;
-  color: var(--primary-color-text);
-  margin: 0;
-}
-
-.team-label .team-tag.winner {
-  margin-left: 10px;
-  font-size: 12px;
+.team-stat-inline .team-stat-value {
   font-weight: 800;
-  color: #111;
-  background: #4ade80;
-  border-radius: 4px;
-  padding: 2px 6px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-size: 0.95rem;
 }
 
-.team-count {
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.7);
-  font-weight: 500;
+.team-ratios {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-left: 0.5rem; /* small separation from basic stats */
 }
 
+.team-ratio-item {
+  display: inline-flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.team-ratio-label {
+  font-weight: 700;
+  font-size: 0.75rem;
+  opacity: 0.85;
+}
+
+.team-ratio-value {
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+/* increase gap between header and the card grid for breathing room */
 .team-cards {
+  padding-top: 0.75rem;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 12px;
-  justify-items: center;
-  max-width: 1400px;
-  margin: 0 auto;
+  grid-template-columns: repeat(auto-fill, minmax(min(180px, 100%), 1fr));
+  gap: 0.75rem;
+  justify-items: stretch;
+  width: 100%;
 }
 
 /* Responsive adjustments */
-@media (min-width: 1400px) {
+@media (min-width: 1600px) {
   .team-cards {
     grid-template-columns: repeat(6, 1fr);
   }
+  
+  .player-card {
+    width: 100%;
+    max-width: 200px;
+    justify-self: center;
+  }
 }
 
-@media (max-width: 1200px) {
+@media (min-width: 1200px) and (max-width: 1599px) {
   .team-cards {
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(170px, 100%), 1fr));
   }
   
   .player-card {
-    width: 160px;
+    width: 100%;
+    max-width: 190px;
+    justify-self: center;
+  }
+}
+
+@media (max-width: 1199px) {
+  .team-cards {
+    grid-template-columns: repeat(auto-fill, minmax(min(160px, 100%), 1fr));
+  }
+  
+  .player-card {
+    width: 100%;
+    max-width: 180px;
     height: 300px;
+    justify-self: center;
   }
 }
 
@@ -230,17 +299,18 @@
   }
   
   .team-cards {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 8px;
+    grid-template-columns: repeat(auto-fill, minmax(min(140px, 100%), 1fr));
+    gap: 0.5rem;
   }
   
   .player-card {
-    width: 140px;
+    width: 100%;
+    max-width: 160px;
     height: 280px;
   }
   
   .card-face {
-    padding: 10px;
+    padding: 8px;
   }
   
   .match-tab-new-header {
@@ -256,7 +326,7 @@
 
   .team-stats-summary {
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 0.5rem;
   }
 }
 
