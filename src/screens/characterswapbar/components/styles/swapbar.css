@@ -1,5 +1,8 @@
 .swap-bar__swap-icon {
   transform: rotate(90deg);
+  display: flex;
+  align-items: center;
+  color: #ffffff; /* ensure SVG stroke (currentColor) is white */
 }
 
 .swap-bar {
@@ -9,7 +12,7 @@
   flex-direction: column;
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  overflow: hidden !important;
 }
 
 /* Root container for the entire swap bar screen */
@@ -19,7 +22,22 @@
   background: transparent;
   z-index: 9999;
   pointer-events: none;
-  overflow: hidden;
+  overflow: hidden !important;
+  position: relative;
+}
+
+.swap-bar-container__background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+  opacity: 0.3;
+  pointer-events: none;
 }
 
 .swap-bar-container.is-hidden {
@@ -29,23 +47,20 @@
 .swap-bar__player-row {
   display: flex;
   flex-direction: row;
+  box-sizing: border-box; /* ensure height includes borders/padding */
   justify-content: space-between;
-  width: 100%;
-  height: 100%;
-  border-radius: var(--border-radius);
-  position:relative;
-  border: 3px solid;
+  width: 160px; /* increased by 10px */
+  height: 50px; /* increased by 10px */
+  border-radius: var(--border-radius-large);
+  position: relative;
+  border: 2px solid;
   margin-bottom: 0.5rem;
   background-color: transparent;
   pointer-events: auto;
 }
 
-.swap-bar__player {
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
-}
-
 .swap-bar__player-name {
+  display: none; /* Hide character names */
   font-size: 1.25rem;
   font-weight: bolder;
   text-align: center;
@@ -59,8 +74,27 @@
   height: 100%;
   opacity: 0.75;
   border-radius: var(--border-radius-small);
+  
+/* Hide native scrollbars as an extra guard (WebKit/Firefox/IE) */
+.swap-bar::-webkit-scrollbar,
+.swap-bar-container::-webkit-scrollbar {
+  display: none;
+}
+.swap-bar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+  overflow: hidden; /* ensure background doesn't create scrollbars */
 }
 
+.swap-bar__player-row.ally {
+  border-color: var(--primary-color-medium);
+}
+.swap-bar__player-row.enemy {
+  border-color: var(--secondary-color-medium);
+}
+
+/* Keep old styles for backward compatibility */
 .swap-bar__player-row.team-1 {
   border-color: var(--primary-color-medium);
 }
@@ -68,13 +102,15 @@
   border-color: var(--secondary-color-medium);
 }
 
+.swap-bar__player-row.ally .swap-bar__player-background,
 .swap-bar__player-row.team-1 .swap-bar__player-background {
   background-color: var(--primary-color-light);
-  opacity: 0.75;
+  opacity: 0.45;
 }
+.swap-bar__player-row.enemy .swap-bar__player-background,
 .swap-bar__player-row.team-2 .swap-bar__player-background {
   background-color: var(--secondary-color-light);
-  opacity: 0.75;
+  opacity: 0.45;
 }
 
 .swap-bar__player,
@@ -88,14 +124,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 0.25rem;
 }
 
 .swap-bar__player-avatar img {
-  width: 64px;
-  height: 64px;
-  border-radius: var(--border-radius-small);
-  object-fit: contain;
+  width: 54px; /* decreased by 1px */
+  height: 54px; /* decreased by 1px */
+  border-radius: var(--border-radius-large);
+  object-fit: cover;
   background-color: rgba(0, 0, 0, 0.3);
 }
 
@@ -114,6 +149,26 @@
   padding-left: 0;
   text-align: center;
   pointer-events: auto;
+  overflow: hidden !important; /* prevent internal scrolling in match-info */
+}
+
+/* When a map image is provided we display it inside the match-info background */
+.swap-bar__match-info .swap-bar__player-background.map-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.55; /* dim the map for readability */
+  z-index: 0;
+}
+
+/* Ensure content stays above the background image */
+.swap-bar__match-info .swap-bar__match-info-content {
+  z-index: 10;
 }
 
 .swap-bar__match-info-content {
