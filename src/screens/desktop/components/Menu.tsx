@@ -22,14 +22,17 @@ import { isDev } from 'lib/utils';
 import { isMatchLive } from 'lib/matchStatusUtils';
 
 // Define the items for the menu
-const getMenuItems = (t: any, isLiveMatch: boolean = false): AntMenuItem[] => {
-  const base: AntMenuItem[] = [
-  {
-    key: MenuKeys.HOME,
-    icon: <IoHomeOutline />,
-    label: t('components.desktop.menu.home'),
-  },
-  {
+const getMenuItems = (t: any, isLiveMatch: boolean = false, showHome: boolean = false): AntMenuItem[] => {
+  const base: AntMenuItem[] = [];
+  // Optionally include the HOME item. Hidden by default while we iterate on the UI.
+  if (showHome) {
+    base.push({
+      key: MenuKeys.HOME,
+      icon: <IoHomeOutline />,
+      label: t('components.desktop.menu.home'),
+    });
+  }
+  base.push({
     key: MenuKeys.MATCH,
     icon: <GiStarfighter />,
     label: t('components.desktop.menu.match'),
@@ -50,7 +53,7 @@ const getMenuItems = (t: any, isLiveMatch: boolean = false): AntMenuItem[] => {
         label: t('components.desktop.menu.match_history'),
       },
     ],
-  },
+  });
   // {
   //   key: MenuKeys.STATS,
   //   icon: <IoStatsChartOutline />,
@@ -68,7 +71,7 @@ const getMenuItems = (t: any, isLiveMatch: boolean = false): AntMenuItem[] => {
   //     },
   //   ],
   // },
-  {
+  base.push({
     key: MenuKeys.PLAYERS,
     icon: <PiUserListBold />,
     label: t('components.desktop.menu.players'),
@@ -84,7 +87,7 @@ const getMenuItems = (t: any, isLiveMatch: boolean = false): AntMenuItem[] => {
         label: t('components.desktop.menu.favourites'),
       },
     ],
-  },
+  });
   // {
   //   key: MenuKeys.HEROS,
   //   icon: <GiKing />,
@@ -97,13 +100,13 @@ const getMenuItems = (t: any, isLiveMatch: boolean = false): AntMenuItem[] => {
   //     },
   //   ],
   // },  
-  {
+  base.push({
     key: MenuKeys.SETTINGS,
     icon: <SettingOutlined />,
     label: t('components.desktop.menu.settings'),
     // Removed children to make this a direct menu item
-  },
-];
+  });
+
 
   // Append dev-only playground entry
   if (isDev) {
@@ -144,7 +147,7 @@ const Menu: React.FC = () => {
   };
 
   // Menu items with translations and live match status
-  const items = getMenuItems(t, isLiveMatchActive);
+  const items = getMenuItems(t, isLiveMatchActive, false);
 
   return (
     <div className="side-menu">

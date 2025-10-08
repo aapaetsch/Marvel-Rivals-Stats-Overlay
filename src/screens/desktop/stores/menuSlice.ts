@@ -8,7 +8,7 @@ export interface MenuState {
 }
 
 const initialState: MenuState = {
-  selectedKeys: [MenuKeys.HOME],  // Default selected menu item
+  selectedKeys: [],  // No default selected menu item (Home is hidden)
   openKeys: [],   // Default open submenu
   collapsed: false      // Menu is expanded by default
 };
