@@ -66,6 +66,13 @@ export interface MatchSnapshot {
 // Current match state, with per-round snapshots
 export interface MatchStatsState extends MatchSnapshot {
   rounds: MatchSnapshot[]; // snapshots captured at round boundaries
+  // Developer-only flag to force display of match info in the UI for testing
+  devForceShowMatchInfo?: boolean;
+  // Developer-only override for how long swaps should remain visible (milliseconds)
+  devSwapDisplayDuration?: number | null;
+  // Developer-only override for maximum number of concurrent swaps visible
+  devMaxVisibleSwaps?: number | null;
+  // (removed) devForceShowSwapBar is deprecated; use devSwapDisplayDuration instead
 }
 
 export interface MatchStoreState {
