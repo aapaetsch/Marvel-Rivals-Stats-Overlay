@@ -7,7 +7,7 @@ import TeamStatsWidget from './widgets/TeamStatsWidget';
 import AlliesWidget from './widgets/AlliesWidget';
 import OpponentsWidget from './widgets/OpponentsWidget';
 import EventHealthWidget from './widgets/EventHealthWidget';
-import ControlTestDataWidget from './widgets/ControlTestDataWidget';
+import SwapBarTestWidget from './widgets/SwapBarTestWidget';
 import './styles/AppStatus.css';
 import CardViewCoverOverride from './CardViewCoverOverride';
 
@@ -47,21 +47,31 @@ const AppStatus: React.FC = () => {
         <div className="app-status-grid-item col-span-3 row-span-2"><MatchSummaryWidget /></div>
         <div className="app-status-grid-item col-span-9"><TeamStatsWidget /></div>
 
-        {/* Fourth row */}
-        <div className="app-status-grid-item col-span-9">
+  {/* Spacer to consume the row where MatchSummaryWidget is still spanning so the next row has full 12 columns free */}
+  <div className="app-status-grid-item col-span-9" aria-hidden style={{ height: 0, overflow: 'hidden' }} />
+
+  {/* Fourth row: Match override controls and swapbar controls side-by-side */}
+        <div className="app-status-grid-item col-span-6">
           <div className="status-card">
             <div className="status-card-header">
-              <Title level={4} style={{ margin: 0 }}>Card View Cover Override</Title>
+              <Title level={4} style={{ margin: 0 }}>Match Override Controls</Title>
             </div>
             <div className="status-card-body">
               <CardViewCoverOverride />
             </div>
           </div>
         </div>
-        {/* Fifth row */}
-        <div className="app-status-grid-item col-span-3">
-          <ControlTestDataWidget />
+        <div className="app-status-grid-item col-span-6">
+          <div className="status-card">
+            <div className="status-card-header">
+              <Title level={4} style={{ margin: 0 }}>Character Swap Bar Override Controls</Title>
+            </div>
+            <div className="status-card-body">
+              <SwapBarTestWidget />
+            </div>
+          </div>
         </div>
+        
       </div>
     </div>
   );

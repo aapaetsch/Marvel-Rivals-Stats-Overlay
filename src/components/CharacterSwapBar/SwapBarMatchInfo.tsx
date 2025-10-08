@@ -3,9 +3,12 @@ import { SwapBarMatchInfoProps } from "./types/SwapBarTypes";
 
 export const SwapBarMatchInfo: React.FC<SwapBarMatchInfoProps> = ({
   matchInfo,
-  show
+  show,
+  mapImageUrl
 }) => {
   if (!show || !matchInfo) return null;
+
+  const bgStyle = mapImageUrl ? { backgroundImage: `url(${mapImageUrl})` } : undefined;
 
   return (
     <div className="swap-bar__match-info">
@@ -17,7 +20,10 @@ export const SwapBarMatchInfo: React.FC<SwapBarMatchInfoProps> = ({
           {matchInfo.gameMode || matchInfo.gameType || "Unknown Game Type"}
         </div>
       </div>
-      <div className="swap-bar__player-background"></div>
+      <div
+        className={`swap-bar__player-background ${mapImageUrl ? 'map-background' : ''}`}
+        style={bgStyle}
+      />
     </div>
   );
 };

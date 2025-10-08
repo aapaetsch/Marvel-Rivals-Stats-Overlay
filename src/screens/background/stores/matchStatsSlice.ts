@@ -40,6 +40,8 @@ const initialMatchStatsState: MatchStatsState = {
     matchEnd: null,
   },
   rounds: [],
+  devSwapDisplayDuration: null,
+  devMaxVisibleSwaps: null,
 };
 
 const initialState: MatchStoreState = {
@@ -814,7 +816,91 @@ const matchStatsSlice = createSlice({
       } catch (e) {
         logger.logError(e as Error, "matchStatsSlice.ts", "captureRoundSnapshot");
       }
-    }
+    },
+    
+    // Developer helper: inject a character swap for testing
+    devAddCharacterSwap(state, action: PayloadAction<{ uid: string; name: string; oldCharacterName: string; newCharacterName: string; team: number; timestamp?: number }>) {
+      const { uid, name, oldCharacterName, newCharacterName, team, timestamp } = action.payload;
+      const ts = timestamp ?? Date.now();
+      const existing = state.currentMatch.players[uid] || null;
+      if (!existing) {
+        // Create a minimal player record so swapQueue picks it up
+        state.currentMatch.players[uid] = {
+          uid,
+          name,
+          characterName: newCharacterName,
+          characterId: newCharacterName ? `dev_${newCharacterName}` : null,
+          team,
+          isTeammate: team === 1,
+          isLocal: false,
+          kills: 0,
+          deaths: 0,
+          assists: 0,
+          finalHits: 0,
+          damageDealt: 0,
+          damageBlocked: 0,
+          totalHeal: 0,
+          killedPlayers: {},
+          killedBy: {},
+          characterSwaps: [],
+          lastUpdated: ts,
+        } as any;
+      }
+      const target = state.currentMatch.players[uid];
+      if (!target.characterSwaps) target.characterSwaps = [];
+      target.characterSwaps.push({ oldCharacterName, newCharacterName, timestamp: ts });
+    },
+    
+    // Developer helper: clear all developer-injected swaps
+    devClearCharacterSwaps(state) {
+      for (const uid of Object.keys(state.currentMatch.players)) {
+        const p = state.currentMatch.players[uid];
+        if (p && p.characterSwaps && p.characterSwaps.length > 0) {
+          p.characterSwaps = [];
+        }
+      }
+    },
+    
+    // Developer helper: set match info (map/mode/type) for preview
+    devSetMatchInfo(state, action: PayloadAction<{ map?: string | null; gameMode?: string | null; gameType?: string | null }>) {
+      const { map = null, gameMode = null, gameType = null } = action.payload;
+      state.currentMatch.map = map;
+      state.currentMatch.gameMode = gameMode;
+      state.currentMatch.gameType = gameType;
+      // If we're setting a map or mode for developer preview, allow forcing the match-info
+      state.currentMatch.devForceShowMatchInfo = !!(map || gameMode || gameType);
+    },
+    // Developer helper: clear any dev-forced match info
+    devClearMatchInfo(state) {
+      if (state.currentMatch) {
+        state.currentMatch.devForceShowMatchInfo = false;
+      }
+    },
+    // Developer helper: set swap display duration (milliseconds)
+    devSetSwapDisplayDuration(state, action: PayloadAction<number | null>) {
+      if (state.currentMatch) {
+        state.currentMatch.devSwapDisplayDuration = action.payload;
+      }
+    },
+    // Developer helper: clear swap display duration override
+    devClearSwapDisplayDuration(state) {
+      if (state.currentMatch) {
+        state.currentMatch.devSwapDisplayDuration = null;
+      }
+    },
+    // Developer helper: set max number of visible swaps
+    devSetMaxVisibleSwaps(state, action: PayloadAction<number | null>) {
+      if (state.currentMatch) {
+        state.currentMatch.devMaxVisibleSwaps = action.payload;
+      }
+    },
+    // Developer helper: clear max visible swaps override
+    devClearMaxVisibleSwaps(state) {
+      if (state.currentMatch) {
+        state.currentMatch.devMaxVisibleSwaps = null;
+      }
+    },
+    // (deprecated) devForceShowSwapBar removed; prefer devSwapDisplayDuration
   },
 });
 
@@ -827,7 +913,16 @@ export const {
   clearMatchTimeoutAction,
   forceResetMatch,
   resetRoundStats,
-  captureRoundSnapshot
+  captureRoundSnapshot,
+  // Developer test helpers
+  devAddCharacterSwap,
+  devClearCharacterSwaps,
+  devSetMatchInfo,
+  devClearMatchInfo,
+  devSetSwapDisplayDuration,
+  devClearSwapDisplayDuration,
+  devSetMaxVisibleSwaps,
+  devClearMaxVisibleSwaps,
 } = matchStatsSlice.actions;
 
 export default matchStatsSlice.reducer;

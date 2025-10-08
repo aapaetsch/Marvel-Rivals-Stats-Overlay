@@ -16,13 +16,16 @@ export const SwapBar: React.FC<SwapBarComponentProps> = ({
   showMatchInfo,
   localPlayerTeam,
   allySwapColor,
-  enemySwapColor
+  enemySwapColor,
+  mapImageUrl,
+  rowHeight,
 }) => {
   return (
     <div className={`swap-bar ${show ? "show" : ""}`}>
       <SwapBarMatchInfo 
         matchInfo={matchInfo!}
         show={showMatchInfo && !!matchInfo}
+        mapImageUrl={mapImageUrl}
       />
       {characters?.map((character, index) => (
         <SwapBarPlayerRow
@@ -31,6 +34,7 @@ export const SwapBar: React.FC<SwapBarComponentProps> = ({
           localPlayerTeam={localPlayerTeam}
           allySwapColor={allySwapColor}
           enemySwapColor={enemySwapColor}
+          rowHeight={rowHeight}
         />
       ))}
     </div>
