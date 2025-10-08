@@ -7,7 +7,7 @@
   background: transparent;
   z-index: 9999;
   pointer-events: none;
-  overflow: hidden;
+  overflow: hidden !important; /* ensure no scrollbars */
   position: relative;
 }
 
@@ -37,22 +37,25 @@
   flex-direction: column;
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  overflow: hidden !important; /* ensure no scrollbars inside */
 }
 
 /* Player row styles */
 .swap-bar__player-row {
   display: flex;
+  align-items: center;
   flex-direction: row;
   justify-content: space-between;
-  width: 150px;
-  height: 40px;
+  width: 250px; /* slightly longer rows */
+  height: 44px; /* taller rows for larger avatars */
+  box-sizing: border-box; /* ensure height includes borders/padding */
   border-radius: var(--border-radius-large);
   position: relative;
-  border: 1px solid;
+  border: 2px solid;
   margin-bottom: 0.5rem;
   background-color: transparent;
   pointer-events: auto;
+  overflow: hidden; /* prevent per-row scroll */
 }
 
 .swap-bar__player-row.ally {
@@ -116,8 +119,8 @@
 }
 
 .swap-bar__player-avatar img {
-  width: 35px;
-  height: 35px;
+  width: 43px; /* decreased by 1px */
+  height: 43px; /* decreased by 1px */
   border-radius: var(--border-radius-large);
   object-fit: cover;
   background-color: rgba(0, 0, 0, 0.3);
@@ -128,8 +131,10 @@
   transform: rotate(90deg);
   display: flex;
   align-items: center;
+  justify-content: center;
   z-index: 10;
   will-change: transform;
+  font-size: 20px; /* increased visual size */
 }
 
 /* Match info styles */
@@ -148,6 +153,7 @@
   padding-left: 0;
   text-align: center;
   pointer-events: auto;
+  overflow: hidden; /* prevent match-info internal scrolling */
 }
 
 .swap-bar__match-info-content {

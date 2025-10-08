@@ -14,6 +14,9 @@ export const useSwapQueue = (currentMatch: any) => {
     // Track if we have real swaps or just initial character selections
     let hasRealSwaps = false;
     let hasInitialSelections = false;
+
+    // Deduplication set to avoid showing the same swap twice
+    const seenKeys = new Set<string>();
     
     for (const player of Object.values(currentMatch.players) as any[]) {
       if (!player.characterSwaps || player.characterSwaps.length === 0) continue;
@@ -32,6 +35,22 @@ export const useSwapQueue = (currentMatch: any) => {
         if (swap.timestamp && now - swap.timestamp > DISPLAY_DURATION) {
           continue;
         }
+
+        // Build a stable key for this swap so we can deduplicate.
+        // Important: do NOT include timestamp here — we want only one instance
+        // of the same (player -> old -> new) combination to be shown at a time,
+        // even if multiple events with different timestamps arrive.
+        const keyParts = [
+          String(player.uid),
+          String((swap.oldCharacterName || '').toLowerCase()),
+          String((swap.newCharacterName || '').toLowerCase()),
+        ];
+        const key = keyParts.join(":");
+        if (seenKeys.has(key)) {
+          // Already processed identical swap for this render, skip it
+          continue;
+        }
+        seenKeys.add(key);
 
         // If old character name exists and isn't a placeholder, it's a real swap not just initial selection
         if (swap.oldCharacterName && swap.oldCharacterName !== "Unknown") {
@@ -68,14 +87,18 @@ export const useSwapQueue = (currentMatch: any) => {
   }, [currentMatch.players, hasHadCharacterSwaps, hasRoundStarted]);
 
   const shouldShowMatchInfo = useMemo(() => {
+    // Developer override: if a dev flag is set on the current match, show match info
+    // (This allows dev widgets to force the match-info preview.)
+    if ((currentMatch as any)?.devForceShowMatchInfo) return true;
+
     // If we've already had character swaps, don't show match info
     if (hasHadCharacterSwaps) return false;
-    
+
     // If round hasn't started yet, show match info
     if (!hasRoundStarted) return true;
-    
+
     return false;
-  }, [hasHadCharacterSwaps, hasRoundStarted]);
+  }, [currentMatch, hasHadCharacterSwaps, hasRoundStarted]);
 
   return {
     swapQueue,
