@@ -1,0 +1,279 @@
+/* FavouritesPage.css - Styles for the Favourites Page */
+
+.favourites-page {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Sticky Header */
+.favourites-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--neutral-1);
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--primary-color-medium);
+}
+
+.favourites-header-card {
+  background-color: var(--neutral-2) !important;
+  border: none !important;
+}
+
+.favourites-header-card .ant-card-body {
+  padding: 1rem !important;
+}
+
+/* Aggregate Stats Section */
+.favourites-stats-section {
+  padding: 1rem;
+  background-color: var(--neutral-1);
+}
+
+.favourites-stats-card {
+  background-color: var(--neutral-2) !important;
+  border: 1px solid var(--primary-color-medium) !important;
+  border-radius: var(--border-radius) !important;
+}
+
+.favourites-stats-card .ant-card-body {
+  padding: 1.5rem !important;
+}
+
+.favourites-stats-card .ant-statistic-title {
+  color: var(--primary-color-text) !important;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.favourites-stats-card .ant-statistic-content {
+  color: var(--primary-color-text) !important;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+/* Main Content Area */
+.favourites-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  background-color: var(--neutral-1);
+  min-height: 0; /* allow proper flex child sizing for internal scrolling */
+}
+
+.favourites-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 1rem;
+  flex: 1; /* allow grid to take the remaining vertical space */
+  min-height: 0; /* allow children to shrink and allow internal scrolling */
+  height: 100%; /* ensure grid fills available vertical space so player column can scroll */
+}
+
+/* Players Column */
+.favourites-players-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow-y: auto; /* only this column scrolls */
+  min-height: 0; /* allow proper flex child scrolling */
+  height: 100%; /* fill the grid cell height so only this area scrolls */
+}
+
+.favourites-players-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1rem;
+  width: 100%;
+  align-content: start; /* keep items at the top of the scrollable area */
+}
+
+/* Empty State */
+.favourites-empty-card {
+  background-color: var(--neutral-2) !important;
+  border: 1px solid var(--primary-color-medium) !important;
+  border-radius: var(--border-radius) !important;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.favourites-empty-card .ant-card-body {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem !important;
+}
+
+.favourites-empty-card .ant-empty-description {
+  color: var(--primary-color-text) !important;
+}
+
+/* Individual Player Card */
+.favourite-player-card .ant-card-body {
+  padding: 1.25rem !important;
+}
+
+.favourite-player-avatar img,
+.favourite-player-avatar canvas {
+  border-radius: 6px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  object-fit: cover;
+}
+
+.favourite-player-card {
+  background-color: var(--neutral-2) !important;
+  border: 1px solid var(--ant-border-color-base) !important;
+  border-radius: var(--border-radius) !important;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.favourite-player-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+.favourite-player-card .ant-statistic-title {
+  color: var(--primary-color-text) !important;
+  font-size: 0.75rem;
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.favourite-player-card .ant-statistic-content {
+  color: var(--primary-color-text) !important;
+  font-weight: 700;
+}
+
+/* Top picks and role distribution styles */
+.top-picks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.top-pick-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.top-pick-meta {
+  display: flex;
+  flex-direction: column;
+}
+.top-pick-name {
+  font-weight: 700;
+  color: var(--primary-color-text);
+}
+.top-pick-count {
+  font-size: 12px;
+  color: rgba(255,255,255,0.7);
+}
+
+.role-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.role-row-small {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: space-between;
+}
+.role-name-small {
+  flex: 1;
+  color: var(--primary-color-text);
+}
+.role-count-small {
+  color: rgba(255,255,255,0.8);
+  font-weight: 700;
+}
+
+/* Ad Spaces */
+.favourites-ad-right,
+.favourites-ad-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.favourites-ad-right {
+  min-height: 600px;
+}
+
+.favourites-ad-bottom {
+  margin-top: 1rem;
+  min-height: 150px;
+  width: 100%;
+}
+
+.ad-placeholder {
+  background-color: var(--neutral-3) !important;
+  border: 2px dashed var(--primary-color-medium) !important;
+  border-radius: var(--border-radius) !important;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.6;
+}
+
+.ad-placeholder .ant-card-body {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem !important;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .favourites-content-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .favourites-ad-right {
+    display: none;
+  }
+
+  .favourites-players-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .favourites-players-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .favourites-stats-card .ant-col {
+    margin-bottom: 1rem;
+  }
+}
+
+/* Scrollbar Styling */
+.favourites-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.favourites-content::-webkit-scrollbar-track {
+  background: var(--neutral-3);
+  border-radius: 4px;
+}
+
+.favourites-content::-webkit-scrollbar-thumb {
+  background: var(--primary-color-medium);
+  border-radius: 4px;
+}
+
+.favourites-content::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color-light);
+}

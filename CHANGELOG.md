@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Live Match: Combined "Card View" and "Match Table" into a single "Live Match" menu item with a toggle to switch between card and table views.
+- Favourites Page: New dedicated page for viewing all favourited players with aggregated stats, individual player cards showing detailed statistics, and reserved space for future ad placements.
 
 ### Fixed
 - Match Stats: Preserve `map`, `gameMode`, and `gameType` when a new `match_start` event arrives so they are recorded correctly even if provided slightly before the start event.

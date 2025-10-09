@@ -11,6 +11,7 @@ import {
   GiCrossedSwords,
   GiSwordman,
   GiKing,
+  GiPyromaniac,
   GiStarfighter,
   GiFloatingPlatforms,
   GiBackstab,
@@ -84,6 +85,7 @@ export interface IconsCollection {
   squad: React.ReactElement;
   favorites: React.ReactElement;
   recent: React.ReactElement;
+  opponent: React.ReactElement;
   
   // Character icons
   heros: React.ReactElement;
@@ -132,6 +134,7 @@ export const icons: IconsCollection = {
   squad: <GiDarkSquad />,
   favorites: <LiaUserTagSolid />,
   recent: <LiaUserInjuredSolid />,
+  opponent: <GiPyromaniac />,
   
   // Character icons
   heros: <GiKing />,
