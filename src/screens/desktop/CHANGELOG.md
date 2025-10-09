@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Card View Cover: New overlay component that appears when no live match is active, with different messaging for no match vs ended match states.
 - Menu Live Indicator: Red pulsing dot on Live Match menu item when a match is currently in progress.
 - Match Status Utils: Utility functions for determining live match status and card view cover visibility.
+- Favourites Page: New comprehensive page for viewing all favourited players [Favourites Page: New dedicated page]. See detailed changes in `favouritesTab/CHANGELOG.md`.
 
 ### Changed
 - Menu Structure: Consolidated "Card View" and "Match Table" menu items into single "Live Match" item with internal view toggle.

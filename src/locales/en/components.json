@@ -211,6 +211,32 @@
         "favorite": "Add to favorites",
         "unfavorite": "Remove from favorites",
         "remove": "Remove player"
+      },
+      "favourites": {
+        "title": "Favourite Players",
+        "count": "{{count}} Players",
+        "stats": {
+          "total-encounters": "Total Encounters",
+          "teammate-encounters": "As Teammates",
+          "opponent-encounters": "As Opponents",
+          "wins-with": "Wins With Teammates"
+        },
+        "empty": {
+          "title": "No Favourite Players Yet",
+          "description": "Star players from your Recent Players list to add them here"
+        },
+        "ad-space": "Ad Space",
+        "unfavorited": "{{name}} removed from favourites",
+        "last-seen": "Last seen",
+        "most-played": "Most played",
+        "remove-favourite": "Remove from favourites",
+        "overall-winrate": "Overall Win Rate",
+        "total-encounters": "Total Encounters",
+        "with-teammate": "As Teammate",
+        "vs-opponent": "Vs Opponent",
+        "top-picks": "Top Picks",
+        "no-picks": "No character picks recorded",
+        "role-distribution": "Role Distribution"
       }
     }
   }

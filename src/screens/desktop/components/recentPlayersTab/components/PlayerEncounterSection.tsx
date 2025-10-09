@@ -5,6 +5,7 @@ import { CharacterClass } from 'lib/characterClassIcons';
 import { getClassImagePath } from 'lib/characterClassIcons';
 import { getCharacterDefaultIconPath } from 'lib/characterIcons';
 import { UserOutlined } from '@ant-design/icons';
+import icons from 'components/Icons';
 import { RecentPlayerTeam } from '../RecentPlayerTypes';
 
 const { Text } = Typography;
@@ -78,7 +79,12 @@ const PlayerEncounterSection: React.FC<PlayerEncounterSectionProps> = ({
   return (
     <div className={colClass} onClick={onClickHeader}>
       <div className="col-header">
-        <Text className="col-title">{title}</Text>
+        <Text className="col-title">
+          {variant === RecentPlayerTeam.Opponent ? (
+            <span style={{ marginRight: 8, display: 'inline-flex', alignItems: 'center' }}>{icons.opponent}</span>
+          ) : null}
+          {title}
+        </Text>
         <span className="count-badge">{count}</span>
       </div>
       {collapsed && (
