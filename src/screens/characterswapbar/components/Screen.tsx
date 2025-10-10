@@ -70,7 +70,9 @@ const Screen: React.FC = () => {
   // Find the team of the local player
   const localPlayerTeam = useMemo(() => {
     const localPlayer = Object.values(currentMatch.players).find((player: any) => player.isLocal);
-    return (localPlayer as any)?.team || 1; // Default to team 1 if not found
+    const team = (localPlayer as any)?.team;
+    const num = Number(team);
+    return Number.isFinite(num) && num > 0 ? num : 1; // Default to team 1 if not found
   }, [currentMatch.players]);
 
   // Get the map image URL based on the current map

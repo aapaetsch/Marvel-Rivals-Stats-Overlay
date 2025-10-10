@@ -1,9 +1,10 @@
 import React from "react";
 
-export const SwapIcon: React.FC = () => {
+export const SwapIcon: React.FC<{ playerTag?: string } > = ({ playerTag }) => {
   return (
     <div className="swap-bar__swap-icon">
       <svg
+        className="swap-bar__swap-icon-svg"
         width="24"
         height="24"
         viewBox="0 0 24 24"
@@ -18,6 +19,9 @@ export const SwapIcon: React.FC = () => {
           strokeLinejoin="round"
         />
       </svg>
+      {playerTag ? (
+        <div className="swap-bar__swap-name" title={playerTag}>{playerTag}</div>
+      ) : null}
     </div>
   );
 };

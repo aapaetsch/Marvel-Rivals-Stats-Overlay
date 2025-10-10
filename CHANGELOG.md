@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Favourites Page: New dedicated page for viewing all favourited players with aggregated stats, individual player cards showing detailed statistics, and reserved space for future ad placements.
 
 ### Fixed
+- Character Swap Bar: Deduplicated identical swaps (same player + old -> new) so a swap only displays once even if multiple events fire; refreshed duration instead of duplicating.
+- Character Swap Bar: Corrected ally/enemy color assignment by normalizing team numbers and using stable team equality with local player.
+- Character Swap Bar: Added gamer tag under the center swap icon to verify who the swap is registered to.
 - Match Stats: Preserve `map`, `gameMode`, and `gameType` when a new `match_start` event arrives so they are recorded correctly even if provided slightly before the start event.
 
 ### Changed

@@ -128,13 +128,30 @@
 
 /* Swap icon styles */
 .swap-bar__swap-icon {
-  transform: rotate(90deg);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   z-index: 10;
   will-change: transform;
   font-size: 20px; /* increased visual size */
+}
+
+.swap-bar__swap-icon-svg {
+  transform: rotate(90deg);
+}
+
+.swap-bar__swap-name {
+  margin-top: 2px;
+  font-size: 0.7rem;
+  line-height: 1rem;
+  max-width: 140px;
+  text-align: center;
+  color: var(--primary-color-text);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Match info styles */

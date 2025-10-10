@@ -1,6 +1,6 @@
 import React, { useRef, useState, useMemo, useEffect } from 'react';
-import { Button, Space, Typography, Switch, Tooltip, Table, Tag, Input, Select } from 'antd';
-import { UploadOutlined, PlayCircleOutlined, PauseCircleOutlined, StopOutlined, StepForwardOutlined, CaretRightOutlined } from '@ant-design/icons';
+import { Button, Space, Typography, Switch, Tooltip, Tag, Input, Select, List } from 'antd';
+import { UploadOutlined, PlayCircleOutlined, PauseCircleOutlined, StopOutlined, StepForwardOutlined, CaretRightOutlined, FileOutlined } from '@ant-design/icons';
 import { useDispatch } from 'react-redux';
 import {
   processInfoUpdate,
@@ -32,6 +32,11 @@ const LogReplayer: React.FC = () => {
   const [filterType, setFilterType] = useState<'ALL' | 'INFO' | 'EVENT' | 'KILL'>('ALL');
   const [stats, setStats] = useState<{ infos: number; events: number; killFeeds: number; otherEvents: number; }>({ infos: 0, events: 0, killFeeds: 0, otherEvents: 0 });
   const replayTimerRef = useRef<number | null>(null);
+  const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
+  const listContainerRef = useRef<HTMLDivElement | null>(null);
+  const loadChunkSize = 200; // number of items to append per scroll
+  const [loadedCount, setLoadedCount] = useState<number>(loadChunkSize);
+  const isLoadingMoreRef = useRef<boolean>(false);
 
   const parseLogFile = async (file: File) => {
     try {
@@ -178,41 +183,42 @@ const LogReplayer: React.FC = () => {
     }
   };
 
-  const flattenToPairs = (obj: any, maxDepth = 3, prefix = '', out: Array<[string,string]> = []) => {
-    if (obj === null || obj === undefined) return out;
-    if (maxDepth < 0) return out;
-    const isPrimitive = (v: any) => (
-      typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' || v === null
-    );
-    if (Array.isArray(obj)) {
-      obj.forEach((v, i) => {
-        if (isPrimitive(v)) {
-          const val = typeof v === 'string' ? v.slice(0, 120) : String(v);
-          out.push([`${prefix}[${i}]`, val]);
-        } else {
-          flattenToPairs(v, maxDepth - 1, `${prefix}[${i}]`, out);
-        }
-      });
+  const tableData = useMemo(() => {
+    const flattenToPairs = (obj: any, maxDepth = 3, prefix = '', out: Array<[string,string]> = []) => {
+      if (obj === null || obj === undefined) return out;
+      if (maxDepth < 0) return out;
+      const isPrimitive = (v: any) => (
+        typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean' || v === null
+      );
+      if (Array.isArray(obj)) {
+        obj.forEach((v, i) => {
+          if (isPrimitive(v)) {
+            const val = typeof v === 'string' ? v.slice(0, 120) : String(v);
+            out.push([`${prefix}[${i}]`, val]);
+          } else {
+            flattenToPairs(v, maxDepth - 1, `${prefix}[${i}]`, out);
+          }
+        });
+        return out;
+      }
+      if (typeof obj === 'object') {
+        Object.entries(obj).forEach(([k, v]) => {
+          const key = prefix ? `${prefix}.${k}` : k;
+          if (isPrimitive(v)) {
+            const val = typeof v === 'string' ? v.slice(0, 120) : String(v);
+            out.push([key, val]);
+          } else {
+            flattenToPairs(v, maxDepth - 1, key, out);
+          }
+        });
+        return out;
+      }
+      // Fallback primitive
+      out.push([prefix || '', String(obj)]);
       return out;
-    }
-    if (typeof obj === 'object') {
-      Object.entries(obj).forEach(([k, v]) => {
-        const key = prefix ? `${prefix}.${k}` : k;
-        if (isPrimitive(v)) {
-          const val = typeof v === 'string' ? v.slice(0, 120) : String(v);
-          out.push([key, val]);
-        } else {
-          flattenToPairs(v, maxDepth - 1, key, out);
-        }
-      });
-      return out;
-    }
-    // Fallback primitive
-    out.push([prefix || '', String(obj)]);
-    return out;
-  };
+    };
 
-  const tableData = useMemo(() => parsed.map((e, idx) => {
+    return parsed.map((e, idx) => {
     const ts = new Date(e.timestamp).toLocaleTimeString();
     const name = e.type === 'event' ? (e.raw?.name || e.raw?.data?.name) : 'info';
     let details = '';
@@ -258,7 +264,8 @@ const LogReplayer: React.FC = () => {
       tag: e.type === 'info' ? 'INFO' : (isKill ? 'KILL' : 'EVENT'),
       raw: e.raw
     };
-  }), [parsed]);
+    });
+  }, [parsed]);
 
   const filteredData = useMemo(() => {
     const needle = filterText.trim().toLowerCase();
@@ -277,166 +284,140 @@ const LogReplayer: React.FC = () => {
     });
   }, [tableData, filterText, filterType]);
 
-  const columns = [
-    { title: '#', dataIndex: 'idx', key: 'idx', width: 60, fixed: 'left' as const, onCell: () => ({ className: 'dev-col-idx' }) },
-    { title: 'Type', dataIndex: 'type', key: 'type', width: 80, render: (v: string) => (
-      <Tag color={v === 'INFO' ? 'geekblue' : 'gold'}>{v}</Tag>
-    ) },
-    { title: 'Time', dataIndex: 'ts', key: 'ts', width: 120 },
-    { title: 'Name', dataIndex: 'name', key: 'name', width: 160 },
-    { title: 'Details', dataIndex: 'details', key: 'details' as const },
-    { title: 'Tag', dataIndex: 'tag', key: 'tag', width: 80, render: (v: string) => (
-      <Tag color={v === 'INFO' ? 'geekblue' : (v === 'KILL' ? 'volcano' : 'default')}>{v}</Tag>
-    ) },
-    { title: 'Actions', key: 'actions', width: 200, fixed: 'right' as const, render: (_: any, row: any) => (
-      <Space size={4} wrap>
-        <Tooltip title="Dispatch once">
-          <Button size="small" icon={<CaretRightOutlined />} onClick={() => { const i = row.idx; if (i >= 0 && i < parsed.length) { stepDispatch(parsed[i]); replayIndexRef.current = i + 1; setReplayIndex(i + 1); } }} />
-        </Tooltip>
-        <Tooltip title="Jump to index">
-          <Button size="small" onClick={() => { replayIndexRef.current = row.idx; setReplayIndex(row.idx); }}>#{row.idx}</Button>
-        </Tooltip>
-        <Tooltip title="Play from here">
-          <Button size="small" type="primary" icon={<PlayCircleOutlined />} onClick={() => { replayIndexRef.current = row.idx; setReplayIndex(row.idx); handleReplayStart(); }} />
-        </Tooltip>
-      </Space>
-    )}
-  ];
+  const toggleRowExpanded = (idx: number) => {
+    setExpandedRows(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(idx)) {
+        newSet.delete(idx);
+      } else {
+        newSet.add(idx);
+      }
+      return newSet;
+    });
+  };
 
   useEffect(() => () => {
     if (replayTimerRef.current) window.clearInterval(replayTimerRef.current);
   }, []);
 
-  const [tablePageSize, setTablePageSize] = useState<number>(15);
-  const [tableHeight, setTableHeight] = useState<number>(400);
+  const [listHeight, setListHeight] = useState<number>(400);
   const rootRef = useRef<HTMLDivElement | null>(null);
   const controlsRef = useRef<HTMLDivElement | null>(null);
+  /**
+   * Compute the preferred height for the empty placeholder. It should be
+   * taller than the usual list so the empty state is more prominent, but
+   * remain clamped to the viewport so it doesn't cause full-page scrolling.
+   */
+  const computePlaceholderHeight = () => {
+    const rootTop = rootRef.current?.getBoundingClientRect().top ?? 0;
+    const viewportH = window.innerHeight;
+    const maxAllowed = Math.max(220, viewportH - rootTop - 80);
+    // Make the placeholder slightly taller than the normal list, but not
+    // larger than the available viewport space. Reduced the extra height
+    // to make the empty state a bit shorter.
+    return Math.min(listHeight + 60, Math.max(200, maxAllowed));
+  };
+
   const recomputeHeights = () => {
     const rootTop = rootRef.current?.getBoundingClientRect().top ?? 0;
     const controlsH = controlsRef.current?.getBoundingClientRect().height ?? 0;
     const viewportH = window.innerHeight;
     const available = Math.max(220, viewportH - rootTop - 24);
-    const tableY = Math.max(160, available - controlsH - 88);
-    setTableHeight(tableY);
+    const computed = Math.max(180, available - controlsH - 80); // reduce max height by extra 80px
+    const maxAllowed = Math.max(180, viewportH - rootTop - 120);
+    const listY = Math.min(computed, maxAllowed);
+    setListHeight(listY);
   };
+
   useEffect(() => {
     recomputeHeights();
     const onResize = () => recomputeHeights();
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
-  }, [parsed.length, tablePageSize]);
+  }, [parsed.length]);
 
-  const handlePaginationChange = (_page: number, pageSize?: number) => {
-    if (pageSize && pageSize !== tablePageSize) setTablePageSize(pageSize);
-    setTimeout(recomputeHeights, 0);
+  // When filters or parsed entries change, reset the loaded window
+  useEffect(() => {
+    setLoadedCount(Math.min(loadChunkSize, filteredData.length));
+    // Reset scroll to top so user sees newest filter results from the top
+    if (listContainerRef.current) listContainerRef.current.scrollTop = 0;
+  }, [filteredData]);
+
+  const loadMoreItems = () => {
+    if (isLoadingMoreRef.current) return;
+    if (loadedCount >= filteredData.length) return;
+    isLoadingMoreRef.current = true;
+    setLoadedCount((c) => Math.min(filteredData.length, c + loadChunkSize));
+    // small debounce guard
+    setTimeout(() => { isLoadingMoreRef.current = false; }, 200);
+  };
+
+  const handleListScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const target = e.currentTarget;
+    // load when within 300px of bottom
+    if (target.scrollHeight - target.scrollTop - target.clientHeight < 300) {
+      loadMoreItems();
+    }
   };
 
   return (
-    <div className="dev-window log-replayer" style={{ padding: 12 }} ref={rootRef}>
+    <div className="dev-window log-replayer" style={{ padding: 12, display: 'flex', flexDirection: 'column', height: '100vh' }} ref={rootRef}>
       <Title level={4}>Log Replay Simulator</Title>
       <Paragraph>Load a background.html.log to simulate Overwolf info/events (e.g., kill_feed) and verify UI updates.</Paragraph>
 
-      <Space direction="vertical" size="small" style={{ width: '100%' }} ref={controlsRef}>
-        <Space style={{ width: '100%' }}>
-          <Space direction="vertical" size="small" style={{ width: '100%'}}>
-            <Space direction="horizontal" size="small" style={{ width: '100%'}}>
-              <Button icon={<UploadOutlined />} onClick={() => replayFileInputRef.current?.click()}>Load Log File</Button>
-              <input
-                type="file"
-                ref={replayFileInputRef}
-                style={{ display: 'none' }}
-                accept=".log,.txt"
-                onChange={handleReplayFileChange}
-              />
-              <Tooltip title="Dispatch reset of current match state">
-                <Button onClick={() => dispatch(forceResetMatch())}>Force Reset Match</Button>
-              </Tooltip>
-              <Tooltip title="Zero out round stats but keep roster">
-                <Button onClick={() => dispatch(resetRoundStats())}>Reset Round Stats</Button>
-              </Tooltip>
-            </Space>
-
-            <Space>
-              <Switch checked={onlyKillFeed} onChange={setOnlyKillFeed} />
-              <Text>Only dispatch kill_feed events (still applies roster/info)</Text>
-            </Space>
-
-            <Space wrap>
-              <Text>Replay interval (ms):</Text>
-              <input
-                type="number"
-                min={25}
-                step={25}
-                value={replaySpeedMs}
-                onChange={(e) => setReplaySpeedMs(Math.max(25, Number(e.target.value) || 150))}
-                style={{ width: 100 }}
-              />
-              <Text>Filter:</Text>
-              <Input.Search
-                allowClear
-                placeholder="Search name/details/index"
-                value={filterText}
-                onChange={(e) => setFilterText(e.target.value)}
-                style={{ width: 260 }}
-              />
-              <Select
-                value={filterType}
-                onChange={(v) => setFilterType(v)}
-                options={[
-                  { value: 'ALL', label: 'All' },
-                  { value: 'INFO', label: 'Info' },
-                  { value: 'EVENT', label: 'Events' },
-                  { value: 'KILL', label: 'Kill Feed' },
-                ]}
-                style={{ width: 140 }}
-              />
-            </Space>
-          </Space>
-          <Space direction="vertical" size="small" style={{ width: '100%'}}>
-            {!!parsed.length && (
-              <div style={{ maxHeight: 200, overflow: 'auto', background: '#111', padding: 8, borderRadius: 4 }}>
-                {parsed.slice(Math.max(0, replayIndex - 10), Math.min(parsed.length, replayIndex + 10)).map((e, i) => {
-                  const idx = Math.max(0, replayIndex - 10) + i;
-                  const ts = new Date(e.timestamp).toLocaleTimeString();
-                  const name = e.type === 'event' ? (e.raw?.name || e.raw?.data?.name) : 'info';
-                  return (
-                    <div key={idx} style={{ opacity: idx < replayIndex ? 0.6 : 1 }}>
-                      <code>
-                        [{idx}] {ts} {e.type.toUpperCase()} {name}
-                      </code>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </Space>
+      <Space direction="vertical" size="small" style={{ width: '100%', flexShrink: 0 }} ref={controlsRef}>
+        <Space direction="horizontal" size="small" wrap>
+          <Button icon={<UploadOutlined />} onClick={() => replayFileInputRef.current?.click()}>Load Log File</Button>
+          <input
+            type="file"
+            ref={replayFileInputRef}
+            style={{ display: 'none' }}
+            accept=".log,.txt"
+            onChange={handleReplayFileChange}
+          />
+          <Tooltip title="Dispatch reset of current match state">
+            <Button onClick={() => dispatch(forceResetMatch())}>Force Reset Match</Button>
+          </Tooltip>
+          <Tooltip title="Zero out round stats but keep roster">
+            <Button onClick={() => dispatch(resetRoundStats())}>Reset Round Stats</Button>
+          </Tooltip>
         </Space>
 
-        <div>
-          <Text type="secondary">Parsed: {parsed.length} • Infos: {stats.infos} • Events: {stats.events} • kill_feed: {stats.killFeeds} • Other: {stats.otherEvents}</Text>
-        </div>
+        <Space wrap>
+          <Switch checked={onlyKillFeed} onChange={setOnlyKillFeed} />
+          <Text>Only dispatch kill_feed events (still applies roster/info)</Text>
+        </Space>
 
-        {!!parsed.length && (
-          <div>
-            <Table
-              size="small"
-              dataSource={filteredData}
-              columns={columns as any}
-              pagination={{
-                pageSize: tablePageSize,
-                showSizeChanger: true,
-                showQuickJumper: true,
-                pageSizeOptions: ['15','30','50','100','200'],
-                onChange: handlePaginationChange,
-                onShowSizeChange: (_current, size) => handlePaginationChange(1, size),
-                position: ['bottomCenter']
-              }}
-              scroll={{ y: tableHeight }}
-              rowClassName={(row: any) => row.idx === replayIndex ? 'ant-table-row-selected' : ''}
-              onRow={(row: any) => ({ onClick: () => setReplayIndex(row.idx) })}
-            />
-          </div>
-        )}
+        <Space wrap>
+          <Text>Replay interval (ms):</Text>
+          <input
+            type="number"
+            min={25}
+            step={25}
+            value={replaySpeedMs}
+            onChange={(e) => setReplaySpeedMs(Math.max(25, Number(e.target.value) || 150))}
+            style={{ width: 100 }}
+          />
+          <Text>Filter:</Text>
+          <Input.Search
+            allowClear
+            placeholder="Search name/details/index"
+            value={filterText}
+            onChange={(e) => setFilterText(e.target.value)}
+            style={{ width: 260 }}
+          />
+          <Select
+            value={filterType}
+            onChange={(v) => setFilterType(v)}
+            options={[
+              { value: 'ALL', label: 'All' },
+              { value: 'INFO', label: 'Info' },
+              { value: 'EVENT', label: 'Events' },
+              { value: 'KILL', label: 'Kill Feed' },
+            ]}
+            style={{ width: 140 }}
+          />
+        </Space>
 
         <Space>
           {!isReplaying && <Button className="start-btn" type="primary" icon={<PlayCircleOutlined />} onClick={handleReplayStart} disabled={!parsed.length}>Start</Button>}
@@ -445,7 +426,156 @@ const LogReplayer: React.FC = () => {
           <Button icon={<StepForwardOutlined />} onClick={handleStepOnce} disabled={!parsed.length}>Step</Button>
           <Text>Index: {replayIndex}/{parsed.length}</Text>
         </Space>
+
+        <div>
+          <Text type="secondary">Parsed: {parsed.length} • Infos: {stats.infos} • Events: {stats.events} • kill_feed: {stats.killFeeds} • Other: {stats.otherEvents}</Text>
+        </div>
       </Space>
+
+      {/* empty placeholder when no log is loaded */}
+      {parsed.length === 0 && (
+        // Use the same container sizing as the populated list so the placeholder
+        // occupies the same area and doesn't cause layout shift when a log is loaded.
+        <div
+          ref={listContainerRef}
+          className="log-empty-container"
+          role="status"
+          aria-live="polite"
+          style={{
+            // Use explicit height for the empty placeholder so it appears slightly
+            // taller than the populated list but not overly large.
+            height: computePlaceholderHeight(),
+            maxHeight: computePlaceholderHeight(),
+            minHeight: 200,
+            overflow: 'auto',
+            border: '1px solid #303030',
+            borderRadius: 4,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 20,
+          }}
+        >
+          <div style={{ textAlign: 'center' }}>
+            <FileOutlined style={{ fontSize: 48, marginBottom: 8 }} />
+            <div style={{ marginTop: 8 }}>
+              <Text className="log-empty-text">No Log File Loaded</Text>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {!!parsed.length && (
+        <div style={{ flex: 1, overflow: 'hidden', marginTop: 12 }}>
+          {/* scrolling container that drives incremental loading */}
+          <div
+            ref={listContainerRef}
+            onScroll={handleListScroll}
+            style={{
+              maxHeight: listHeight,
+              minHeight: 180,
+              overflow: 'auto',
+              border: '1px solid #303030',
+              borderRadius: 4,
+              background: '#141414'
+            }}
+          >
+            <List
+              dataSource={filteredData.slice(0, loadedCount)}
+              renderItem={(item) => {
+                const isExpanded = expandedRows.has(item.idx);
+                const isCurrent = item.idx === replayIndex;
+                return (
+                  <div
+                    key={item.key}
+                    style={{
+                      padding: '8px 12px',
+                      borderBottom: '1px solid #303030',
+                      background: isCurrent ? '#1f1f1f' : 'transparent',
+                      cursor: 'pointer',
+                      transition: 'background 0.2s'
+                    }}
+                    onClick={() => toggleRowExpanded(item.idx)}
+                    onMouseEnter={(e) => { if (!isCurrent) e.currentTarget.style.background = '#1a1a1a'; }}
+                    onMouseLeave={(e) => { if (!isCurrent) e.currentTarget.style.background = 'transparent'; }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <Text strong style={{ width: 50, flexShrink: 0 }}>#{item.idx}</Text>
+                      <Tag color={item.type === 'INFO' ? 'geekblue' : 'gold'}>{item.type}</Tag>
+                      <Text style={{ width: 100, flexShrink: 0 }}>{item.ts}</Text>
+                      <Text strong style={{ width: 150, flexShrink: 0 }}>{item.name}</Text>
+                      <Tag color={item.tag === 'INFO' ? 'geekblue' : (item.tag === 'KILL' ? 'volcano' : 'default')}>
+                        {item.tag}
+                      </Tag>
+                      <Text ellipsis style={{ flex: 1 }}>{item.details}</Text>
+                      <Space size={4}>
+                        <Tooltip title="Dispatch once">
+                          <Button 
+                            size="small" 
+                            icon={<CaretRightOutlined />} 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const i = item.idx;
+                              if (i >= 0 && i < parsed.length) {
+                                stepDispatch(parsed[i]);
+                                replayIndexRef.current = i + 1;
+                                setReplayIndex(i + 1);
+                              }
+                            }} 
+                          />
+                        </Tooltip>
+                        <Tooltip title="Jump to index">
+                          <Button 
+                            size="small" 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              replayIndexRef.current = item.idx;
+                              setReplayIndex(item.idx);
+                            }}
+                          >
+                            Jump
+                          </Button>
+                        </Tooltip>
+                        <Tooltip title="Play from here">
+                          <Button 
+                            size="small" 
+                            type="primary" 
+                            icon={<PlayCircleOutlined />} 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              replayIndexRef.current = item.idx;
+                              setReplayIndex(item.idx);
+                              handleReplayStart();
+                            }} 
+                          />
+                        </Tooltip>
+                      </Space>
+                    </div>
+                    {isExpanded && (
+                      <div className="expanded-json" style={{ 
+                        marginTop: 8, 
+                        padding: 8, 
+                        background: '#0d0d0d', 
+                        borderRadius: 4,
+                        maxHeight: 400,
+                        overflow: 'auto'
+                      }}>
+                        <pre style={{ margin: 0, fontSize: '0.85em', whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>
+                          {JSON.stringify(item.raw, null, 2)}
+                        </pre>
+                      </div>
+                    )}
+                  </div>
+                );
+              }}
+            />
+            {/* small loader indicator at the bottom while appending */}
+            {loadedCount < filteredData.length && (
+              <div style={{ padding: 12, textAlign: 'center', color: '#bbb' }}>Loading more...</div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

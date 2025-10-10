@@ -10,6 +10,8 @@ import DevWindowHeader from './DevWindowHeader';
 import 'screens/desktop/components/styles/themes.css';
 import './styles/DevScreen.css';
 import AppStatus from './appStatus/AppStatus';
+import OverridesTab from './OverridesTab';
+import PayloadsTab from './PayloadsTab';
 
 const DevScreen: React.FC = () => {
   const { theme } = useSelector((state: RootReducer) => state.appSettingsReducer.settings);
@@ -29,6 +31,8 @@ const DevScreen: React.FC = () => {
         className="dev-tabs"
         items={[
           { key: 'appstatus', label: 'App Status', children: <AppStatus /> },
+          { key: 'payloads', label: 'Payloads', children: <PayloadsTab /> },
+          { key: 'overrides', label: 'Overrides', children: <OverridesTab /> },
           { key: 'replay', label: 'Log Replayer', children: <LogReplayer /> },
           { key: 'redux', label: 'Redux Viewer', children: <DevStoreViewer /> }
         ]}
