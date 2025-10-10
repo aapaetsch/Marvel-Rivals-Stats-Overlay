@@ -15,8 +15,11 @@ export const useSwapQueue = (currentMatch: any) => {
     let hasRealSwaps = false;
     let hasInitialSelections = false;
 
-    // Deduplication set to avoid showing the same swap twice
+    // Deduplication sets to avoid showing the same swap twice
+    // 1) by uid+old+new (strict)
     const seenKeys = new Set<string>();
+    // 2) by name+old+new (cross-uid safety if backend duplicates player records)
+    const seenNameKeys = new Set<string>();
     
     for (const player of Object.values(currentMatch.players) as any[]) {
       if (!player.characterSwaps || player.characterSwaps.length === 0) continue;
@@ -46,11 +49,13 @@ export const useSwapQueue = (currentMatch: any) => {
           String((swap.newCharacterName || '').toLowerCase()),
         ];
         const key = keyParts.join(":");
-        if (seenKeys.has(key)) {
+        const nameKey = [String(player.name || "").toLowerCase(), keyParts[1], keyParts[2]].join(":");
+        if (seenKeys.has(key) || seenNameKeys.has(nameKey)) {
           // Already processed identical swap for this render, skip it
           continue;
         }
         seenKeys.add(key);
+        seenNameKeys.add(nameKey);
 
         // If old character name exists and isn't a placeholder, it's a real swap not just initial selection
         if (swap.oldCharacterName && swap.oldCharacterName !== "Unknown") {
@@ -69,7 +74,7 @@ export const useSwapQueue = (currentMatch: any) => {
           swapTimestamp: swap.timestamp,
           oldAvatarURL,
           newAvatarURL,
-          team: player.team,
+          team: Number(player.team),
         });
       }
     }

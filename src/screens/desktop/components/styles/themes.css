@@ -361,3 +361,39 @@ body.theme-minimalistic-black .ant-select-item-option-active {
   background-color: #181818 !important;
 }
 
+/* LogReplayer expanded JSON text color */
+.dev-window.log-replayer .expanded-json,
+.dev-window.log-replayer .expanded-json pre {
+  color: var(--primary-color-text) !important;
+}
+
+/* LogReplayer: empty placeholder */
+.dev-window.log-replayer .log-empty-container {
+  background: var(--neutral-2, #1f1f1f);
+  border-radius: 6px;
+  color: var(--primary-color-text);
+}
+.dev-window.log-replayer .log-empty-container .anticon {
+  color: var(--primary-color-text);
+}
+.dev-window.log-replayer .log-empty-text {
+  color: var(--primary-color-text);
+  font-size: 1rem;
+}
+
+/* Overrides tab: ensure radio and segmented labels use primary text color */
+.overrides-root .ant-radio-wrapper,
+.overrides-root .ant-radio-group .ant-radio-wrapper,
+.overrides-root .ant-radio-wrapper > span,
+.overrides-root .themed-segmented,
+.overrides-root .themed-segmented .ant-segmented-item,
+.overrides-root .themed-segmented .ant-segmented-item-label {
+  color: var(--primary-color-text) !important;
+}
+
+/* Also make the switch labels and card headers follow the primary text rule inside overrides */
+.overrides-root .status-card-header .ant-typography,
+.overrides-root .status-card-body {
+  color: var(--primary-color-text);
+}
+

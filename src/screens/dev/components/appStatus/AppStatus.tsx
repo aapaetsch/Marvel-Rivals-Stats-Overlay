@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Typography } from 'antd';
 import GameStatusWidget from './widgets/GameStatusWidget';
 import MatchSummaryWidget from './widgets/MatchSummaryWidget';
 import LocalPlayerWidget from './widgets/LocalPlayerWidget';
@@ -7,11 +6,7 @@ import TeamStatsWidget from './widgets/TeamStatsWidget';
 import AlliesWidget from './widgets/AlliesWidget';
 import OpponentsWidget from './widgets/OpponentsWidget';
 import EventHealthWidget from './widgets/EventHealthWidget';
-import SwapBarTestWidget from './widgets/SwapBarTestWidget';
 import './styles/AppStatus.css';
-import CardViewCoverOverride from './CardViewCoverOverride';
-
-const { Title } = Typography;
 
 const AppStatus: React.FC = () => {
   const eventRef = useRef<HTMLDivElement | null>(null);
@@ -51,7 +46,7 @@ const AppStatus: React.FC = () => {
   <div className="app-status-grid-item col-span-9" aria-hidden style={{ height: 0, overflow: 'hidden' }} />
 
   {/* Fourth row: Match override controls and swapbar controls side-by-side */}
-        <div className="app-status-grid-item col-span-6">
+        {/* <div className="app-status-grid-item col-span-6">
           <div className="status-card">
             <div className="status-card-header">
               <Title level={4} style={{ margin: 0 }}>Match Override Controls</Title>
@@ -70,8 +65,8 @@ const AppStatus: React.FC = () => {
               <SwapBarTestWidget />
             </div>
           </div>
-        </div>
-        
+        </div> */}
+        {/* Override controls moved to the Overrides tab to keep App Status focused */}
       </div>
     </div>
   );

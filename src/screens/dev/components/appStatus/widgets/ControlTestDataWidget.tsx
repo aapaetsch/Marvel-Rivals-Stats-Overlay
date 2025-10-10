@@ -29,7 +29,7 @@ const ControlTestDataWidget: React.FC = () => {
         <Space direction="vertical" size="small" style={{ width: '100%' }}>
           <Text type="secondary">Toggle use of test fixtures for testing UI flows.</Text>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Text strong>Match History</Text>
             <Space align="center" size="middle">
               <Switch checked={useMatchHistoryTestData} onChange={toggleHistory} aria-label="Use match history test data" />
@@ -39,7 +39,7 @@ const ControlTestDataWidget: React.FC = () => {
             </Space>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Text strong>Match Table</Text>
             <Space align="center" size="middle">
               <Switch checked={useMatchTableTestData} onChange={toggleTable} aria-label="Use match table test data" />

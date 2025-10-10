@@ -1,0 +1,67 @@
+/* PayloadsTab specific styles */
+
+.payloads-root {
+  /* allow the payloads area to claim vertical space inside the dev window */
+  height: calc(100vh - 160px);
+}
+
+.payloads-root .payloads-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  height: 100%;
+}
+
+.payload-panel {
+  background: var(--neutral-2, #1a1a1a);
+  border-radius: 8px;
+  padding: 8px;
+  /* Make panels taller by default. They will expand to fill the container.
+     We also cap max-height so they don't overflow the viewport too much. */
+  min-height: 420px;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.2) inset;
+}
+
+.payload-panel-header {
+  font-weight: 600;
+  padding: 6px 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  color: var(--primary-color-text);
+}
+
+.payload-panel-body {
+  padding: 8px;
+  overflow: auto;
+  flex: 1;
+  color: var(--primary-color-text);
+}
+
+.payload-item {
+  margin-bottom: 10px;
+  border-radius: 6px;
+  padding: 8px;
+  background: rgba(0,0,0,0.12);
+}
+
+.payload-item pre {
+  margin: 0;
+  font-size: 12px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  color: var(--primary-color-text);
+}
+
+.payload-empty {
+  color: var(--primary-color-text);
+  opacity: 0.8;
+  text-align: center;
+  padding: 20px 0;
+}
+
+@media (max-width: 900px) {
+  .payloads-root .payloads-container { grid-template-columns: 1fr; }
+  .payload-panel { min-height: 260px; }
+}

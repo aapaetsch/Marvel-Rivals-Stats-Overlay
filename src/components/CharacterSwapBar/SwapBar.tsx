@@ -29,7 +29,7 @@ export const SwapBar: React.FC<SwapBarComponentProps> = ({
       />
       {characters?.map((character, index) => (
         <SwapBarPlayerRow
-          key={index}
+          key={`${character.uid}:${(character.oldCharacterName||'').toLowerCase()}:${(character.newCharacterName||'').toLowerCase()}:${index}`}
           character={character}
           localPlayerTeam={localPlayerTeam}
           allySwapColor={allySwapColor}

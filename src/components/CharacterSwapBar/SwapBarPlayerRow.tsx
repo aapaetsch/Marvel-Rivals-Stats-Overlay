@@ -24,7 +24,7 @@ export const SwapBarPlayerRow: React.FC<SwapBarPlayerRowProps> = ({
   };
 
   // Determine if this player is an ally (same team as local player) or enemy
-  const isAlly = character.team === localPlayerTeam;
+  const isAlly = Number(character.team) === Number(localPlayerTeam);
   const teamClass = isAlly ? "ally" : "enemy";
   const DEFAULT_ALLY = '#1890FF';
   const DEFAULT_ENEMY = '#FF4D4F';
@@ -54,7 +54,7 @@ export const SwapBarPlayerRow: React.FC<SwapBarPlayerRowProps> = ({
       style={{ borderColor: rowBorderColor, height: rowHeight ?? undefined }}
     >
   {character.oldCharacterName && <SwapBarPlayer {...leftProps} avatarSize={avatarSize} />}
-      <SwapIcon />
+      <SwapIcon playerTag={character.name} />
   {character.newCharacterName && <SwapBarPlayer {...rightProps} avatarSize={avatarSize} />}
       <div 
         className="swap-bar__player-background" 
