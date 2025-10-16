@@ -64,6 +64,15 @@
   --tag-bg-neutral: var(--neutral-4, var(--neutral-3));
   --tag-text-neutral: var(--neutral-0, #111);
   --tag-border-neutral: var(--neutral-1, rgba(0,0,0,0.08));
+  /* Swap bar colors: used for swap row borders and backgrounds. These provide
+     a single place to tweak ally/enemy colors per-theme and fall back to
+     sensible defaults when not overridden. */
+  --swapbar-ally-color: #1890FF;
+  --swapbar-ally-border: var(--swapbar-ally-color);
+  --swapbar-ally-bg: rgba(24, 144, 255, 0.45);
+  --swapbar-enemy-color: #FF4D4F;
+  --swapbar-enemy-border: var(--swapbar-enemy-color);
+  --swapbar-enemy-bg: rgba(255, 77, 79, 0.45);
 }
 
 /* Dark Theme (Default) */
@@ -116,6 +125,13 @@ body.theme-dark {
   --scrollbar-thumb: rgba(255,255,255,0.06);
   /* On hover in dark mode we want the thumb to lighten (increase alpha) */
   --scrollbar-thumb-hover: rgba(255,255,255,0.14);
+  /* Theme-specific overrides for the swap bar colors (dark theme) */
+  --swapbar-ally-color: #1890FF;
+  --swapbar-ally-border: var(--swapbar-ally-color);
+  --swapbar-ally-bg: rgba(24,144,255,0.45);
+  --swapbar-enemy-color: #FF4D4F;
+  --swapbar-enemy-border: var(--swapbar-enemy-color);
+  --swapbar-enemy-bg: rgba(255,77,79,0.45);
 }
 
 /* Light Theme */
@@ -167,6 +183,13 @@ body.theme-light {
   --scrollbar-thumb: rgba(0,0,0,0.08);
   /* On hover in light mode we want the thumb to darken (increase alpha) */
   --scrollbar-thumb-hover: rgba(0,0,0,0.18);
+  /* Theme-specific swap bar colors for light theme (slightly more muted bg) */
+  --swapbar-ally-color: #1f618d;
+  --swapbar-ally-border: var(--swapbar-ally-color);
+  --swapbar-ally-bg: rgba(31,97,141,0.28);
+  --swapbar-enemy-color: #c0392b;
+  --swapbar-enemy-border: var(--swapbar-enemy-color);
+  --swapbar-enemy-bg: rgba(192,57,43,0.28);
 }
 
 /* Minimalistic Black Theme */
@@ -225,6 +248,13 @@ body.theme-minimalistic-black {
   --tag-border-neutral: var(--neutral-2);
   --tag-border-warning: var(--neutral-2);
   --tag-text-neutral: var(--neutral-text, #000);
+  /* Minimalistic black theme: make swap bar subtle and readable on black */
+  --swapbar-ally-color: #ffffff;
+  --swapbar-ally-border: var(--swapbar-ally-color);
+  --swapbar-ally-bg: rgba(255,255,255,0.12);
+  --swapbar-enemy-color: #ffffff;
+  --swapbar-enemy-border: var(--swapbar-enemy-color);
+  --swapbar-enemy-bg: rgba(255,255,255,0.08);
   
   
   /* Override specific components for minimalistic look */
@@ -388,6 +418,28 @@ body.theme-minimalistic-black .ant-select-item-option-active {
 .overrides-root .themed-segmented,
 .overrides-root .themed-segmented .ant-segmented-item,
 .overrides-root .themed-segmented .ant-segmented-item-label {
+  color: var(--primary-color-text) !important;
+}
+
+/* Selected segmented option should use primary text color when selected */
+.overrides-root .themed-segmented .ant-segmented-item-selected,
+.overrides-root .themed-segmented .ant-segmented-item-checked {
+  color: var(--primary-color-text) !important;
+}
+.overrides-root .themed-segmented .ant-segmented-item-selected .ant-segmented-item-label,
+.overrides-root .themed-segmented .ant-segmented-item-checked .ant-segmented-item-label {
+  color: var(--primary-color-text) !important;
+}
+
+/* Selected radio labels (only when the radio is checked) */
+.overrides-root .ant-radio-wrapper-checked,
+.overrides-root .ant-radio-wrapper-checked > span,
+.overrides-root .ant-radio-wrapper-checked .ant-radio + span {
+  color: var(--primary-color-text) !important;
+}
+
+/* Fallback: when radio input has ant-radio-checked class, target the following label */
+.overrides-root .ant-radio-checked + span {
   color: var(--primary-color-text) !important;
 }
 
