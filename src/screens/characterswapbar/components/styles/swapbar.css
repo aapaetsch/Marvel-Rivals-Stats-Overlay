@@ -1,8 +1,14 @@
 .swap-bar__swap-icon {
-  transform: rotate(90deg);
+  /* Layout the icon and player tag horizontally (icon on the left, name on the right)
+     Previously this entire block was rotated and used a column layout which stacked
+     the SVG and the player name vertically. Make the container a horizontal flex
+     row and remove rotation so the SVG and name appear side-by-side. */
   display: flex;
+  flex-direction: row;
   align-items: center;
-  color: #ffffff; /* ensure SVG stroke (currentColor) is white */
+  gap: 0.5rem; /* small spacing between icon and name */
+  color: var(--primary-color-text, #ffffff); /* use theme-aware text color */
+  transform: none;
 }
 
 .swap-bar {
@@ -88,28 +94,28 @@
 }
 
 .swap-bar__player-row.ally {
-  border-color: var(--primary-color-medium);
+  border-color: var(--swapbar-ally-border, var(--primary-color-medium));
 }
 .swap-bar__player-row.enemy {
-  border-color: var(--secondary-color-medium);
+  border-color: var(--swapbar-enemy-border, var(--secondary-color-medium));
 }
 
 /* Keep old styles for backward compatibility */
 .swap-bar__player-row.team-1 {
-  border-color: var(--primary-color-medium);
+  border-color: var(--swapbar-ally-border, var(--primary-color-medium));
 }
 .swap-bar__player-row.team-2 {
-  border-color: var(--secondary-color-medium);
+  border-color: var(--swapbar-enemy-border, var(--secondary-color-medium));
 }
 
 .swap-bar__player-row.ally .swap-bar__player-background,
 .swap-bar__player-row.team-1 .swap-bar__player-background {
-  background-color: var(--primary-color-light);
+  background-color: var(--swapbar-ally-bg, var(--primary-color-light));
   opacity: 0.45;
 }
 .swap-bar__player-row.enemy .swap-bar__player-background,
 .swap-bar__player-row.team-2 .swap-bar__player-background {
-  background-color: var(--secondary-color-light);
+  background-color: var(--swapbar-enemy-bg, var(--secondary-color-light));
   opacity: 0.45;
 }
 
