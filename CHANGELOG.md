@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Character Swap Bar: Corrected ally/enemy color assignment by normalizing team numbers and using stable team equality with local player.
 - Character Swap Bar: Added gamer tag under the center swap icon to verify who the swap is registered to.
 - Match Stats: Preserve `map`, `gameMode`, and `gameType` when a new `match_start` event arrives so they are recorded correctly even if provided slightly before the start event.
+ - Character Swap Bar: Team-scoped de-duplication using `team:uid:old:new` keys to prevent rendering a second row when the same player+previous→new combo is already in use.
 
 ### Changed
 - Recent Players [#36]: Removed border around the main Recent Players page card container.
