@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { RootReducer } from "app/shared/rootReducer";
 import { PlayerStatsProps, TeamStatProps } from "../types/teamateStatsTypes";
-import { Collapse } from "antd";
 import "./styles/Screen.css";
 import TeammateStats from "../components/TeammateStats";
 import DragHandle from "../../shared/DragHandle";
@@ -24,14 +23,17 @@ const Screen = () => {
     return Object.values(currentMatch.players)
       .filter(p => p.isTeammate)
       .map((p, idx) => ({
-        rosterId: `roster_${idx}`,
+        // Use a stable identifier for rosterId so React keys and
+        // slot-based settings stay consistent when players leave/join.
+        rosterId: p.uid ?? `roster_${idx}`,
         playerName: p.name,
         characterName: p.characterName,
-        kills: p.kills,
-        finalHits: p.finalHits,
-        deaths: p.deaths,
-        assists: p.assists,
-        damageBlocked: p.damageBlocked, // Add damage blocked here
+        // Ensure numeric stats have safe defaults to avoid transient styling differences
+        kills: p.kills ?? 0,
+        finalHits: p.finalHits ?? 0,
+        deaths: p.deaths ?? 0,
+        assists: p.assists ?? 0,
+        damageBlocked: p.damageBlocked ?? 0,
         isTeammate: p.isTeammate,
         isUser: p.isLocal,
         ultCharge: p.ultCharge ?? 0,
@@ -52,11 +54,11 @@ const Screen = () => {
   }
 
   // 4) If you still want to handle window resizing for your container:
-  const [windowHeight, setWindowHeight] = useState(window.outerHeight);
   useEffect(() => {
-    const handleResize = () => setWindowHeight(window.innerHeight);
+    const handleResize = () => {
+      /* no-op placeholder for future resize handling */
+    };
     window.addEventListener("resize", handleResize);
-    handleResize();
     return () => window.removeEventListener("resize", handleResize);
   }, []);
   const forceVisible = true;
