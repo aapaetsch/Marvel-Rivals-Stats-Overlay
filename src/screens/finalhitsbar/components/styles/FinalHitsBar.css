@@ -13,13 +13,23 @@
   overflow: visible;
 }
 
+.final-hits-bar-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: var(--border-radius);
+}
+
 .final-hits-bar {
   display: flex;
   flex-direction: row;
   justify-content: center;
   max-width: 100%;
   margin: 0 auto;
-  padding: 5px;
   box-sizing: border-box;
 }
 
@@ -28,8 +38,6 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 0 2.5px;
-  margin: 0 2.5px;
   flex: 1;
   min-width: 0; /* Allows elements to shrink below content size */
   max-width: 90px; /* Prevents player columns from getting too wide */
@@ -45,8 +53,13 @@
 .final-hits-player-avatar img.character-avatar {
   width: 48px;
   height: 48px;
-  border-radius: var(--border-radius-large);
   background-color: rgba(0, 0, 0, 0.3);
+}
+
+.character-avatar-empty {
+  width: 48px;
+  height: 48px;
+  background-color: transparent; /* invisible placeholder */
 }
 
 .final-hits-player-avatar span.player-name {
@@ -70,21 +83,31 @@
   border-color: var(--primary-color-medium);
   /* background-color: var(--success-color); */
   /* opacity: 0.5; */
+  border-top-left-radius: var(--border-radius);
+  border-top-right-radius: var(--border-radius);
 }
 .final-hits-on-player .final-hits-background {
   background-color: var(--primary-color);
   } 
 .final-hits-on-player span {
   color: var(--primary-color-text);
+  position: relative;
+  z-index: 2; /* Ensure text is above background */
+  opacity: 1 !important; /* Force text to be fully opaque */
 }
 .final-hits-on-user {
   border-color: var(--secondary-color);
+  border-bottom-left-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
 }
 .final-hits-on-user .final-hits-background {
   background-color: var(--secondary-color);
-  }
+}
 .final-hits-on-user span {
   color: var(--primary-color-text);
+  position: relative;
+  z-index: 2; /* Ensure text is above background */
+  opacity: 1 !important; /* Force text to be fully opaque */
 }
 
 .final-hits-on-player,
@@ -92,9 +115,8 @@
   font-size: 2rem;
   font-weight: bolder;
   text-align: center;
-  border-width: 2px;
+  border-width: 2.5px;
   border-style: solid;
-  border-radius: var(--border-radius);
   position: relative;
 }
 
@@ -103,9 +125,9 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: 100%;  
   border-radius: var(--border-radius);
-  opacity: 0.4;  
+  /* Removed hardcoded opacity to allow dynamic setting from finalHitsOpacity to work */
   will-change: transform;
 }
 
