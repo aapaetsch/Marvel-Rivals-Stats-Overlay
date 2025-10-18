@@ -20,7 +20,7 @@ export const SwapIcon: React.FC<{ playerTag?: string } > = ({ playerTag }) => {
         />
       </svg>
       {playerTag ? (
-        <div className="swap-bar__swap-name" title={playerTag}>{playerTag}</div>
+        <div className="swap-bar__swap-name is-hidden" title={playerTag}>{playerTag}</div>
       ) : null}
     </div>
   );

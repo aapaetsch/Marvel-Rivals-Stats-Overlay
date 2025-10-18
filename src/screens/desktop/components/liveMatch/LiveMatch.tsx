@@ -305,60 +305,63 @@ const LiveMatch: React.FC = () => {
           onRefresh={() => window.location.reload()}
         />
       )}
-      
-      <div className="live-match-header">
-        <div className="live-match-header-left">
-          <h2 className="live-match-title">
-            {t('components.desktop.live-match.title', 'Live Match')}
-          </h2>
-          {titleParts.length > 0 && (
-            <span className="live-match-details">
-              {titleParts.join(' - ')}
-            </span>
-          )}
-          <span className="live-match-duration">
-            {formatDuration(currentMatch?.timestamps?.matchStart, currentMatch?.timestamps?.matchEnd)}
-          </span>
-        </div>
-        <div className="live-match-header-right">
-          <Segmented
-            value={roundSelection}
-            onChange={(val) => setRoundSelection(val as any)}
-            options={(() => {
-              const rounds = currentMatch?.rounds || [];
-              const base: { label: string; value: 'match' }[] = [{ label: 'Match', value: 'match' }];
-              const roundOpts = rounds.map((_: any, i: number) => ({ label: `Round ${i + 1}`, value: i }));
-              return [...base, ...roundOpts];
-            })()}
-            size="small"
-          />
-          <Segmented
-            value={viewMode}
-            onChange={(value) => setViewMode(value as ViewMode)}
-            options={[
-              {
-                label: t('components.desktop.live-match.card-view', 'Card View'),
-                value: 'cards',
-                icon: <GiCardRandom />,
-              },
-              {
-                label: t('components.desktop.live-match.table-view', 'Table View'),
-                value: 'table',
-                icon: <BsTable />,
-              },
-              {
-                label: t('components.desktop.live-match.info-view', 'Match Info'),
-                value: 'info',
-                icon: <InfoCircleOutlined />,
-              },
-            ]}
-            size="middle"
-          />
-        </div>
-      </div>
 
-      <div className="live-match-content">
-        {renderContent()}
+      {/* Inner wrapper: keeps header + content together so the whole overlay can be centered */}
+      <div className="live-match-inner">
+        <div className="live-match-header">
+          <div className="live-match-header-left">
+            <h2 className="live-match-title">
+              {t('components.desktop.live-match.title', 'Live Match')}
+            </h2>
+            {titleParts.length > 0 && (
+              <span className="live-match-details">
+                {titleParts.join(' - ')}
+              </span>
+            )}
+            <span className="live-match-duration">
+              {formatDuration(currentMatch?.timestamps?.matchStart, currentMatch?.timestamps?.matchEnd)}
+            </span>
+          </div>
+          <div className="live-match-header-right">
+            <Segmented
+              value={roundSelection}
+              onChange={(val) => setRoundSelection(val as any)}
+              options={(() => {
+                const rounds = currentMatch?.rounds || [];
+                const base: { label: string; value: 'match' }[] = [{ label: 'Match', value: 'match' }];
+                const roundOpts = rounds.map((_: any, i: number) => ({ label: `Round ${i + 1}`, value: i }));
+                return [...base, ...roundOpts];
+              })()}
+              size="small"
+            />
+            <Segmented
+              value={viewMode}
+              onChange={(value) => setViewMode(value as ViewMode)}
+              options={[
+                {
+                  label: t('components.desktop.live-match.card-view', 'Card View'),
+                  value: 'cards',
+                  icon: <GiCardRandom />,
+                },
+                {
+                  label: t('components.desktop.live-match.table-view', 'Table View'),
+                  value: 'table',
+                  icon: <BsTable />,
+                },
+                {
+                  label: t('components.desktop.live-match.info-view', 'Match Info'),
+                  value: 'info',
+                  icon: <InfoCircleOutlined />,
+                },
+              ]}
+              size="middle"
+            />
+          </div>
+        </div>
+
+        <div className="live-match-content">
+          {renderContent()}
+        </div>
       </div>
     </div>
   );

@@ -11,7 +11,8 @@ export const SwapBarPlayer: React.FC<SwapBarCharacterProps> = ({
 }) => {
   return (
     <div className="swap-bar__player">
-      <div className="swap-bar__player-name">{name}</div>
+      {/* Name hidden per design — keep DOM slot commented for future use */}
+      <div className="swap-bar__player-name is-hidden">{name}</div>
       <div className="swap-bar__player-avatar">
         {avatarURLStr ? (
           <img src={avatarURLStr} alt={charName} style={{ width: avatarSize ?? 43, height: avatarSize ?? 43 }} />

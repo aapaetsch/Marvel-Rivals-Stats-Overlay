@@ -141,8 +141,7 @@
 }
 
 .swap-bar__swap-icon-svg {
-  /* Do not rotate the svg by default. Keep original arrow orientation. */
-  transform: none;
+  transform: rotate(90deg);
 }
 
 .swap-bar__swap-name {
