@@ -1,16 +1,13 @@
 import React, { useMemo } from 'react';
-import { Card, Avatar, Typography, Space, Statistic, Row, Col, Button, Tooltip, message } from 'antd';
-import { useDispatch } from 'react-redux';
+import { Card, Avatar, Typography, Statistic, Row, Col } from 'antd';
 import { useTranslation } from 'react-i18next';
 import {
   UserOutlined,
-  StarFilled,
   TrophyOutlined,
   TeamOutlined,
 } from '@ant-design/icons';
 import { getCharacterClass, CharacterClass, getClassImagePath } from 'lib/characterClassIcons';
 import type { RecentPlayer } from '../../../background/stores/recentPlayersSlice';
-import { togglePlayerFavorite } from '../../../background/stores/recentPlayersSlice';
 import { getCharacterDefaultIconPath } from 'lib/characterIcons';
 import { formatRelativeTime } from 'lib/utils';
 import icons from 'components/Icons';
@@ -27,7 +24,6 @@ interface FavouritePlayerCardProps {
  */
 const FavouritePlayerCard: React.FC<FavouritePlayerCardProps> = ({ player }) => {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
 
   // Get the most played character across both ally and opponent stats
   const mostUsedCharacter = useMemo(() => {
@@ -72,12 +68,12 @@ const FavouritePlayerCard: React.FC<FavouritePlayerCardProps> = ({ player }) => 
     return items.slice(0, 5);
   }, [player.allyCharacterStats, player.opponentCharacterStats]);
 
-  // Compute role distribution (most -> least picked) using character class mapping
+  // Compute role distribution (most -> least picked) with win rates using character class mapping
   const roleDistribution = useMemo(() => {
-    const agg: Record<CharacterClass, number> = {
-      [CharacterClass.VANGUARD]: 0,
-      [CharacterClass.DUELIST]: 0,
-      [CharacterClass.STRATEGIST]: 0,
+    const agg: Record<CharacterClass, { count: number; wins: number; losses: number }> = {
+      [CharacterClass.VANGUARD]: { count: 0, wins: 0, losses: 0 },
+      [CharacterClass.DUELIST]: { count: 0, wins: 0, losses: 0 },
+      [CharacterClass.STRATEGIST]: { count: 0, wins: 0, losses: 0 },
     };
     const allyStats = player.allyCharacterStats || {};
     const oppStats = player.opponentCharacterStats || {};
@@ -85,15 +81,21 @@ const FavouritePlayerCard: React.FC<FavouritePlayerCardProps> = ({ player }) => 
       Object.entries(stats).forEach(([charName, s]: any) => {
         const cls = getCharacterClass(charName);
         if (cls != null) {
-          agg[cls] += s?.count || 0;
+          agg[cls].count += s?.count || 0;
+          agg[cls].wins += s?.wins || 0;
+          agg[cls].losses += s?.losses || 0;
         }
       });
     };
     addCounts(allyStats);
     addCounts(oppStats);
-    const total = Object.values(agg).reduce((a, b) => a + b, 0);
+    const total = Object.values(agg).reduce((a, b) => a + b.count, 0);
     // Convert to array and sort desc
-    const arr = (Object.entries(agg) as Array<[CharacterClass, number]>).map(([cls, count]) => ({ cls, count, pct: total > 0 ? Math.round((count / total) * 100) : 0 }));
+    const arr = (Object.entries(agg) as Array<[CharacterClass, { count: number; wins: number; losses: number }]>).map(([cls, stats]) => {
+      const winRate = stats.count > 0 ? Math.round((stats.wins / stats.count) * 100) : 0;
+      const pct = total > 0 ? Math.round((stats.count / total) * 100) : 0;
+      return { cls, count: stats.count, wins: stats.wins, losses: stats.losses, winRate, pct };
+    });
     arr.sort((a, b) => b.count - a.count);
     return { total, arr };
   }, [player.allyCharacterStats, player.opponentCharacterStats]);
@@ -121,24 +123,11 @@ const FavouritePlayerCard: React.FC<FavouritePlayerCardProps> = ({ player }) => 
 
   const lastSeenFormatted = formatRelativeTime(player.lastSeen);
 
-  /**
-   * Handles unfavoriting the player
-   */
-  const handleUnfavorite = () => {
-    dispatch(togglePlayerFavorite({ uid: player.uid }));
-    message.success(
-      t('components.desktop.favourites.unfavorited', {
-        name: player.name,
-        defaultValue: `${player.name} removed from favourites`,
-      })
-    );
-  };
-
   return (
     <Card className="favourite-player-card" bordered={false}>
-      {/* Header: Avatar and Player Name */}
-      <div className="flex items-start justify-between mb-4">
-        <Space size="middle" align="start">
+      {/* Header: Avatar, Player Name, and Total Encounters (aligned to same y) */}
+      <div className="favourite-player-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <Avatar
             shape="square"
             size={64}
@@ -146,37 +135,41 @@ const FavouritePlayerCard: React.FC<FavouritePlayerCardProps> = ({ player }) => 
             icon={!characterIcon ? <UserOutlined /> : undefined}
             className="favourite-player-avatar"
           />
-          <div className="flex flex-col">
-            <Text className="favourite-player-name font-bold text-lg">
-              {player.name}
-            </Text>
-            <Text type="secondary" className="text-sm">
-              {t('components.desktop.favourites.last-seen', 'Last seen')}: {lastSeenFormatted}
-            </Text>
-            {mostUsedCharacter && (
-              <Text type="secondary" className="text-sm">
-                {t('components.desktop.favourites.most-played', 'Most played')}: {mostUsedCharacter}
+          <div className="favourite-player-meta">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems:'baseline', gap: 8 }}>
+              <Text className="favourite-player-name meta-name">
+                {player.name}
               </Text>
-            )}
+            </div>
+            <div className="meta-stack">
+              <Text className="meta-text meta-last-seen">
+                {t('components.desktop.favourites.last-seen', 'Last seen')}: {lastSeenFormatted}
+              </Text>
+              {mostUsedCharacter && (
+                <Text className="meta-text meta-most-played">
+                  {t('components.desktop.favourites.most-played', 'Most played')}: {mostUsedCharacter}
+                </Text>
+              )}
+            </div>
           </div>
-        </Space>
+        </div>
 
-        {/* Unfavorite Button */}
-        <Tooltip
-          title={t('components.desktop.favourites.remove-favourite', 'Remove from favourites')}
-        >
-          <Button
-            type="text"
-            icon={<StarFilled style={{ color: '#fadb14' }} />}
-            onClick={handleUnfavorite}
-            className="favourite-star-button"
+        {/* Total Encounters - title above the numeric counter */}
+        <div style={{ textAlign: 'right', minWidth: 120 }}>
+          <Text className="total-encounters-title has-text-primary-color" type="secondary" style={{ display: 'block', marginBottom: 6 }}>
+            {t('components.desktop.favourites.total-encounters', 'Total Encounters')}
+          </Text>
+          <Statistic
+            value={totalGames}
+            prefix={<TeamOutlined />}
+            valueStyle={{ fontSize: '1.25rem' }}
           />
-        </Tooltip>
+        </div>
       </div>
 
-      {/* Stats Section */}
-      <Row gutter={[8, 8]}>
-        <Col xs={24} sm={12}>
+      {/* Win Rate Stats Row - first row under header */}
+      <Row gutter={[12, 8]} style={{ marginBottom: 16 }}>
+  <Col xs={24} sm={8} className="stat-col">
           <Statistic
             title={t('components.desktop.favourites.overall-winrate', 'Overall Win Rate')}
             value={overallWinRate}
@@ -187,36 +180,26 @@ const FavouritePlayerCard: React.FC<FavouritePlayerCardProps> = ({ player }) => 
               fontSize: '1.25rem',
             }}
           />
-          <Text type="secondary" className="text-xs block mt-1">
-            {totalWins}W - {totalGames - totalWins}L
-          </Text>
+          <Text className="stat-wl">{totalWins}W - {totalGames - totalWins}L</Text>
+          <Text className="stat-games">({totalGames} games)</Text>
         </Col>
 
-        <Col xs={24} sm={12}>
-          <Statistic
-            title={t('components.desktop.favourites.total-encounters', 'Total Encounters')}
-            value={totalGames}
-            prefix={<TeamOutlined />}
-            valueStyle={{ fontSize: '1.25rem' }}
-          />
-        </Col>
-
-        <Col xs={24} sm={12}>
+  <Col xs={24} sm={8} className="stat-col">
           <Statistic
             title={t('components.desktop.favourites.with-teammate', 'As Teammate')}
             value={teammateWinRate}
             suffix="%"
+            prefix={icons.teammate}
             valueStyle={{
               color: 'rgba(82, 196, 26, 1)',
               fontSize: '1rem',
             }}
           />
-          <Text type="secondary" className="text-xs block mt-1">
-            {player.teamsWithWins}W - {player.teamsWithCount - player.teamsWithWins}L ({player.teamsWithCount} games)
-          </Text>
+          <Text className="stat-wl">{player.teamsWithWins}W - {player.teamsWithCount - player.teamsWithWins}L</Text>
+          <Text className="stat-games">({player.teamsWithCount} games)</Text>
         </Col>
 
-        <Col xs={24} sm={12}>
+  <Col xs={24} sm={8} className="stat-col">
           <Statistic
             title={t('components.desktop.favourites.vs-opponent', 'Vs Opponent')}
             value={opponentWinRate}
@@ -227,45 +210,44 @@ const FavouritePlayerCard: React.FC<FavouritePlayerCardProps> = ({ player }) => 
               fontSize: '1rem',
             }}
           />
-          <Text type="secondary" className="text-xs block mt-1">
-            {player.teamsAgainstWins}W - {player.teamsAgainstCount - player.teamsAgainstWins}L ({player.teamsAgainstCount} games)
-          </Text>
+          <Text className="stat-wl">{player.teamsAgainstWins}W - {player.teamsAgainstCount - player.teamsAgainstWins}L</Text>
+          <Text className="stat-games">({player.teamsAgainstCount} games)</Text>
         </Col>
       </Row>
 
-      {/* Top picks & role distribution */}
-      <Row gutter={[8, 8]} style={{ marginTop: 12 }}>
-        <Col xs={24} sm={14}>
-          <div className="top-picks">
+      {/* Role Distribution and Top Picks */}
+      <Row gutter={[8, 8]}>
+        <Col xs={24}>
+          <div className="role-distribution">
+            <Text className="stat-sub" strong>{t('components.desktop.favourites.role-distribution', 'Role Distribution')}</Text>
+              <div className="role-list" style={{ marginTop: 4 }}>
+                {roleDistribution.arr.map((r) => (
+                  <div key={r.cls} className="role-row-small">
+                    <Text className="role-pct-small">{r.pct}%</Text>
+                    <Avatar shape="square" size={20} src={getClassImagePath(r.cls)} className="character-icon-small" />
+                    <Text className="role-name-small">{r.cls}</Text>
+                    <Text className="role-count-small">{r.winRate}% WR</Text>
+                  </div>
+                ))}
+              </div>
+          </div>
+
+          <div style={{ marginTop: 12 }}>
             <Text className="stat-sub" strong>{t('components.desktop.favourites.top-picks', 'Top Picks')}</Text>
-            <div className="top-picks-list" style={{ marginTop: 8 }}>
+            <div className="top-picks-list-horizontal" style={{ marginTop: 6 }}>
               {topPicks.length === 0 ? (
                 <Text type="secondary">{t('components.desktop.favourites.no-picks', 'No character picks recorded')}</Text>
               ) : (
                 topPicks.map((p) => (
-                  <div key={p.name} className="top-pick-item">
-                    <Avatar shape="square" size={28} src={getCharacterDefaultIconPath(p.name)} icon={<UserOutlined />} className="character-icon-small" />
-                    <div className="top-pick-meta">
-                      <Text className="top-pick-name">{p.name}</Text>
-                      <Text type="secondary" className="top-pick-count">{p.count} games</Text>
+                  <div key={p.name} className="top-pick-item-horizontal">
+                    <Avatar shape="square" size={40} src={getCharacterDefaultIconPath(p.name)} icon={<UserOutlined />} className="character-icon-small" />
+                    <div className="top-pick-meta-horizontal">
+                      <Text className="top-pick-name-horizontal">{p.name}</Text>
+                      <Text type="secondary" className="top-pick-count-horizontal">{p.count} games</Text>
                     </div>
                   </div>
                 ))
               )}
-            </div>
-          </div>
-        </Col>
-        <Col xs={24} sm={10}>
-          <div className="role-distribution">
-            <Text className="stat-sub" strong>{t('components.desktop.favourites.role-distribution', 'Role Distribution')}</Text>
-            <div className="role-list" style={{ marginTop: 8 }}>
-              {roleDistribution.arr.map((r) => (
-                <div key={r.cls} className="role-row-small">
-                  <Avatar shape="square" size={20} src={getClassImagePath(r.cls)} className="character-icon-small" />
-                  <Text className="role-name-small">{r.cls}</Text>
-                  <Text className="role-count-small">{r.count} ({r.pct}%)</Text>
-                </div>
-              ))}
             </div>
           </div>
         </Col>

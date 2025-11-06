@@ -421,14 +421,12 @@ body.theme-minimalistic-black .ant-select-item-option-active {
   color: var(--primary-color-text) !important;
 }
 
-/* Selected segmented option should use primary text color when selected */
+/* Selected segmented option should use text on primary color when selected */
 .overrides-root .themed-segmented .ant-segmented-item-selected,
-.overrides-root .themed-segmented .ant-segmented-item-checked {
-  color: var(--primary-color-text) !important;
-}
+.overrides-root .themed-segmented .ant-segmented-item-checked,
 .overrides-root .themed-segmented .ant-segmented-item-selected .ant-segmented-item-label,
 .overrides-root .themed-segmented .ant-segmented-item-checked .ant-segmented-item-label {
-  color: var(--primary-color-text) !important;
+  color: var(--text-on-primary) !important;
 }
 
 /* Selected radio labels (only when the radio is checked) */

@@ -9,7 +9,6 @@ import FavouritePlayerCard from './FavouritePlayerCard';
 import './FavouritesPage.css';
 
 const { Title, Text } = Typography;
-
 /**
  * FavouritesPage displays all favourited players with their stats,
  * including a sticky header, aggregated stats at the top, and space for ads
@@ -49,70 +48,69 @@ const FavouritesPage: React.FC = () => {
 
   return (
     <div className="favourites-page">
-      {/* Sticky Header */}
-      <div className="favourites-header sticky top-0 z-10">
-        <Card className="favourites-header-card" bordered={false}>
-          <div className="flex items-center justify-between">
-            <Space align="center" size="large">
-              <StarFilled className="text-yellow-400 text-2xl" />
-              <Title level={3} className="mb-0">
-                {t('components.desktop.favourites.title', 'Favourite Players')}
-              </Title>
-            </Space>
-            <Text className="text-base">
-              {t('components.desktop.favourites.count', {
-                count: aggregateStats.totalFavorites,
-                defaultValue: `${aggregateStats.totalFavorites} Players`,
-              })}
-            </Text>
-          </div>
-        </Card>
-      </div>
+      {/* Main Content Area with Players Grid. Header moved inside this container so sticky works reliably */}
+      <div className="favourites-content">
+        {/* Compact Combined Header with Stats - now inside the scroll container */}
+        <div className="favourites-header">
+          <Card className="favourites-header-card" bordered={false}>
+            {/* Title Row */}
+            <div className="favourites-header-title">
+              <Space align="center" size="middle">
+                <StarFilled style={{ color: '#fadb14', fontSize: '1.25rem' }} />
+                <Title level={4} style={{ margin: 0 }}>
+                  {t('components.desktop.favourites.title', 'Favourite Players')}
+                </Title>
+                <Text type="secondary" style={{ fontSize: '0.875rem' }}  className="has-text-primary-color">
+                  {t('components.desktop.favourites.count', {
+                    count: aggregateStats.totalFavorites,
+                    defaultValue: `${aggregateStats.totalFavorites} Players`,
+                  })}
+                </Text>
+              </Space>
+            </div>
 
-      {/* Aggregate Stats Section */}
-      {favoritedPlayers.length > 0 && (
-        <div className="favourites-stats-section">
-          <Card className="favourites-stats-card" bordered={false}>
-            <Row gutter={[16, 16]}>
-              <Col xs={24} sm={12} md={6}>
-                <Statistic
-                  title={t('components.desktop.favourites.stats.total-encounters', 'Total Encounters')}
-                  value={aggregateStats.totalEncounters}
-                  prefix={<TeamOutlined />}
-                  valueStyle={{ color: 'var(--primary-color-text)' }}
-                />
-              </Col>
-              <Col xs={24} sm={12} md={6}>
-                <Statistic
-                  title={t('components.desktop.favourites.stats.teammate-encounters', 'As Teammates')}
-                  value={aggregateStats.totalTeammateEncounters}
-                  prefix={<TeamOutlined />}
-                  valueStyle={{ color: 'rgba(82, 196, 26, 1)' }}
-                />
-              </Col>
-              <Col xs={24} sm={12} md={6}>
-                <Statistic
-                  title={t('components.desktop.favourites.stats.opponent-encounters', 'As Opponents')}
-                  value={aggregateStats.totalOpponentEncounters}
-                  prefix={icons.opponent}
-                  valueStyle={{ color: 'rgba(255, 77, 79, 1)' }}
-                />
-              </Col>
-              <Col xs={24} sm={12} md={6}>
-                <Statistic
-                  title={t('components.desktop.favourites.stats.wins-with', 'Wins With Teammates')}
-                  value={aggregateStats.totalWinsWithTeammates}
-                  prefix={<TrophyOutlined />}
-                  valueStyle={{ color: '#fadb14' }}
-                />
-              </Col>
-            </Row>
+            {/* Aggregate Stats Row - only shown when there are favorites */}
+            {favoritedPlayers.length > 0 && (
+              <div className="favourites-header-stats">
+                <Row gutter={[12, 8]} align="middle">
+                  <Col xs={12} sm={6}>
+                    <Statistic
+                      title={t('components.desktop.favourites.stats.total-encounters', 'Total')}
+                      value={aggregateStats.totalEncounters}
+                      prefix={<TeamOutlined />}
+                      valueStyle={{ fontSize: '1.125rem' }}
+                    />
+                  </Col>
+                  <Col xs={12} sm={6}>
+                    <Statistic
+                      title={t('components.desktop.favourites.stats.teammate-encounters', 'As Teammates')}
+                      value={aggregateStats.totalTeammateEncounters}
+                      prefix={icons.teammate}
+                      valueStyle={{ fontSize: '1.125rem', color: 'rgba(82, 196, 26, 1)' }}
+                    />
+                  </Col>
+                  <Col xs={12} sm={6}>
+                    <Statistic
+                      title={t('components.desktop.favourites.stats.opponent-encounters', 'As Opponents')}
+                      value={aggregateStats.totalOpponentEncounters}
+                      prefix={icons.opponent}
+                      valueStyle={{ fontSize: '1.125rem', color: 'rgba(255, 77, 79, 1)' }}
+                    />
+                  </Col>
+                  <Col xs={12} sm={6}>
+                    <Statistic
+                      title={t('components.desktop.favourites.stats.wins-with', 'Wins (Team)')}
+                      value={aggregateStats.totalWinsWithTeammates}
+                      prefix={<TrophyOutlined />}
+                      valueStyle={{ fontSize: '1.125rem', color: '#fadb14' }}
+                    />
+                  </Col>
+                </Row>
+              </div>
+            )}
           </Card>
         </div>
-      )}
 
-      {/* Main Content Area with Players Grid */}
-      <div className="favourites-content">
         <div className="favourites-content-grid">
           {/* Players Column - takes up main space */}
           <div className="favourites-players-column">
@@ -123,10 +121,7 @@ const FavouritesPage: React.FC = () => {
                   description={
                     <Space direction="vertical" size="small">
                       <Text className="text-base">
-                        {t(
-                          'components.desktop.favourites.empty.title',
-                          'No Favourite Players Yet'
-                        )}
+                        {t('components.desktop.favourites.empty.title', 'No Favourite Players Yet')}
                       </Text>
                       <Text type="secondary" className="text-sm">
                         {t(
@@ -157,14 +152,7 @@ const FavouritesPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Bottom Ad Space */}
-        <div className="favourites-ad-bottom">
-          <Card className="ad-placeholder" bordered={false}>
-            <Text type="secondary" className="text-center block">
-              {t('components.desktop.favourites.ad-space', 'Ad Space')}
-            </Text>
-          </Card>
-        </div>
+        {/* Bottom Ad Space removed to prevent page-level scrolling */}
       </div>
     </div>
   );

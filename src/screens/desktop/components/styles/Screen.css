@@ -51,7 +51,6 @@
 }
 
 .desktop__main-scroller {
-  /* maybe want 85% here? */
   max-height: 85vh;
   overflow-y: auto;
 }
