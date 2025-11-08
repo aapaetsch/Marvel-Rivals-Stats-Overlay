@@ -1,14 +1,12 @@
 import React from 'react';
-import { Collapse, Switch, FormInstance, Form, Select, Button, Divider } from 'antd';
+import { Switch, FormInstance, Form, Select } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootReducer } from 'app/shared/rootReducer';
 import '../styles/Settings.css';
 import { Themes, updateSettings } from 'features/appSettings/appSettingsSlice';
-import WindowResourceSettings from './WindowResourceSettings';
 import RecentPlayersSettings from './RecentPlayersSettings';
 
-const { Panel } = Collapse;
 const { Option } = Select;
 
 // General Settings Component
@@ -29,14 +27,6 @@ export const GeneralSettingsComponent: React.FC<GeneralSettingsProps> = ({ form:
       language: appSettings.language,
       theme: appSettings.theme,
       showDevWindow: appSettings.showDevWindow,
-      // Add overlay visibility settings
-      // showTeamStats: appSettings.showTeamStats,
-      // showPlayerSwapNotification: appSettings.showPlayerSwapNotification,
-      // showFinalHitsOverlay: appSettings.showFinalHitsOverlay,
-      // Window resource management settings
-      // enablePlayerStatsWindow: appSettings.enablePlayerStatsWindow,
-      // enableFinalHitsWindow: appSettings.enableFinalHitsWindow,
-      // enableCharSwapWindow: appSettings.enableCharSwapWindow
     });
   }, [appSettings, form]);
   
@@ -68,17 +58,14 @@ export const GeneralSettingsComponent: React.FC<GeneralSettingsProps> = ({ form:
   };
 
   return (
-    <div className="settings-container">      
-      <Collapse 
-        defaultActiveKey={['1', '2']} 
-        className="settings-collapse"
-      >        
-        <Panel 
-          header={t("components.desktop.settings.general-settings", "General Settings")} 
-          key="1"
-          className="settings-panel"
-        >
-          <Form form={form} className="settings-form">
+    <div className="settings-content-scrollable">
+      {/* General Settings Section */}
+      <div className="settings-static-section">
+        <h3 className="settings-section-header">
+          {t("components.desktop.settings.general-settings", "General Settings")}
+        </h3>
+        <div className="settings-section-content">
+          <Form form={form} className="settings-form" layout="vertical">
             <Form.Item 
               name="language" 
               label={t("components.desktop.settings.language", "Language")}
@@ -114,81 +101,19 @@ export const GeneralSettingsComponent: React.FC<GeneralSettingsProps> = ({ form:
             >
               <Switch onChange={handleToggleDevWindow} checked={appSettings.showDevWindow} />
             </Form.Item>
-          </Form>        
-        </Panel>
-
-        <Panel 
-          header={t("components.desktop.settings.recent-players-settings", "Recent Players")} 
-          key="2"
-          className="settings-panel"
-        >
-          <RecentPlayersSettings form={form} />
-        </Panel>
-
-        {/* <Panel 
-          header={t("components.desktop.settings.window-resource-management", "Window Resource Management")} 
-          key="2"
-          className="settings-panel"
-        >
-          <WindowResourceSettings form={form} />
-        </Panel> */}
-        {/* <Panel 
-          header={t("components.desktop.settings.overlay-visibility", "Overlay Visibility")} 
-          key="3"
-          className="settings-panel"
-        >
-          <Form form={form} className="settings-form">
-            <div className="settings-column">
-              <Form.Item
-                name="showTeamStats"
-                label={t("components.desktop.settings.player-stats-overlay", "Show Player Stats Overlay")}
-                valuePropName="checked"
-              >
-                <Switch onChange={(checked) => dispatch(updateSettings({ showTeamStats: checked }))} />
-              </Form.Item>
-              
-              <Form.Item
-                name="showPlayerSwapNotification"
-                label={t("components.desktop.settings.player-swap", "Player Swap Notifications")}
-                valuePropName="checked"
-              >
-                <Switch onChange={(checked) => dispatch(updateSettings({ showPlayerSwapNotification: checked }))} />
-              </Form.Item>
-              
-              <Form.Item
-                name="showFinalHitsOverlay"
-                label={t("components.desktop.settings.final-hits", "Final Hits Overlay")}
-                valuePropName="checked"
-              >
-                <Switch onChange={(checked) => dispatch(updateSettings({ showFinalHitsOverlay: checked }))} />
-              </Form.Item>
-            </div>
           </Form>
-        </Panel> */}
-        {/* <Panel 
-          header={t("components.desktop.set", "About")} 
-          key="3"
-          className="settings-panel"
-        >
-          <div className="about-content">
-            <h3>Rivals Overlay</h3>
-            <p>Version 0.1.0</p>
-            <p>A stats tracker and overlay for Marvel Rivals</p>
-            <Divider />
-            <div className="button-group">
-              <Button type="primary">
-                {t("components.desktop.settings.check-updates", "Check for Updates")}
-              </Button>
-              <Button>
-                {t("components.desktop.settings.support", "Get Support")}
-              </Button>
-              <Button>
-                {t("components.desktop.settings.feedback", "Send Feedback")}
-              </Button>
-            </div>
-          </div>
-        </Panel> */}
-      </Collapse>
+        </div>
+      </div>
+
+      {/* Recent Players Section */}
+      <div className="settings-static-section">
+        <h3 className="settings-section-header">
+          {t("components.desktop.settings.recent-players-settings", "Recent Players")}
+        </h3>
+        <div className="settings-section-content">
+          <RecentPlayersSettings form={form} />
+        </div>
+      </div>
     </div>
   );
 };

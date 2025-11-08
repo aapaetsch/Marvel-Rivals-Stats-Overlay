@@ -144,6 +144,14 @@
   color: var(--primary-color-text) !important
 }
 
+.ant-input-number-group-addon {
+  color: var(--primary-color-text) !important;
+}
+
+.ant-typography-secondary {
+  color: var(--neutral-text) !important;  
+}
+
 .ant-collapse-content-box {
   padding: 16px !important;
 }

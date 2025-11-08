@@ -1,22 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Switch, Alert, Collapse, FormInstance } from 'antd'; 
+import { Alert, FormInstance } from 'antd'; 
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from 'app/shared/store';
 import { updateSettings } from 'features/appSettings/appSettingsSlice'; 
 import { WINDOW_NAMES } from 'app/shared/constants';
 import PlayerStatsSettings from './PlayerStatsSettings';
-import OverlayToggleSettings from './OverlayToggleSettings';
 import OverlayPositionEditor from './OverlayPositionEditor';
 import PlayerStatsAppearanceSettings from './PlayerStatsAppearanceSettings';
-import WindowResourceSettings from './WindowResourceSettings'; // Import the window resource settings component
+import WindowResourceSettings from './WindowResourceSettings';
 import CardSettingsRowSlider from './CardSettingsRowSlider';
 import CardSettingsRowColorPicker from './CardSettingsRowColorPicker';
 import '../styles/Settings.css';
-import CardSettingsRowToggle from './CardSettingsRowToggle';
 import { logger } from '../../../../../src/lib/log';
-
-const { Panel } = Collapse;
 
 // Export the constant
 export const defaultOverlayWindowPositions = {
@@ -272,69 +268,49 @@ const OverlaySettingsComponent: React.FC<OverlaySettingsComponentProps> = ({ for
   };
   
   return (
-    <div className="settings-content-scrollable"> {/* Keep scrollable container */} 
-      <Collapse 
-        defaultActiveKey={['1']}
-        accordion
-        className="settings-collapse"
-        ghost // Added ghost prop for cleaner look
-      >
-        {/* Panel 1: Overlay Visibility & Positioning */}
-        <Panel 
-          header={t("components.desktop.settings.overlay-visibility", "Overlay Visibility & Positioning") || "Overlay Visibility & Positioning"} 
-          key="1"
-          className="settings-panel"
-        >
-          {/* <OverlayToggleSettings 
-            form={form} // Pass down the form instance
-            isPositioningMode={positioningModeOverlay !== null} 
-            onEditPositions={handleEditOverlayPositions}
-            onSavePositions={handleSaveOverlayPositions}
-          /> */}
-          
-          {positioningModeOverlay !== null && ( 
-            <div className="positioning-mode-notice">
-              <Alert
-                message={t("components.desktop.settings.positioning-mode-active", "Positioning Mode Active")}
-                description={t("components.desktop.settings.positioning-mode-description", `Drag the ${positioningModeOverlay} overlay to position it. Click Save when finished.`)}
-                type="info"
-                showIcon
-              />
-            </div>
-          )}
-        </Panel>
-        
-        {/* Panel 2: Player Stats Overlay */}
-        <Panel 
-          header={t("components.desktop.settings.player-stats-overlay", "Player Stats Overlay") || "Player Stats Overlay"} 
-          key="2"
-          className={`settings-panel ${!appSettings.showTeamStats ? 'disabled-panel' : ''}`}
-          collapsible={!appSettings.showTeamStats ? "disabled" : undefined}
-        >
+    <div className="settings-content-scrollable">
+      {/* Global positioning mode notice */}
+      {positioningModeOverlay !== null && ( 
+        <div className="positioning-mode-notice">
+          <Alert
+            message={t("components.desktop.settings.positioning-mode-active", "Positioning Mode Active")}
+            description={t("components.desktop.settings.positioning-mode-description", `Drag the ${positioningModeOverlay} overlay to position it. Click Save when finished.`)}
+            type="info"
+            showIcon
+          />
+        </div>
+      )}
+
+      {/* Section 1: Player Stats Overlay */}
+      <div className="settings-static-section">
+        <h3 className="settings-section-header">
+          {t("components.desktop.settings.player-stats-overlay", "Player Stats Overlay")}
+        </h3>
+        <div className={`settings-section-content ${!appSettings.showTeamStats ? 'disabled-section' : ''}`}>
           <div className="settings-columns">
             <div className="settings-column">
-              <PlayerStatsAppearanceSettings form={form} /> {/* Pass down form */} 
+              <PlayerStatsAppearanceSettings form={form} />
             </div>
             <div className="settings-column">
               <OverlayPositionEditor 
                 overlayKey="playerStats" 
-                form={form} // Pass down form
+                form={form}
                 isPositioningMode={positioningModeOverlay === WINDOW_NAMES.INGAME}
                 onEditPositions={handleEditOverlayPositions}
                 onSavePositions={handleSaveOverlayPositions}
               />
             </div>
           </div>
-          <PlayerStatsSettings form={form} /> {/* Pass down form */} 
-        </Panel>
-        
-        {/* Panel 3: Player Swap Notification */}
-        <Panel 
-          header={t("components.desktop.settings.player-swap", "Player Swap Notification") || "Player Swap Notification"} 
-          key="3"
-          className={`settings-panel ${!appSettings.showPlayerSwapNotification ? 'disabled-panel' : ''}`}
-          collapsible={!appSettings.showPlayerSwapNotification ? "disabled" : undefined}
-        > 
+          <PlayerStatsSettings form={form} />
+        </div>
+      </div>
+      
+      {/* Section 2: Player Swap Notification */}
+      <div className="settings-static-section">
+        <h3 className="settings-section-header">
+          {t("components.desktop.settings.player-swap", "Player Swap Notification")}
+        </h3>
+        <div className={`settings-section-content ${!appSettings.showPlayerSwapNotification ? 'disabled-section' : ''}`}>
           <div className="settings-columns">
             <div className="settings-column">
               <div className="settings-column-title">
@@ -370,22 +346,22 @@ const OverlaySettingsComponent: React.FC<OverlaySettingsComponentProps> = ({ for
             <div className="settings-column">
               <OverlayPositionEditor 
                 overlayKey="charSwapBar" 
-                form={form} // Pass down form
+                form={form}
                 isPositioningMode={positioningModeOverlay === WINDOW_NAMES.CHARSWAPBAR}
                 onEditPositions={handleEditOverlayPositions}
                 onSavePositions={handleSaveOverlayPositions}
               />
             </div>
           </div>
-        </Panel>
-        
-        {/* Panel 4: Final Hits Overlay */}
-        <Panel 
-          header={t("components.desktop.settings.final-hits", "Final Hits Overlay") || "Final Hits Overlay"} 
-          key="4"
-          className={`settings-panel ${!appSettings.showFinalHitsOverlay ? 'disabled-panel' : ''}`}
-          collapsible={!appSettings.showFinalHitsOverlay ? "disabled" : undefined}
-        >
+        </div>
+      </div>
+      
+      {/* Section 3: Final Hits Overlay */}
+      <div className="settings-static-section">
+        <h3 className="settings-section-header">
+          {t("components.desktop.settings.final-hits", "Final Hits Overlay")}
+        </h3>
+        <div className={`settings-section-content ${!appSettings.showFinalHitsOverlay ? 'disabled-section' : ''}`}>
           <div className="settings-columns">
             <div className="settings-column">
               <div className="settings-column-title">
@@ -421,24 +397,25 @@ const OverlaySettingsComponent: React.FC<OverlaySettingsComponentProps> = ({ for
             <div className="settings-column">
               <OverlayPositionEditor 
                 overlayKey="finalHitsBar" 
-                form={form} // Pass down form
+                form={form}
                 isPositioningMode={positioningModeOverlay === WINDOW_NAMES.FINALHITSBAR}
                 onEditPositions={handleEditOverlayPositions}
                 onSavePositions={handleSaveOverlayPositions}
               />
             </div>
-          </div>        
-        </Panel>
-        
-        {/* Panel 5: Window Resource Management */}
-        <Panel 
-          header={t("components.desktop.settings.window-resource-management", "Window Resource Management") || "Window Resource Management"} 
-          key="5"
-          className="settings-panel"
-        >
+          </div>
+        </div>
+      </div>
+      
+      {/* Section 4: Window Resource Management */}
+      <div className="settings-static-section">
+        <h3 className="settings-section-header">
+          {t("components.desktop.settings.window-resource-management", "Window Resource Management")}
+        </h3>
+        <div className="settings-section-content">
           <WindowResourceSettings form={form} />
-        </Panel>
-      </Collapse>
+        </div>
+      </div>
     </div> 
   );
 };
