@@ -18,7 +18,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Recent Players [#37]: Pagination controls/icons styled for dark themes (white icons/text).
 – Match Cards (Front/Back): Increased player and character name font sizes by 0.25rem.
 – Team Headers: Reduced vertical padding and internal spacing to make headers slightly shorter.
-- Card View: Menu label changed from "Card View" to "Live Match Cards" to better reflect functionality.
 
 ### Fixed
 - Character Swap Bar: Deduplicated identical swaps (same player + old -> new) so a swap only displays once even if multiple events fire; refreshed duration instead of duplicating.

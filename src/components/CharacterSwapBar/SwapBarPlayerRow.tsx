@@ -88,7 +88,7 @@ export const SwapBarPlayerRow: React.FC<SwapBarPlayerRowProps> = ({
   {character.oldCharacterName && <SwapBarPlayer {...leftProps} avatarSize={avatarSize} />}
       <SwapIcon playerTag={character.name} />
   {character.newCharacterName && <SwapBarPlayer {...rightProps} avatarSize={avatarSize} />}
-      <div 
+    <div 
         className="swap-bar__player-background" 
         style={{ backgroundColor: rowBgColor, opacity: 1 }}
       />
