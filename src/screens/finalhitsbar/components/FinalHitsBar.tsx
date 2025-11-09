@@ -179,13 +179,16 @@ const Screen = () => {
     backgroundColor: finalHitsBackgroundColor || 'transparent'
   }), [finalHitsBackgroundColor]);
   
+  // If no active match or the user has disabled this overlay, don't render anything
+  if (!isMatchInProgress || !showFinalHitsOverlay) return null;
+
   return (
-    <div className={`final-hits-bar-screen ${(isMatchInProgress && showFinalHitsOverlay) ? '' : 'is-hidden'}`} style={finalHitsScreenStyle}>
+    <div className={`final-hits-bar-screen`} style={finalHitsScreenStyle}>
       <div className="final-hits-bar-background" style={backgroundStyle}></div>
       <DragHandle windowName={WINDOW_NAMES.FINALHITSBAR} />
       <FinalHitsBar players={finalHitsPlayers.length ? finalHitsPlayers : pdummy}/>
     </div>
-  )
+  );
 }
 
 

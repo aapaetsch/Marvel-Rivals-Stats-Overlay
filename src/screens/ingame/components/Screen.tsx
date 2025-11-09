@@ -61,12 +61,11 @@ const Screen = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-  const forceVisible = true;
   // Get app settings to check if this overlay should be shown
   const { showTeamStats, playerStatsOpacity } = useSelector((state: RootReducer) => state.appSettingsReducer.settings);
-  
-  // Show the component if match is in progress, forceVisible is true AND settings allow it
-  const isVisible = (isMatchInProgress || forceVisible) && showTeamStats;
+
+  // Show the component only if a match is in progress and settings allow it
+  const isVisible = isMatchInProgress && showTeamStats;
   
   // Apply opacity at the container level for consistent transparency
   const containerStyle = {
