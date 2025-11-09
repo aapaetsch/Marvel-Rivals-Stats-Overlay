@@ -465,23 +465,29 @@ const matchStatsSlice = createSlice({
                 state.lastKillEvents = [];
               }
               
-              // Check if this exact kill event was processed very recently (within 500ms)
+              // Check if this exact kill event was processed very recently
+              // Use a small window to avoid skipping legitimate rapid consecutive kills (e.g., double-kills)
+              // If the event provides its own timestamp, prefer that for deduplication accuracy.
+              const DUPLICATE_KILL_WINDOW_MS = 100; // tuned down from 500ms to allow quick real kills
+              const eventTimestamp = (data && (data.timestamp || data.time)) ? Number(data.timestamp || data.time) : Date.now();
+
               const recentKill = state.lastKillEvents.find(
-                (event: { attacker: string; victim: string; timestamp: number }) => event.attacker === data.attacker && 
-                          event.victim === data.victim && 
-                          Date.now() - event.timestamp < 500
+                (event: { attacker: string; victim: string; timestamp: number }) =>
+                  event.attacker === data.attacker &&
+                  event.victim === data.victim &&
+                  (Date.now() - event.timestamp) < DUPLICATE_KILL_WINDOW_MS
               );
-              
+
               if (recentKill) {
-                console.log("Duplicate kill_feed event detected, skipping:", data);
+                console.log("Duplicate kill_feed event detected (within short window), skipping:", data);
                 break;
               }
-              
+
               // Add this event to the recent events list
               state.lastKillEvents.push({
                 attacker: data.attacker,
                 victim: data.victim,
-                timestamp: Date.now()
+                timestamp: eventTimestamp
               });
               
               // Keep only the last 10 events to prevent memory bloat
@@ -514,15 +520,22 @@ const matchStatsSlice = createSlice({
             
               // finalHits, plus tracking "who killed who"
               if (attacker && victim) {
-                // Track final hits for ALL players, not just teammates
+                // Skip same-team events (common for revives or friendly interactions)
+                // to avoid counting revives as final hits.
+                if (attacker.team === victim.team) {
+                  console.log("kill_feed event ignored because attacker and victim are on same team (likely revive):", data);
+                  break;
+                }
+
+                // Track final hits for cross-team kills
                 attacker.finalHits += 1;
-            
+
                 // Increment how many times the attacker has killed the victim
                 if (!attacker.killedPlayers[victim.uid]) {
                   attacker.killedPlayers[victim.uid] = 0;
                 }
                 attacker.killedPlayers[victim.uid]++;
-            
+
                 // Conversely, increment how many times the victim was killed by attacker
                 if (!victim.killedBy[attacker.uid]) {
                   victim.killedBy[attacker.uid] = 0;
