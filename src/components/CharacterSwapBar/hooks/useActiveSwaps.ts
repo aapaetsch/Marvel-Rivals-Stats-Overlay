@@ -1,17 +1,22 @@
 import { useState, useEffect, useRef } from "react";
 import { SwapBarPlayerProps } from "../types/SwapBarTypes";
 
-export const useActiveSwaps = (swapQueue: SwapBarPlayerProps[], displayDuration: number = 5000) => {
+export const useActiveSwaps = (swapQueue: SwapBarPlayerProps[], displayDuration: number = 5000, resetKey?: any) => {
   const [activeSwaps, setActiveSwaps] = useState<SwapBarPlayerProps[]>([]);
   const timeoutRefsRef = useRef<{[key: string]: NodeJS.Timeout}>({});
 
-  // Helper function to create a unique key for each swap
+  /**
+   * Build a stable, logical identity for a visible swap row.
+   * Order matters (old -> new). We also scope by team so that
+   * any cross-team duplication cannot collide or double-render.
+   * Timestamp is intentionally excluded so refreshes coalesce.
+   */
   const createSwapKey = (swap: SwapBarPlayerProps) => {
-    // Deduplicate by logical identity only (ignore timestamp)
+    const team = Number(swap.team);
     const uid = String(swap.uid);
-    const oldName = String(swap.oldCharacterName || "").toLowerCase();
-    const newName = String(swap.newCharacterName || "").toLowerCase();
-    return `${uid}:${oldName}:${newName}`;
+    const oldName = String(swap.oldCharacterName || "").trim().toLowerCase();
+    const newName = String(swap.newCharacterName || "").trim().toLowerCase();
+    return `${team}:${uid}:${oldName}:${newName}`;
   };
 
   // Clear all timeouts when component unmounts
@@ -22,6 +27,16 @@ export const useActiveSwaps = (swapQueue: SwapBarPlayerProps[], displayDuration:
       timeoutRefsRef.current = {};
     };
   }, []);
+
+  // If resetKey changes (for example a new match started), clear active swaps immediately
+  useEffect(() => {
+    if (resetKey == null) return;
+    // Clear timeouts
+    Object.values(timeoutRefsRef.current).forEach(clearTimeout);
+    timeoutRefsRef.current = {};
+    // Clear active swaps
+    setActiveSwaps([]);
+  }, [resetKey]);
 
   // Periodically check for expired swaps (additional safety mechanism)
   useEffect(() => {

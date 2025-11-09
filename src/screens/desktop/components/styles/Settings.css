@@ -36,9 +36,57 @@
   overflow-y: auto;
 }
 
+/* Sticky tabs at the top */
+.settings-tabs-sticky .ant-tabs-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--background-color, #1a1a1a);
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--neutral-4);
+}
+
+/* Ensure tab labels and inner elements use theme text color */
+.settings-tabs-sticky .ant-tabs-tab .ant-tabs-tab-btn,
+.settings-tabs-sticky .ant-tabs-tab .ant-tabs-tab-btn *,
+.settings-tabs .ant-tabs-tab .ant-tabs-tab-btn,
+.settings-tabs .ant-tabs-tab .ant-tabs-tab-btn * {
+  color: var(--primary-color-text) !important;
+  fill: currentColor !important;
+}
+
 .settings-collapse {
   background-color: transparent !important;
   border: none !important;
+}
+
+/* Static section styling */
+.settings-static-section {
+  margin-bottom: 2rem;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.settings-section-header {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--primary-color-text);
+  margin: 0;
+  padding: 1rem 1.25rem;
+  background: var(--neutral-3);
+  border-bottom: 2px solid var(--primary-color);
+}
+
+.settings-section-content {
+  padding: 1.25rem;
+  background: var(--neutral-2);
+}
+
+.settings-section-content.disabled-section {
+  opacity: 0.6;
+  pointer-events: none;
 }
 
 /* Form styling */

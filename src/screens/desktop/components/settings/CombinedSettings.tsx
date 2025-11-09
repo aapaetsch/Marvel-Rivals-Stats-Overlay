@@ -3,7 +3,6 @@ import { Tabs, FormInstance } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { GeneralSettingsComponent } from './Settings';
 import OverlaySettingsComponent from './OverlaySettings';
-import AdvancedSettings from './AdvancedSettings';
 import '../styles/Settings.css';
 
 const { TabPane } = Tabs;
@@ -16,7 +15,7 @@ const CombinedSettings: React.FC<CombinedSettingsProps> = ({ form }) => {
   const { t } = useTranslation();
   
   return (
-    <Tabs defaultActiveKey="general" className="settings-tabs">
+    <Tabs defaultActiveKey="general" className="settings-tabs settings-tabs-sticky">
       <TabPane 
         tab={t('components.desktop.settings.general', 'General')} 
         key="general"
@@ -29,13 +28,6 @@ const CombinedSettings: React.FC<CombinedSettingsProps> = ({ form }) => {
         key="overlay"
       >
         <OverlaySettingsComponent form={form} />
-      </TabPane>
-      
-      <TabPane 
-        tab={t('components.desktop.settings.advanced', 'Advanced')} 
-        key="advanced"
-      >
-        <AdvancedSettings />
       </TabPane>
     </Tabs>
   );

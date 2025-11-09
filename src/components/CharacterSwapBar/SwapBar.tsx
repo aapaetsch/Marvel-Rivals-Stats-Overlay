@@ -27,9 +27,9 @@ export const SwapBar: React.FC<SwapBarComponentProps> = ({
         show={showMatchInfo && !!matchInfo}
         mapImageUrl={mapImageUrl}
       />
-      {characters?.map((character, index) => (
+      {characters?.map((character) => (
         <SwapBarPlayerRow
-          key={`${character.uid}:${(character.oldCharacterName||'').toLowerCase()}:${(character.newCharacterName||'').toLowerCase()}:${index}`}
+          key={`${Number(character.team)}:${character.uid}:${(character.oldCharacterName||'').trim().toLowerCase()}:${(character.newCharacterName||'').trim().toLowerCase()}`}
           character={character}
           localPlayerTeam={localPlayerTeam}
           allySwapColor={allySwapColor}

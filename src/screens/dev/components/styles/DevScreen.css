@@ -33,15 +33,32 @@
 }
 
 /* Ensure unselected tabs are visible across themes */
-body.theme-dark .dev-tabs .ant-tabs-tab .ant-tabs-tab-btn,
-body.theme-minimalistic-black .dev-tabs .ant-tabs-tab .ant-tabs-tab-btn {
-  color: #ddd;
+body.theme-dark .ant-tabs-tab .ant-tabs-tab-btn,
+body.theme-minimalistic-black .ant-tabs-tab .ant-tabs-tab-btn {
+  color: var(--primary-color-text) !important;
 }
+
+body.theme-dark .ant-tabs-tab,
+body.theme-minimalistic-black .ant-tabs-tab {
+  color: var(--primary-color-text)!important;
+}
+
 body.theme-light .dev-tabs .ant-tabs-tab .ant-tabs-tab-btn {
   color: #222;
 }
 .dev-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
   color: var(--primary-color, #3498db) !important;
+}
+
+/* Force tab labels (and their inner text/icons) to use the theme text color.
+   Some Ant selectors or nested children may override color; this higher
+   specificity rule ensures the CSS variable is respected for all tab text. */
+.dev-tabs .ant-tabs-tab .ant-tabs-tab-btn,
+.dev-tabs .ant-tabs-tab .ant-tabs-tab-btn *,
+.dev-window-root .ant-tabs-tab .ant-tabs-tab-btn,
+.dev-window-root .ant-tabs-tab .ant-tabs-tab-btn * {
+  color: var(--primary-color-text) !important;
+  fill: currentColor !important;
 }
 
 /* Table visibility */

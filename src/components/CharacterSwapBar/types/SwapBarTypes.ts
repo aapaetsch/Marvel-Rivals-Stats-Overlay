@@ -13,6 +13,10 @@ export interface SwapBarPlayerProps {
   oldAvatarURL: string | null;
   newAvatarURL: string | null;
   team: number;
+  // Optional hint from the match data indicating whether this player is on the local player's team.
+  // Providing this avoids relying solely on numeric team comparisons which can be racy when
+  // roster info arrives in multiple steps.
+  isTeammate?: boolean;
   swapTimestamp?: number;
 }
 

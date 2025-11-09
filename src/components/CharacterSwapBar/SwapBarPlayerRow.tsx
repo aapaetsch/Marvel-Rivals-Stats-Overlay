@@ -23,8 +23,12 @@ export const SwapBarPlayerRow: React.FC<SwapBarPlayerRowProps> = ({
     avatarURLStr: character.newAvatarURL || getCharacterDefaultIconPath(character.newCharacterName) || null,
   };
 
-  // Determine if this player is an ally (same team as local player) or enemy
-  const isAlly = Number(character.team) === Number(localPlayerTeam);
+  // Determine if this player is an ally (same team as local player) or enemy.
+  // Prefer the explicit `isTeammate` hint when available to avoid race conditions
+  // where the local player's team is not yet present in the roster data.
+  const isAlly = typeof character.isTeammate === 'boolean'
+    ? Boolean(character.isTeammate)
+    : (Number(character.team) === Number(localPlayerTeam));
   const teamClass = isAlly ? "ally" : "enemy";
   // Defaults use CSS custom properties where possible so themes can override
   const DEFAULT_ALLY_BORDER = 'var(--swapbar-ally-border, #1890FF)';
@@ -74,8 +78,7 @@ export const SwapBarPlayerRow: React.FC<SwapBarPlayerRowProps> = ({
 
   // compute avatar size based on requested rowHeight (keep full avatar at ~44px)
   const FULL_ROW_HEIGHT = 44;
-  const DEFAULT_AVATAR_SIZE = 44;
-  const avatarSize = rowHeight && rowHeight > 0 ? Math.max(20, Math.round((rowHeight / FULL_ROW_HEIGHT) * DEFAULT_AVATAR_SIZE)) : DEFAULT_AVATAR_SIZE;
+  const avatarSize = rowHeight && rowHeight > 0 ? Math.max(20, Math.round((rowHeight / FULL_ROW_HEIGHT) * FULL_ROW_HEIGHT)) : FULL_ROW_HEIGHT;
 
   return (
     <div 
@@ -85,7 +88,7 @@ export const SwapBarPlayerRow: React.FC<SwapBarPlayerRowProps> = ({
   {character.oldCharacterName && <SwapBarPlayer {...leftProps} avatarSize={avatarSize} />}
       <SwapIcon playerTag={character.name} />
   {character.newCharacterName && <SwapBarPlayer {...rightProps} avatarSize={avatarSize} />}
-      <div 
+    <div 
         className="swap-bar__player-background" 
         style={{ backgroundColor: rowBgColor, opacity: 1 }}
       />

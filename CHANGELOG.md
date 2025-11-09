@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Live Match: Combined "Card View" and "Match Table" into a single "Live Match" menu item with a toggle to switch between card and table views.
 - Favourites Page: New dedicated page for viewing all favourited players with aggregated stats, individual player cards showing detailed statistics, and reserved space for future ad placements.
 
+### Changed
+- Settings Screen: Tabs are now fixed/sticky to the top of the screen for easier navigation.
+- Settings Screen: Removed Advanced Settings tab to simplify the interface.
+- Settings Screen: Converted accordion sections to static, always-visible sections that can be scrolled into view.
+- Recent Players [#36]: Removed border around the main Recent Players page card container.
+- Recent Players [#39]: Switched Recent Players to a 3-column vertical layout (round-robin distribution) so expanding a player card only affects its column. Preserves left→right by-row ordering and prevents empty whitespace under sibling cards when expanding/collapsing.
+- Recent Players [#37]: Pagination controls/icons styled for dark themes (white icons/text).
+– Match Cards (Front/Back): Increased player and character name font sizes by 0.25rem.
+– Team Headers: Reduced vertical padding and internal spacing to make headers slightly shorter.
+
 ### Fixed
 - Character Swap Bar: Deduplicated identical swaps (same player + old -> new) so a swap only displays once even if multiple events fire; refreshed duration instead of duplicating.
 - Character Swap Bar: Corrected ally/enemy color assignment by normalizing team numbers and using stable team equality with local player.

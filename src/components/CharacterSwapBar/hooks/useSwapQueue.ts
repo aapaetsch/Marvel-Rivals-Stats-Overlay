@@ -16,7 +16,7 @@ export const useSwapQueue = (currentMatch: any) => {
     let hasInitialSelections = false;
 
     // Deduplication sets to avoid showing the same swap twice
-    // 1) by uid+old+new (strict)
+    // 1) by team+uid+old+new (strict)
     const seenKeys = new Set<string>();
     // 2) by name+old+new (cross-uid safety if backend duplicates player records)
     const seenNameKeys = new Set<string>();
@@ -44,12 +44,18 @@ export const useSwapQueue = (currentMatch: any) => {
         // of the same (player -> old -> new) combination to be shown at a time,
         // even if multiple events with different timestamps arrive.
         const keyParts = [
+          String(Number(player.team)),
           String(player.uid),
-          String((swap.oldCharacterName || '').toLowerCase()),
-          String((swap.newCharacterName || '').toLowerCase()),
+          String((swap.oldCharacterName || '').trim().toLowerCase()),
+          String((swap.newCharacterName || '').trim().toLowerCase()),
         ];
         const key = keyParts.join(":");
-        const nameKey = [String(player.name || "").toLowerCase(), keyParts[1], keyParts[2]].join(":");
+        const nameKey = [
+          String(Number(player.team)),
+          String(player.name || "").trim().toLowerCase(),
+          keyParts[2],
+          keyParts[3]
+        ].join(":");
         if (seenKeys.has(key) || seenNameKeys.has(nameKey)) {
           // Already processed identical swap for this render, skip it
           continue;
@@ -75,6 +81,7 @@ export const useSwapQueue = (currentMatch: any) => {
           oldAvatarURL,
           newAvatarURL,
           team: Number(player.team),
+          isTeammate: !!player.isTeammate,
         });
       }
     }
