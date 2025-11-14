@@ -1,11 +1,10 @@
 import React from 'react';
-import { Menu as AntMenu, Button, Badge } from 'antd';
+import { Menu as AntMenu } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootReducer } from 'app/shared/rootReducer';
 import {
   setSelectedKeys,
-  setOpenKeys,
-  toggleCollapsed
+  setOpenKeys
 } from '../stores/menuSlice';
 import {
   SettingOutlined
@@ -13,9 +12,9 @@ import {
 import { useTranslation } from 'react-i18next';
 import './styles/Menu.css';
 import { IoGameControllerOutline, IoStatsChartOutline, IoHomeOutline } from 'react-icons/io5';
-import { GiFloatingPlatforms, GiKing, GiStarfighter, GiOpenGate, GiClosedDoors } from 'react-icons/gi';
+import { GiStarfighter } from 'react-icons/gi';
 import { MdOutlineWorkHistory } from 'react-icons/md';
-import { LiaUsersSolid, LiaUserTagSolid, LiaUserInjuredSolid, LiaUserGraduateSolid } from 'react-icons/lia';
+import { LiaUserInjuredSolid, LiaUserTagSolid } from 'react-icons/lia';
 import { PiUserListBold } from 'react-icons/pi';
 import { AntMenuItem, MenuKeys } from '../types/MenuTypes';
 import { isDev } from 'lib/utils';
@@ -142,9 +141,9 @@ const Menu: React.FC = () => {
   };
 
   // Handle menu collapse/expand
-  const handleToggleCollapsed = () => {
-    dispatch(toggleCollapsed());
-  };
+  // const handleToggleCollapsed = () => {
+  //   dispatch(toggleCollapsed());
+  // };
 
   // Menu items with translations and live match status
   const items = getMenuItems(t, isLiveMatchActive, false);
