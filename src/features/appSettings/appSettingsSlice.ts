@@ -41,6 +41,7 @@ export interface OverlaySettings {
   playerStatsOpacity: number;
   playerStatsFontColor: string; // Font color property
   teammateBorderColor: string; // Teammate border color property
+  ultFullyChargedBorderColor: string; // Ult fully charged border color property
   playerStatsBackgroundColor: string; // Background color property
   overlayTheme: OverlayThemes; // Theme options
   // Window resource management flags (control whether auxiliary windows are enabled)
@@ -111,8 +112,8 @@ const initialState: AppSettingsState = {
     showStoreViewer: false,
     showDevWindow: false,
     // Recent players defaults
-    maxRecentPlayers: 100,
-    maxFavoriteRecentPlayers: 15,
+    maxRecentPlayers: 1000,
+    maxFavoriteRecentPlayers: 100,
     autoCleanupRecentPlayers: false,
     recentPlayersCleanupDays: 30,
   // Window positioning mode tracking (which declared windows are in 'positioning'/'drag' mode)
@@ -186,6 +187,7 @@ const initialState: AppSettingsState = {
     finalHitsBackgroundColor: "",
     playerStatsFontColor: "",
     teammateBorderColor: "",
+    ultFullyChargedBorderColor: "#FFD700", // Default gold for fully charged ult
   // Card View Cover Control (tri-state)
   // Use ForceShowCover enum for clarity
   forceShowCardViewCover: ForceShowCover.Auto,
