@@ -8,6 +8,15 @@ import { clearOldPlayers, trimToMaxPlayers } from '../../../background/stores/re
 import { InfoCircleOutlined, DeleteOutlined, ClearOutlined } from '@ant-design/icons';
 
 const { Title, Text } = Typography;
+const maxRecentPlayersCount = 1000;
+const minRecentPlayersCount = 50;
+const recentPlayersStep = 10;
+const minFavoriteRecentPlayersCount = 5;
+const maxFavoriteRecentPlayersCount = 100;
+const favoritePlayersStep = 1;
+const minAutoCleanupDaysCount = 7;
+const maxAutoCleanupDaysCount = 365;
+const cleanupDaysStep = 1;
 
 interface RecentPlayersSettingsProps {
   form: any;
@@ -42,7 +51,7 @@ const RecentPlayersSettings: React.FC<RecentPlayersSettingsProps> = ({ form }) =
       <Title level={4}>{t('components.desktop.settings.recent-players', 'Recent Players Settings')}</Title>
       
       {/* Current Stats */}
-      <Card className="stats-card" size="small">
+      <Card className="stats-card has-text-area-bg has-text-default-color" size="small">
         <Space direction="vertical" size="small" style={{ width: '100%' }}>
           <div>
             <Text strong>{t('components.desktop.settings.current-stats', 'Current Statistics')}</Text>
@@ -61,6 +70,7 @@ const RecentPlayersSettings: React.FC<RecentPlayersSettingsProps> = ({ form }) =
       <Divider />
       
       {/* Storage Settings */}
+
       <div className="settings-section">
         <Title level={5}>{t('components.desktop.settings.storage-limits', 'Storage Limits')}</Title>
         
@@ -76,13 +86,14 @@ const RecentPlayersSettings: React.FC<RecentPlayersSettingsProps> = ({ form }) =
           }
         >
           <InputNumber
-            min={50}
-            max={500}
-            step={10}
+            min={minRecentPlayersCount}
+            max={maxRecentPlayersCount}
+            step={recentPlayersStep}
             value={maxRecentPlayers}
-            onChange={(value) => dispatch(updateSettings({ maxRecentPlayers: value || 100 }))}
+            onChange={(value) => dispatch(updateSettings({ maxRecentPlayers: value || 1000 }))}
             addonAfter="players"
             style={{ width: '200px' }}
+            className="has-text-area-bg has-text-default-color"
           />
         </Form.Item>
         
@@ -97,14 +108,15 @@ const RecentPlayersSettings: React.FC<RecentPlayersSettingsProps> = ({ form }) =
             </Space>
           }
         >
-          <InputNumber
-            min={5}
-            max={25}
-            step={1}
+            <InputNumber
+            min={minFavoriteRecentPlayersCount}
+            max={maxFavoriteRecentPlayersCount}
+            step={favoritePlayersStep}
             value={maxFavoriteRecentPlayers}
-            onChange={(value) => dispatch(updateSettings({ maxFavoriteRecentPlayers: value || 15 }))}
+            onChange={(value) => dispatch(updateSettings({ maxFavoriteRecentPlayers: value || maxFavoriteRecentPlayersCount }))}
             addonAfter="players"
             style={{ width: '200px' }}
+            className="has-text-area-bg has-text-default-color"
           />
         </Form.Item>
       </div>
@@ -139,13 +151,14 @@ const RecentPlayersSettings: React.FC<RecentPlayersSettingsProps> = ({ form }) =
             }
           >
             <InputNumber
-              min={7}
-              max={365}
-              step={1}
+              min={minAutoCleanupDaysCount}
+              max={maxAutoCleanupDaysCount}
+              step={cleanupDaysStep}
               value={recentPlayersCleanupDays}
               onChange={(value) => dispatch(updateSettings({ recentPlayersCleanupDays: value || 30 }))}
               addonAfter="days"
               style={{ width: '200px' }}
+              className="has-text-area-bg has-text-default-color"
             />
           </Form.Item>
         )}
@@ -167,7 +180,7 @@ const RecentPlayersSettings: React.FC<RecentPlayersSettingsProps> = ({ form }) =
               {t('components.desktop.settings.cleanup-old-players', 'Remove Old Players')}
             </Button>
             <Text type="secondary" style={{ marginLeft: '8px' }}>
-              {t('components.desktop.settings.cleanup-old-players-desc', `Remove players not seen for ${recentPlayersCleanupDays} days`)}
+              {t('components.desktop.settings.cleanup-old-players-desc', 'Remove players not seen for {days} days', { days: recentPlayersCleanupDays })}
             </Text>
           </div>
           
@@ -180,7 +193,7 @@ const RecentPlayersSettings: React.FC<RecentPlayersSettingsProps> = ({ form }) =
               {t('components.desktop.settings.trim-to-limit', 'Trim to Limit')}
             </Button>
             <Text type="secondary" style={{ marginLeft: '8px' }}>
-              {t('components.desktop.settings.trim-to-limit-desc', `Keep only the ${maxRecentPlayers} most recent players + favorites`)}
+              {t('components.desktop.settings.trim-to-limit-desc', 'Keep only the {max} most recent players + favorites', { max: maxRecentPlayers })}
             </Text>
           </div>
         </Space>
