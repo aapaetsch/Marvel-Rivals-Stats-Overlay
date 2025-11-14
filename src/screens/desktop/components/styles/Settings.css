@@ -50,9 +50,9 @@
 
 /* Ensure tab labels and inner elements use theme text color */
 .settings-tabs-sticky .ant-tabs-tab .ant-tabs-tab-btn,
-.settings-tabs-sticky .ant-tabs-tab .ant-tabs-tab-btn *,
+.settings-tabs-sticky .ant-tabs-tab .ant-tabs-tab-btn *:not(.status-indicator),
 .settings-tabs .ant-tabs-tab .ant-tabs-tab-btn,
-.settings-tabs .ant-tabs-tab .ant-tabs-tab-btn * {
+.settings-tabs .ant-tabs-tab .ant-tabs-tab-btn *:not(.status-indicator) {
   color: var(--primary-color-text) !important;
   fill: currentColor !important;
 }
@@ -385,6 +385,24 @@
   font-size: 14px;
 }
 
+.position-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.position-inputs-container {
+  flex: 1;
+  max-width: 200px; /* Limit width of coordinate inputs */
+}
+
+.edit-position-button-wrapper {
+  display: flex;
+  align-items: center;
+}
+
 .toggle-settings-label {
   width: 8.5rem;
   color: var(--primary-color-text);
@@ -395,6 +413,12 @@
   display: flex;
   justify-content: flex-end; 
   margin-top: 5px;
+  gap: 8px;
+  align-items: center;
+}
+
+.toggle-settings-content .ant-input-number {
+  transition: opacity 0.3s ease;
 }
 
 .game-mode-position-row {

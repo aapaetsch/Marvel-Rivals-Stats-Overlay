@@ -1,6 +1,19 @@
-@import url('./typography.css');
-
 :root {
+  /* Gray color palette */
+  --gray-1: #ffffff;
+  --gray-2: #fafafa;
+  --gray-3: #f5f5f5;
+  --gray-4: #f0f0f0;
+  --gray-5: #d9d9d9;
+  --gray-6: #bfbfbf;
+  --gray-7: #8c8c8c;
+  --gray-8: #595959;
+  --gray-9: #434343;
+  --gray-10: #262626;
+  --gray-11: #1f1f1f;
+  --gray-12: #141414;
+  --gray-13: #000000;
+
   --neutral-0: #282931;
   --neutral-1: #595F82;
   --neutral-2: #313161;
@@ -31,6 +44,10 @@
   --discord-color: #7289da;
 
   --success-color: #4caf50;
+  --status-enabled-color: #52c41a;
+  --status-disabled-color: #ff4d4f;
+  --status-enabled-glow: rgba(82, 196, 26, 0.3);
+  --status-disabled-glow: rgba(255, 77, 79, 0.3);
   
   --border-radius-small: 4px;
   --border-radius: 6px;
@@ -41,7 +58,29 @@
 
   --ant-switch-handle: #ffffff;
   --ant-switch-handle-checked: #ffffff;
+
+  /* Scrollbar variables (theme-aware defaults, can be overridden per-theme)
+     track = background behind the thumb
+     thumb = draggable piece
+     thumb-hover = hover state for thumb
+     width = width for vertical scrollbar (also used as height for horizontal)
+  */
+  --scrollbar-track: rgba(255,255,255,0.04);
+  --scrollbar-thumb: rgba(255,255,255,0.08);
+  --scrollbar-thumb-hover: rgba(255,255,255,0.14);
+  --scrollbar-width: 12px;
+
+  /* Input background */
+  --input-bg: #2a2a2a;
 }
+
+@import url('./themes.css');
+@import url('./typography.css');
+@import url('./buttons.css');
+@import url('./toggles.css');
+@import url('./inputs.css');
+
+
 
 button {
   padding: 0;
@@ -79,6 +118,26 @@ button:focus {
   width: 100%;
 }
 
+.mr-1 {
+  margin-right: 0.25rem;
+}
+.mr-2 {
+  margin-right: 0.5rem;
+}
+.mr-3 {
+  margin-right: 0.75rem;
+}
+
+.ml-1 {
+  margin-left: 0.25rem;
+}
+.ml-2 {
+  margin-left: 0.5rem;
+}
+.ml-3 {
+  margin-left: 0.75rem;
+}
+
 .mb-1 {
   margin-bottom: 0.25rem;
 }
@@ -87,4 +146,60 @@ button:focus {
 }
 .mb-3 {
   margin-bottom: 0.75rem;
+}
+
+.mt-1 {
+  margin-top: 0.25rem;
+}
+.mt-2 {
+  margin-top: 0.5rem;
+}
+.mt-3 {
+  margin-top: 0.75rem;
+}
+
+/* Custom scrollbar styles
+   - WebKit browsers (Chrome, Edge, Safari)
+   - Firefox (uses scrollbar-color + scrollbar-width)
+   These use CSS variables so themes can override colors in their own files.
+*/
+*::-webkit-scrollbar {
+  width: var(--scrollbar-width);
+  height: var(--scrollbar-width);
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+  border-radius: 8px;
+  border: 3px solid transparent; /* adds padding around thumb */
+  background-clip: padding-box;
+  transition: background-color 120ms linear, box-shadow 120ms linear;
+}
+
+/* Hover state uses the theme hover variable. We keep the pseudo-element hover for WebKit */
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-thumb-hover);
+}
+
+/* Firefox: change the scrollbar colors when the document/body is hovered.
+   Firefox doesn't support :hover on the thumb, but we can update scrollbar-color
+   when the page/body is hovered to give a similar effect.
+*/
+body:hover, body:has(:hover) {
+  scrollbar-color: var(--scrollbar-thumb-hover) var(--scrollbar-track);
+}
+
+/* Firefox: use modern scrollbar properties where available */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+/* Utility: compact scrollbar for elements that need a slimmer variant */
+.scrollbar-compact {
+  --scrollbar-width: 8px;
 }

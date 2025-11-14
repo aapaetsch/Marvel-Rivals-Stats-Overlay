@@ -31,39 +31,50 @@ const UltBorderOverlay: React.FC<{
 }) => {
   const p = Math.max(0, Math.min(100, pct));
   const pathRef = useRef<SVGPathElement | null>(null);
+  const svgRef = useRef<SVGSVGElement | null>(null);
   const [total, setTotal] = useState(1);
+  const [svgSize, setSvgSize] = useState({ width: 100, height: 100 });
 
-  // Use a normalized viewBox so we don't need to measure the element.
-  // We'll express the rounded-rect radius in viewBox units by approximating px → %
-  // Since stroke is non-scaling, the visual thickness stays constant.
-  // We'll pick a radius in viewBox units that roughly matches a 12px corner on typical card sizes.
-  // You can tweak rVU if you want more/less rounding.
-  const rVU = 8; // viewBox radius (0..50 makes sense here)
+  // Convert the requested corner radius (px) into viewBox units separately for X and Y
+  // so we handle non-uniform scaling (preserveAspectRatio="none"). Also compute an
+  // inset so the non-scaling stroke doesn't get clipped by the viewBox edges.
+  const { rXVU, rYVU, insetVU } = useMemo(() => {
+    const w = Math.max(1, svgSize.width);
+    const h = Math.max(1, svgSize.height);
+    const rX = Math.max(0, Math.min(50, (radiusPx / w) * 100));
+    const rY = Math.max(0, Math.min(50, (radiusPx / h) * 100));
+    // convert half of stroke thickness (px) to viewBox units along each axis and take a safe inset
+    const insetX = (thickness / 2 / w) * 100;
+    const insetY = (thickness / 2 / h) * 100;
+    const inset = Math.max(1, Math.max(insetX, insetY));
+    return { rXVU: rX, rYVU: rY, insetVU: inset };
+  }, [radiusPx, svgSize.width, svgSize.height, thickness]);
 
   const d = useMemo(() => {
     // Rectangle from 0..100 with an inset to keep stroke inside bounds
     // Because stroke doesn't scale, keep the path slightly inset so rounded caps aren't clipped
-    const inset = 1; // viewBox units
-    const left = inset, right = 100 - inset, top = inset, bot = 100 - inset;
-    const r = Math.max(0, Math.min(50, rVU));
+    const left = insetVU, right = 100 - insetVU, top = insetVU, bot = 100 - insetVU;
+    const rX = Math.max(0, Math.min(50, rXVU));
+    const rY = Math.max(0, Math.min(50, rYVU));
 
     // Start at RIGHT CENTER
     const midY = (top + bot) / 2;
 
-    // Clockwise: right -> bottom-right arc -> bottom -> bottom-left arc -> left -> top-left arc -> top -> top-right arc -> back to right center
+    // Construct a rounded rect path using elliptical arcs (rx ry) so X/Y scaling is respected.
     return [
       `M ${right} ${midY}`,
-      `L ${right} ${bot - r}`,
-      `A ${r} ${r} 0 0 1 ${right - r} ${bot}`,
-      `L ${left + r} ${bot}`,
-      `A ${r} ${r} 0 0 1 ${left} ${bot - r}`,
-      `L ${left} ${top + r}`,
-      `A ${r} ${r} 0 0 1 ${left + r} ${top}`,
-      `L ${right - r} ${top}`,
-      `A ${r} ${r} 0 0 1 ${right} ${top + r}`,
+      `L ${right} ${bot - rY}`,
+      `A ${rX} ${rY} 0 0 1 ${right - rX} ${bot}`,
+      `L ${left + rX} ${bot}`,
+      `A ${rX} ${rY} 0 0 1 ${left} ${bot - rY}`,
+      `L ${left} ${top + rY}`,
+      `A ${rX} ${rY} 0 0 1 ${left + rX} ${top}`,
+      `L ${right - rX} ${top}`,
+      `A ${rX} ${rY} 0 0 1 ${right} ${top + rY}`,
       `L ${right} ${midY}`,
+      `Z`,
     ].join(" ");
-  }, [rVU]);
+  }, [rXVU, rYVU, insetVU]);
 
   useLayoutEffect(() => {
     if (pathRef.current) {
@@ -72,11 +83,27 @@ const UltBorderOverlay: React.FC<{
     }
   }, [d]);
 
-  const dashArray = total;
-  const dashOffset = total * (1 - p / 100);
+  // Measure the SVG size so we can convert px radius → viewBox units accurately.
+  useLayoutEffect(() => {
+    const measure = () => {
+      if (svgRef.current) {
+        const r = svgRef.current.getBoundingClientRect();
+        setSvgSize({ width: r.width || 100, height: r.height || 100 });
+      }
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, []);
+
+  // Use a two-value dash array so the dash+gap equals the full path length
+  // and avoid fractional rounding gaps. Ensure exact 0 offset at 100%.
+  const dashArray = `${total} ${total}`;
+  const dashOffset = p >= 100 ? 0 : total * (1 - p / 100);
 
   return (
     <svg
+      ref={svgRef}
       className="ultimate-border"
       viewBox="0 0 100 100"
       preserveAspectRatio="none"
@@ -94,6 +121,7 @@ const UltBorderOverlay: React.FC<{
         stroke={muted}
         strokeWidth={thickness}
         strokeLinecap="round"
+        strokeLinejoin="round"
         vectorEffect="non-scaling-stroke"
       />
       {/* Progress ring */}
@@ -104,6 +132,7 @@ const UltBorderOverlay: React.FC<{
         stroke={color}
         strokeWidth={thickness}
         strokeLinecap="round"
+        strokeLinejoin="round"
         strokeDasharray={dashArray}
         strokeDashoffset={dashOffset}
         vectorEffect="non-scaling-stroke"
@@ -122,7 +151,7 @@ const TeammateCard = ({ player, index }: { player: PlayerStatsProps; index: numb
     compactTeammate3, compactTeammate4, compactTeammate5,
     ultraCompactOwnPlayerCard, ultraCompactTeammate1, ultraCompactTeammate2,
     ultraCompactTeammate3, ultraCompactTeammate4, ultraCompactTeammate5,
-    playerStatsOpacity, playerStatsBackgroundColor, playerStatsFontColor, teammateBorderColor 
+    playerStatsOpacity, playerStatsBackgroundColor, playerStatsFontColor, teammateBorderColor, ultFullyChargedBorderColor 
   } = useSelector((state: RootState) => state.appSettingsReducer.settings);
 
   const teamateArrays: TeamateOptionsArrays = {
@@ -176,7 +205,7 @@ const TeammateCard = ({ player, index }: { player: PlayerStatsProps; index: numb
   const fontStyle = { color: playerStatsFontColor || '#FFFFFF' };
 
   // Border visual settings
-  const borderColor = ultPercentage >= 99 ? 'var(--victory-color)' : (teammateBorderColor || 'var(--victory-color)');
+  const borderColor = ultPercentage >= 99 ? (ultFullyChargedBorderColor || '#FFD700') : (teammateBorderColor || 'var(--victory-color)');
   const borderOpacity = ultPercentage > 0 ? 0.95 : 0.3;
 
   return (

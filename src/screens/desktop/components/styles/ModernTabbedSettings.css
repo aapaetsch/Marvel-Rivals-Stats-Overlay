@@ -1,0 +1,388 @@
+/* Modern Tabbed Settings Styles - Cleaned Version */
+
+/* Modern Tabbed Settings Styles */
+.modern-tabbed-settings {
+  padding: 1rem;
+  background: var(--background-color, #1a1a1a);
+  color: var(--text-color, #ffffff);
+  min-height: 100vh;
+}
+
+.modern-general-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.settings-subsection {
+  background: var(--card-background, #2a2a2a);
+  border-radius: 8px;
+  padding: 1.5rem;
+  border: 1px solid var(--border-color, #404040);
+}
+
+.settings-subsection-title {
+  color: var(--text-color, #ffffff);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color, #404040);
+}
+
+.settings-subsection-description {
+  color: var(--text-secondary, #b0b0b0);
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.settings-subsection-content .tab-disabled-alert {
+  margin-bottom: 1rem;
+}
+
+.settings-subsection-content .settings-columns {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+.settings-subsection-content .settings-column {
+  flex: 1;
+}
+
+.settings-tab-content .settings-column-title {
+  color: var(--text-color, #ffffff);
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color, #404040);
+}
+
+.positioning-mode-notice {
+  margin-bottom: 1.5rem;
+}
+
+.positioning-mode-notice .ant-alert {
+  background: var(--warning-background, #fff7e6);
+  border: 1px solid var(--warning-border, #ffd591);
+  border-radius: 8px;
+}
+
+.positioning-mode-notice .ant-alert-message {
+  color: var(--warning-text, #d48806);
+}
+
+.positioning-mode-notice .ant-alert-description {
+  color: var(--warning-text-secondary, #ad6800);
+}
+
+.tab-disabled-alert {
+  margin-bottom: 1.5rem;
+}
+
+.tab-disabled-alert .ant-alert {
+  background: var(--warning-background, #fff7e6);
+  border: 1px solid var(--warning-border, #ffd591);
+  border-radius: 8px;
+}
+
+.tab-disabled-alert .ant-alert-message {
+  color: var(--warning-text, #d48806);
+}
+
+.tab-disabled-alert .ant-alert-description {
+  color: var(--warning-text-secondary, #ad6800);
+}
+
+/* Compact Resource Management */
+.compact-resource-management {
+  background: var(--card-background, #2a2a2a);
+  border: 1px solid var(--border-color, #404040);
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.compact-resource-management:hover {
+  border-color: var(--primary-color, #1890ff);
+  box-shadow: 0 0 0 1px rgba(24, 144, 255, 0.1);
+}
+
+/* Light theme adjustments */
+[data-theme="light"] .compact-resource-management {
+  background: var(--gray-1, #ffffff);
+  border-color: var(--gray-4, #e0e0e0);
+}
+
+[data-theme="light"] .compact-resource-management:hover {
+  border-color: var(--primary-color, #1890ff);
+  box-shadow: 0 0 0 1px rgba(24, 144, 255, 0.05);
+}
+
+.settings-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.settings-title {
+  color: var(--text-color, #ffffff) !important;
+  margin-bottom: 0.5rem !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-title-icon {
+  margin-right: 12px;
+  font-size: 24px;
+  vertical-align: middle;
+}
+
+.settings-description {
+  color: var(--text-secondary, #b0b0b0);
+  font-size: 1rem;
+  margin: 0;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.modern-settings-tabs {
+  background: transparent;
+  width: 100%;
+}
+
+/* Inherit the same styles as the original settings-tabs-sticky */
+.modern-settings-tabs .ant-tabs-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--background-color, #1a1a1a);
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color, #404040);
+}
+
+/* Ensure tab labels and inner elements use theme text color */
+.modern-settings-tabs .ant-tabs-tab .ant-tabs-tab-btn,
+.modern-settings-tabs .ant-tabs-tab .ant-tabs-tab-btn *:not(.status-indicator) {
+  color: var(--text-color, #ffffff) !important;
+}
+
+.modern-settings-tabs .ant-tabs-tab {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary, #b0b0b0);
+  padding: 0.75rem 1.5rem;
+  margin: 0;
+  border-radius: 0;
+  transition: all 0.3s ease;
+}
+
+.modern-settings-tabs .ant-tabs-tab:hover {
+  color: var(--text-color, #ffffff);
+  background: transparent;
+}
+
+.modern-settings-tabs .ant-tabs-tab-active {
+  background: transparent;
+  color: var(--primary-color, #1890ff);
+}
+
+.modern-settings-tabs .ant-tabs-tab-disabled {
+  color: var(--text-disabled, #666) !important;
+  cursor: not-allowed !important;
+  opacity: 0.6;
+}
+
+.modern-settings-tabs .ant-tabs-content-holder {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.modern-settings-tabs .ant-tabs-content {
+  overflow-y: auto;
+}
+
+.modern-settings-tabs .ant-tabs-tabpane {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Tab Status Indicators */
+.tab-with-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-indicator {
+  font-size: 14px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.status-enabled {
+  color: var(--status-enabled-color) !important;
+  text-shadow: 0 0 4px var(--status-enabled-glow);
+}
+
+.status-disabled {
+  color: var(--status-disabled-color) !important;
+  text-shadow: 0 0 4px var(--status-disabled-glow);
+}
+
+/* Hover effects for status indicators */
+.modern-settings-tabs .ant-tabs-tab:hover .status-enabled {
+  filter: brightness(1.2);
+  text-shadow: 0 0 6px var(--status-enabled-glow);
+}
+
+.modern-settings-tabs .ant-tabs-tab:hover .status-disabled {
+  filter: brightness(1.2);
+  text-shadow: 0 0 6px var(--status-disabled-glow);
+}
+
+/* Active tab status indicator */
+.modern-settings-tabs .ant-tabs-tab-active .status-enabled {
+  filter: brightness(1.4);
+  text-shadow: 0 0 8px var(--status-enabled-glow);
+}
+
+.modern-settings-tabs .ant-tabs-tab-active .status-disabled {
+  filter: brightness(1.4);
+  text-shadow: 0 0 8px var(--status-disabled-glow);
+}
+
+.settings-tab-content {
+  max-width: 100%;
+}
+
+.settings-section {
+  margin-bottom: 2rem;
+}
+
+.settings-section:last-child {
+  margin-bottom: 0;
+}
+
+.settings-section-title {
+  color: var(--text-color, #ffffff);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color, #404040);
+}
+
+.settings-section-description {
+  color: var(--text-secondary, #b0b0b0);
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] .modern-tabbed-settings,
+[data-theme="minimalistic-black"] .modern-tabbed-settings {
+  background: var(--gray-11, #0a0a0a);
+}
+
+[data-theme="dark"] .modern-settings-tabs .ant-tabs-nav,
+[data-theme="minimalistic-black"] .modern-settings-tabs .ant-tabs-nav,
+[data-theme="dark"] .modern-settings-tabs .ant-tabs-content-holder,
+[data-theme="minimalistic-black"] .modern-settings-tabs .ant-tabs-content-holder {
+  background: var(--gray-10, #1a1a1a);
+}
+
+[data-theme="dark"] .modern-settings-tabs .ant-tabs-tab-active,
+[data-theme="minimalistic-black"] .modern-settings-tabs .ant-tabs-tab-active {
+  background: var(--gray-10, #1a1a1a);
+}
+
+/* Light theme adjustments */
+[data-theme="light"] .modern-tabbed-settings {
+  background: var(--gray-3, #f5f5f5);
+  color: var(--gray-8, #333);
+}
+
+[data-theme="light"] .modern-settings-tabs .ant-tabs-nav,
+[data-theme="light"] .modern-settings-tabs .ant-tabs-content-holder {
+  background: var(--gray-1, #ffffff);
+}
+
+[data-theme="light"] .settings-title {
+  color: var(--gray-8, #333) !important;
+}
+
+[data-theme="light"] .settings-section-title {
+  color: var(--gray-8, #333);
+  border-bottom-color: var(--gray-4, #e0e0e0);
+}
+
+[data-theme="light"] .settings-description,
+[data-theme="light"] .settings-section-description {
+  color: var(--gray-6, #666);
+}
+
+[data-theme="light"] .modern-settings-tabs .ant-tabs-tab {
+  color: var(--gray-6, #666);
+}
+
+[data-theme="light"] .modern-settings-tabs .ant-tabs-tab:hover {
+  color: var(--primary-color, #1890ff);
+  background: var(--primary-color-light-alpha, rgba(24, 144, 255, 0.05));
+}
+
+[data-theme="light"] .modern-settings-tabs .ant-tabs-tab-active {
+  background: var(--gray-1, #ffffff);
+  color: var(--primary-color, #1890ff);
+  border-bottom-color: var(--primary-color, #1890ff);
+}
+
+/* Animation for tab transitions */
+.modern-settings-tabs .ant-tabs-tabpane {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Improved focus styles for accessibility */
+.modern-settings-tabs .ant-tabs-tab:focus {
+  outline: 2px solid var(--primary-color, #1890ff);
+  outline-offset: 2px;
+}
+
+.settings-tab-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.settings-tab-content::-webkit-scrollbar-track {
+  background: var(--background-color, #1a1a1a);
+  border-radius: 4px;
+}
+
+.settings-tab-content::-webkit-scrollbar-thumb {
+  background: var(--border-color, #404040);
+  border-radius: 4px;
+}
+
+.settings-tab-content::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary, #b0b0b0);
+}
+
+.appearance-column {
+  overflow-y: visible;
+}

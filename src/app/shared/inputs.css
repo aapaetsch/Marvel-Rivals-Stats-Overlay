@@ -1,0 +1,56 @@
+/* Input styles for all themes */
+.ant-input:not(:disabled),
+.ant-input-number-input:not(:disabled),
+.ant-select .ant-select-selector,
+.ant-textarea {
+  background-color: var(--input-bg) !important;
+  border-color: var(--gray-7, #404040) !important;
+  color: var(--text-color) !important;
+}
+
+.ant-input:focus,
+.ant-input-number-input:focus,
+.ant-select-focused .ant-select-selector,
+.ant-textarea:focus {
+  background-color: var(--input-bg) !important;
+  border-color: var(--primary-color, #1890ff);
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+/* Stats card styles */
+.stats-card {
+  background-color: var(--input-bg) !important;
+  border: 1px solid var(--gray-7, #404040);
+  border-radius: var(--border-radius, 6px);
+}
+
+.stats-card .ant-card-body {
+  background-color: transparent;
+}
+
+.stats-card .ant-typography {
+  color: var(--text-color) !important;
+}
+
+/* Light theme text adjustments for stats card */
+[data-theme="light"] .stats-card .ant-typography {
+  color: var(--gray-8, #333) !important;
+}
+
+[data-theme="light"] .stats-card .ant-typography strong {
+  color: var(--gray-8, #333) !important;
+}
+
+.has-text-area-bg {
+  background-color: var(--input-bg) !important;
+}
+
+/* Disabled input styles */
+.toggle-settings-content .ant-btn.ant-btn-disabled,
+.toggle-settings-content .ant-input-number.ant-input-number-disabled,
+.toggle-settings-content .ant-btn.ant-btn-disabled:hover,
+.toggle-settings-content .ant-input-number.ant-input-number-disabled:hover {
+  opacity: 0.5 !important;
+  color: var(--text-on-disabled-input) !important;
+  background: var(--disabled-input-bg) !important;
+}

@@ -1,3 +1,5 @@
+import { ItemType } from 'antd/es/menu/interface';
+
 export enum MenuKeys {
   HOME = 'Home',
   STATS = 'Stats-Sub',
@@ -17,9 +19,4 @@ export enum MenuKeys {
   DEV_PLAYGROUND = 'Dev-Playground',
 }
 
-export interface AntMenuItem {
-  key: string;
-  label: string;
-  icon?: React.ReactNode | JSX.Element;
-  children?: AntMenuItem[];
-}
+export type AntMenuItem = ItemType;

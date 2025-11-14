@@ -95,10 +95,14 @@ const CardSettingsRowToggle: React.FC<CardSettingsRowToggleProps> = ({
           name={formName} 
           noStyle
           valuePropName="checked"
+          getValueFromEvent={(checked) => checked}
         >
           <Switch 
             disabled={disabled}
             onChange={(checked) => {
+              // Update the form first (this will trigger Form.useWatch updates)
+              formInstance.setFieldValue(formName, checked);
+              
               // Update Redux directly
               const updateObj: any = {};
               updateObj[formName] = checked;

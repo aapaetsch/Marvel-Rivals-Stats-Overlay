@@ -1,85 +1,140 @@
 import React from 'react';
-import { FormInstance } from 'antd';
+import { FormInstance, Alert, Button, Space } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from 'app/shared/store';
 import { WINDOW_NAMES } from 'app/shared/constants';
+import { updateSettings } from 'features/appSettings/appSettingsSlice';
 import CardSettingsRowSlider from './CardSettingsRowSlider';
 import CardSettingsRowColorPicker from './CardSettingsRowColorPicker';
 import OverlayPositionEditor from './OverlayPositionEditor';
+import CardSettingsRowToggle from './CardSettingsRowToggle';
+import { ReloadOutlined } from '@ant-design/icons';
 import '../styles/Settings.css';
 
 interface PlayerSwapTabProps {
   form: FormInstance<any>;
+  onEditPositions?: (enable: boolean, overlayWindowName?: string) => void;
+  onSavePositions?: (overlayWindowName?: string) => void;
 }
 
 /**
- * Component for Player Swap tab settings
+ * Component for Player Swap tab settings with window resource management
  */
-const PlayerSwapTab: React.FC<PlayerSwapTabProps> = ({ form }) => {
+const PlayerSwapTab: React.FC<PlayerSwapTabProps> = ({ form, onEditPositions, onSavePositions }) => {
   const { t } = useTranslation();
   const appSettings = useSelector((state: RootState) => state.appSettingsReducer.settings);
+  const dispatch = useDispatch();
+  
+  // Player Swap tab default values
+  const playerSwapDefaults = {
+    showPlayerSwapNotification: true,
+    playerSwapNotificationDuration: 5,
+    enableCharSwapWindow: true,
+    // Reset positions to default
+    customPositions: {
+      ...appSettings.customPositions,
+      charSwapBar: {
+        _base: { x: 0, y: 300 },
+        Domination: { x: 0, y: 300 },
+        Convoy: { x: 0, y: 300 },
+        'Doom Match': { x: 0, y: 300 },
+        Conquest: { x: 0, y: 300 },
+      }
+    }
+  };
+
+  const handleResetToDefaults = () => {
+    dispatch(updateSettings(playerSwapDefaults));
+    form.setFieldsValue(playerSwapDefaults);
+  };
   
   // Use positioning mode state from the Redux store
   const positioningModeOverlay = appSettings.positioningModeWindows?.[WINDOW_NAMES.CHARSWAPBAR] 
     ? WINDOW_NAMES.CHARSWAPBAR 
     : null;
   
-  // Forward these functions to the parent component
-  const handleEditOverlayPositions = (enable: boolean, overlayWindowName?: string) => {
-    // This is just a stub - real implementation will be in the parent
+  // Use the passed handlers or default to console.log
+  const handleEditOverlayPositions = onEditPositions || ((enable: boolean, overlayWindowName?: string) => {
     console.log('Edit positions:', enable, overlayWindowName);
-  };
+  });
   
-  const handleSaveOverlayPositions = (overlayWindowName?: string) => {
-    // This is just a stub - real implementation will be in the parent
+  const handleSaveOverlayPositions = onSavePositions || ((overlayWindowName?: string) => {
     console.log('Save positions:', overlayWindowName);
-  };
+  });
+
+  const isPlayerSwapEnabled = appSettings.enableCharSwapWindow !== false;
 
   return (
     <div className="settings-tab-content">
-      <div className="settings-columns">
-        <div className="settings-column">
-          <div className="settings-column-title">
-            {t("components.desktop.settings.appearance", "Appearance Settings")}
-          </div>
-          <CardSettingsRowSlider
-            label={t("components.desktop.settings.player-swap-duration", "Notification Duration (seconds)")}
-            formName="playerSwapNotificationDuration"
-            min={1}
-            max={10}
-            marks={{ 1: '1s', 5: '5s', 10: '10s' }}
-            stackedLabel={true}
-          />
-          <CardSettingsRowColorPicker
-            label={t("components.desktop.settings.ally-swap-color", "Ally Swap Color")}
-            formName="allySwapColor"
-            tooltip={t("components.desktop.settings.ally-swap-color-tooltip", "Highlight color when an ally swaps character")}
-            initialValue="#1890FF"
-          />
-          <CardSettingsRowColorPicker
-            label={t("components.desktop.settings.enemy-swap-color", "Enemy Swap Color")}
-            formName="enemySwapColor"
-            tooltip={t("components.desktop.settings.enemy-swap-color-tooltip", "Highlight color when an enemy swaps character")}
-            initialValue="#FF4D4F"
-          />
-          <CardSettingsRowColorPicker
-            label={t("components.desktop.settings.swap-screen-background-color", "Background Color")}
-            formName="swapScreenBackgroundColor"
-            tooltip={t("components.desktop.settings.swap-screen-background-tooltip", "Background color for the character swap notification")}
-            initialValue="#000000"
-          />
-        </div>
-        <div className="settings-column">
-          <OverlayPositionEditor 
-            overlayKey="charSwapBar" 
-            form={form}
-            isPositioningMode={positioningModeOverlay === WINDOW_NAMES.CHARSWAPBAR}
-            onEditPositions={handleEditOverlayPositions}
-            onSavePositions={handleSaveOverlayPositions}
-          />
-        </div>
+      {/* Compact Window Resource Management */}
+      <div className="compact-resource-management">
+        <CardSettingsRowToggle
+          label="Enable Character Swap Window"
+          formName="enableCharSwapWindow"
+        />
+        
+        {/* Reset to Default Button */}
+        <Space style={{ marginTop: '12px' }}>
+          <Button 
+            type="default" 
+            icon={<ReloadOutlined />}
+            onClick={handleResetToDefaults}
+            size="small"
+          >
+            {t('components.desktop.settings.reset-to-default', 'Reset to Default')}
+          </Button>
+        </Space>
       </div>
+      
+      {!isPlayerSwapEnabled && (
+        <Alert
+          message="Player Swap Window Disabled"
+          description="Enable the toggle above to access these settings."
+          type="warning"
+          showIcon
+          className="tab-disabled-alert"
+          style={{ marginBottom: '1.5rem' }}
+        />
+      )}
+
+      {/* Player Swap Settings (only shown when enabled) */}
+      {isPlayerSwapEnabled && (
+        <div className="settings-columns">
+          <div className="settings-column">
+            <div className="settings-column-title">
+              {t("components.desktop.settings.appearance", "Appearance Settings")}
+            </div>
+            <CardSettingsRowSlider
+              label={t("components.desktop.settings.player-swap-duration", "Notification Duration (seconds)")}
+              formName="playerSwapNotificationDuration"
+              min={1}
+              max={10}
+              marks={{ 1: '1s', 5: '5s', 10: '10s' }}
+              stackedLabel={true}
+            />
+            <CardSettingsRowColorPicker
+              label={t("components.desktop.settings.ally-swap-color", "Ally swap notification color")}
+              formName="allySwapColor"
+              initialValue="#1890FF"
+            />
+            <CardSettingsRowColorPicker
+              label={t("components.desktop.settings.enemy-swap-color", "Enemy swap notification color")}
+              formName="enemySwapColor"
+              initialValue="#FF4D4F"
+            />
+          </div>
+          <div className="settings-column">
+            <OverlayPositionEditor 
+              overlayKey="charSwapBar" 
+              form={form}
+              isPositioningMode={positioningModeOverlay === WINDOW_NAMES.CHARSWAPBAR}
+              onEditPositions={handleEditOverlayPositions}
+              onSavePositions={handleSaveOverlayPositions}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
