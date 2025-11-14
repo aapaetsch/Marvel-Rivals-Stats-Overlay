@@ -1,6 +1,6 @@
 // filepath: c:\Users\aapae\Documents\Overwolf Projects\rivalsreactoverlay\src\screens\desktop\components\settings\OverlayPositionEditor.fixed.tsx
 import React, { useState } from 'react';
-import { Form, Button, InputNumber, Switch, Space } from 'antd';
+import { Form, Button, InputNumber, Switch } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { WINDOW_NAMES } from 'app/shared/constants';
@@ -64,10 +64,7 @@ const OverlayPositionEditor: React.FC<OverlayPositionEditorProps> = ({
       [mode]: enabled
     }));
     
-    // If disabling, reset to default position
-    if (!enabled) {
-      resetToDefault(mode);
-    }
+    // No longer reset to default when disabling since inputs are always visible
   };
   
   // Reset a game mode position to the _base position
@@ -95,11 +92,8 @@ const OverlayPositionEditor: React.FC<OverlayPositionEditorProps> = ({
         {t('components.desktop.settings.overlay-positioning', 'Overlay Positioning')}
       </div>
       {/* Default Position Section */}
-      <div className="card-settings-row position-row is-flex-direction-column"> 
-        <div className="is-flex is-flex-direction-row is-full-width mb-2">
-          <div className="card-settings-label">
-            {t('components.desktop.settings.default-position', 'Default Position')}
-          </div>
+      <div className="card-settings-row position-row"> 
+        <div className="position-inputs-container">
           <div className="card-settings-toggles">
             <Form.Item
               name={['customPositions', overlayKey, '_base', 'x']}
@@ -123,29 +117,27 @@ const OverlayPositionEditor: React.FC<OverlayPositionEditorProps> = ({
                 onChange={(value: number | null) => handlePositionChange('_base', 'y', value)}
               />
             </Form.Item>
-          </div>        
-        </div>        
-        <div className="is-flex is-justify-content-flex-end mb-2 is-full-width">            
-          <Space>
-            <Button
-              variant="text"
-              color="primary"
-              onClick={() => {
-                // Call the original handler which will update the Redux state
-                onEditPositions(!isPositioningMode, windowName);
-                
-                // Auto-save position when disabling drag mode
-                if (isPositioningMode) {
-                  onSavePositions(windowName);
-                }
-              }}
-              className="edit-position-button"
-            >
-              {isPositioningMode 
-                ? t('components.desktop.settings.disable-drag-mode', 'Disable Drag Mode') 
-                : t('components.desktop.settings.enable-drag-move', 'Enable Drag to Move')}
-            </Button>
-          </Space>
+          </div>
+        </div>
+        <div className="edit-position-button-wrapper">
+          <Button
+            variant="text"
+            color="primary"
+            onClick={() => {
+              // Call the original handler which will update the Redux state
+              onEditPositions(!isPositioningMode, windowName);
+              
+              // Auto-save position when disabling drag mode
+              if (isPositioningMode) {
+                onSavePositions(windowName);
+              }
+            }}
+            className="edit-position-button"
+          >
+            {isPositioningMode 
+              ? t('components.desktop.settings.disable-drag-mode', 'Disable Drag Mode') 
+              : t('components.desktop.settings.enable-drag-move', 'Enable Drag to Move')}
+          </Button>
         </div>
       </div>
       <div className="sub-title">
@@ -169,42 +161,43 @@ const OverlayPositionEditor: React.FC<OverlayPositionEditorProps> = ({
                 onChange={(checked) => toggleCustomMode(mode, checked)}
               />
             </div>              
-            {customEnabledModes[mode] && (
-              <div className="toggle-settings-content">
-                <Form.Item
-                  name={['customPositions', overlayKey, mode, 'x']}
-                  noStyle>
-                  <InputNumber 
-                    addonBefore={<span style={{ color: 'var(--primary-color-text)' }}>X</span>}
-                    size="small"
-                    className="coordinate-input-wrapper"
-                    maxLength={4}
-                    onChange={(value: number | null) => handlePositionChange(mode, 'x', value)}
-                  />
-                </Form.Item>
-                <Form.Item
-                  name={['customPositions', overlayKey, mode, 'y']}
-                  noStyle>
-                  <InputNumber 
-                    addonBefore={<span style={{ color: 'var(--primary-color-text)' }}>Y</span>}
-                    className="coordinate-input-wrapper"
-                    size="small"
-                    maxLength={4}
-                    onChange={(value: number | null) => handlePositionChange(mode, 'y', value)}
-                  />
-                </Form.Item>
-                <div style={{ marginLeft: '8px' }}>
-                  <Button
-                    size="small"
-                    type="default"
-                    ghost
-                    onClick={() => resetToDefault(mode)}
-                  >
-                    {t('components.desktop.settings.set-to-default', 'Set to Default')}
-                  </Button>
-                </div>
+            <div className="toggle-settings-content">
+              <Form.Item
+                name={['customPositions', overlayKey, mode, 'x']}
+                noStyle>
+                <InputNumber 
+                  addonBefore={<span style={{ color: 'var(--primary-color-text)' }}>X</span>}
+                  size="small"
+                  className="coordinate-input-wrapper"
+                  maxLength={4}
+                  disabled={!customEnabledModes[mode]}
+                  onChange={(value: number | null) => handlePositionChange(mode, 'x', value)}
+                />
+              </Form.Item>
+              <Form.Item
+                name={['customPositions', overlayKey, mode, 'y']}
+                noStyle>
+                <InputNumber 
+                  addonBefore={<span style={{ color: 'var(--primary-color-text)' }}>Y</span>}
+                  className="coordinate-input-wrapper"
+                  size="small"
+                  maxLength={4}
+                  disabled={!customEnabledModes[mode]}
+                  onChange={(value: number | null) => handlePositionChange(mode, 'y', value)}
+                />
+              </Form.Item>
+              <div style={{ marginLeft: '8px' }}>
+                <Button
+                  size="small"
+                  type="default"
+                  ghost
+                  disabled={!customEnabledModes[mode]}
+                  onClick={() => resetToDefault(mode)}
+                >
+                  {t('components.desktop.settings.set-to-default', 'Set to Default')}
+                </Button>
               </div>
-            )}
+            </div>
           </div>
         </div>
       ))}

@@ -13,6 +13,7 @@ import CardSettingsRowSlider from './CardSettingsRowSlider';
 import CardSettingsRowColorPicker from './CardSettingsRowColorPicker';
 import '../styles/Settings.css';
 import { logger } from '../../../../../src/lib/log';
+import { openWindowIfNeeded } from '../../../../../src/lib/windowManager';
 
 // Export the constant
 export const defaultOverlayWindowPositions = {
@@ -65,6 +66,7 @@ const OverlaySettingsComponent: React.FC<OverlaySettingsComponentProps> = ({ for
       playerStatsBackgroundColor: appSettings.playerStatsBackgroundColor || '#000000',
       playerStatsFontColor: appSettings.playerStatsFontColor || '#FFFFFF',
       teammateBorderColor: appSettings.teammateBorderColor || '#1890FF',
+      ultFullyChargedBorderColor: appSettings.ultFullyChargedBorderColor || '#FFD700',
       showOwnPlayerCard: appSettings.showOwnPlayerCard,
       compactOwnPlayerCard: appSettings.compactOwnPlayerCard,
       showTeammate1: appSettings.showTeammate1,
@@ -212,14 +214,22 @@ const OverlaySettingsComponent: React.FC<OverlaySettingsComponentProps> = ({ for
   };
   
   // Helper function to enable drag mode for a window
-  const enableDragMode = (windowName: string) => {
-    overwolf.windows.obtainDeclaredWindow(windowName, (result) => {
-      if (result.success) {
-        overwolf.windows.dragMove(result.window.id, (dragResult) => {
-          console.log(dragResult);
-        });
-      }
-    });
+  const enableDragMode = async (windowName: string) => {
+    try {
+      // Ensure the window is visible/restored before attempting dragMove
+      await openWindowIfNeeded(windowName);
+
+      overwolf.windows.obtainDeclaredWindow(windowName, (result) => {
+        if (result.success) {
+          overwolf.windows.dragMove(result.window.id, (dragResult) => {
+            console.log(dragResult);
+          });
+        }
+      });
+    } catch (error) {
+      const errToLog = error instanceof Error ? error : new Error(String(error));
+      logger.logError(errToLog, 'OverlaySettings.tsx', `enableDragMode - ${windowName}`);
+    }
   };
   
   // Helper function to disable drag mode for a window
@@ -335,12 +345,6 @@ const OverlaySettingsComponent: React.FC<OverlaySettingsComponentProps> = ({ for
                 formName="enemySwapColor"
                 tooltip={t("components.desktop.settings.enemy-swap-color-tooltip", "Highlight color when an enemy swaps character")}
                 initialValue="#FF4D4F"
-              />
-              <CardSettingsRowColorPicker
-                label={t("components.desktop.settings.swap-screen-background-color", "Background Color")}
-                formName="swapScreenBackgroundColor"
-                tooltip={t("components.desktop.settings.swap-screen-background-tooltip", "Background color for the character swap notification")}
-                initialValue="#000000"
               />
             </div>
             <div className="settings-column">
