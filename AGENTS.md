@@ -1,6 +1,11 @@
 # Project Agents.md
 This Agents.md file provides a brief overview of the project structure and about documenting changes
 
+# General Information
+- You should always be coming up with a plan and a corresponding TODO list before starting any significant coding task
+- If you create a TODO list you should be updating it as you go along and marking things off as you complete them
+- If you create a TODO list you must always follow it through to completion
+
 ## Project Structure for OpenAI Codex Navigation
 - `/src`: Source code containing the majority of the app
   - `/components`: Reusable React Components
@@ -9,12 +14,19 @@ This Agents.md file provides a brief overview of the project structure and about
   - `/locals`: localization files using i18n
   - `/screens`: Contains the various overwolf screens and overlays along with their specific components and pages
 
+## Useful Commands
+- `npm run build:overwolf`: Builds the project for overwolf, can be used to verify if changes are breaking anything in the build process.
+- DO NOT USE `npm run build` as it is not configured to build and package for overwolf properly.
+
 ## Styling & CSS Considerations
 - Sizing, spacing ect should be done using em and rem
-- Colors for text and backgrounds should be set using the css variables defined in `src/app/shared/root.cs` and `src/screens/desktop/components/styles/themes.css`
-- New colors required to style the application should be made theme compatible by updating `src/app/shared/root.cs` and `src/screens/desktop/components/styles/themes.css`
+- Colors for text and backgrounds should be set using the css variables defined in `src/app/shared/root.css` and `src/app/shared/themes.css`
+- New colors required to style the application should be made theme compatible by updating `src/app/shared/root.css` and `src/app/shared/themes.css`
 - Be aware of contrast and color of the components on each theme, text should be styled so that it is readable on all themes (e.g. usually use white text on dark themes and a dark gray or off black for light themes)
 - Style using tailwind from here on out. We can slowly incremently update the existing code to use tailwind where needed. We will still use custom css where needed as well.
+- Avoid using Hex colors directly in the code. Use css variables when possible so that themes can be supported.
+- When you need a color you should be using var(--text-color) or var(--background-color) or other defined css variables in the root.css and themes.css files. If you need a color that is not defined there, please add it to those files so that themes can be supported.
+- Avoid using !important in css unless absolutely necessary.
 
 ## Documenting changes
 - The overall change should be in the root level CHANGELOG.md file.
