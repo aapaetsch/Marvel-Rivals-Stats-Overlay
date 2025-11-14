@@ -23,6 +23,8 @@ export interface GeneralSettings {
   notifications: boolean;
   showStoreViewer: boolean;
   showDevWindow: boolean;
+  useMatchHistoryTestData: boolean;
+  useMatchTableTestData: boolean;
   // Recent players storage/cleanup settings
   maxRecentPlayers: number;
   maxFavoriteRecentPlayers: number;
@@ -111,6 +113,8 @@ const initialState: AppSettingsState = {
     notifications: true,
     showStoreViewer: false,
     showDevWindow: false,
+    useMatchHistoryTestData: false,
+    useMatchTableTestData: false,
     // Recent players defaults
     maxRecentPlayers: 1000,
     maxFavoriteRecentPlayers: 100,
