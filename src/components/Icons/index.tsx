@@ -3,7 +3,8 @@ import {
   // Game-related icons
   IoGameControllerOutline, 
   IoStatsChartOutline,
-  IoHomeOutline 
+  IoHomeOutline,
+  IoSettingsOutline 
 } from 'react-icons/io5';
 
 import {
@@ -31,7 +32,8 @@ import {
   GiLaserWarning,
   GiPodiumWinner,
   GiCheckMark,
-  GiCardRandom
+  GiCardRandom,
+  GiThreeFriends
 } from 'react-icons/gi';
 
 import { 
@@ -78,6 +80,7 @@ export interface IconsCollection {
   match: React.ReactElement;
   currentMatch: React.ReactElement;
   matchHistory: React.ReactElement;
+  settings: React.ReactElement;
   
   // Player icons
   players: React.ReactElement;
@@ -86,6 +89,7 @@ export interface IconsCollection {
   favorites: React.ReactElement;
   recent: React.ReactElement;
   opponent: React.ReactElement;
+  teammate: React.ReactElement;
   
   // Character icons
   heros: React.ReactElement;
@@ -127,6 +131,7 @@ export const icons: IconsCollection = {
   match: <GiCheckboxTree />,
   currentMatch: <GiGamepad />,
   matchHistory: <GiBackwardTime />,
+  settings: <IoSettingsOutline />,
   
   // Player icons
   players: <PiUserListBold />,
@@ -135,6 +140,7 @@ export const icons: IconsCollection = {
   favorites: <LiaUserTagSolid />,
   recent: <LiaUserInjuredSolid />,
   opponent: <GiPyromaniac />,
+  teammate: <GiThreeFriends />,
   
   // Character icons
   heros: <GiKing />,
