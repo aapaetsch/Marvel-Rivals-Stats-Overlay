@@ -35,24 +35,27 @@ const PlayerStatsAppearanceSettings: React.FC<PlayerStatsAppearanceSettingsProps
       />
       
       <CardSettingsRowColorPicker
-        label={t("components.desktop.settings.player-stats-background-color", "Background Color")}
+        label={t("components.desktop.settings.player-stats-background-color", "Player stat cards background color")}
         formName="playerStatsBackgroundColor"
-        tooltip={t("components.desktop.settings.background-color-tooltip", "Background color for player stat cards")}
         initialValue="#000000"
       />
       
       <CardSettingsRowColorPicker
-        label={t("components.desktop.settings.player-stats-font-color", "Font Color")}
+        label={t("components.desktop.settings.player-stats-font-color", "Font color for text on player stats cards")}
         formName="playerStatsFontColor"
-        tooltip={t("components.desktop.settings.font-color-tooltip", "Text color for player stat cards")}
         initialValue="#FFFFFF"
       />
       
       <CardSettingsRowColorPicker
-        label={t("components.desktop.settings.teammate-border-color", "Teammate Border Color")}
+        label={t("components.desktop.settings.teammate-border-color", "Ult charge border color")}
         formName="teammateBorderColor"
-        tooltip={t("components.desktop.settings.border-color-tooltip", "Accent color for teammate card borders")}
         initialValue="#1890FF"
+      />
+      
+      <CardSettingsRowColorPicker
+        label={t("components.desktop.settings.ult-fully-charged-border-color", "Ult fully charged border color")}
+        formName="ultFullyChargedBorderColor"
+        initialValue="#FFD700"
       />
     </div>
   );
