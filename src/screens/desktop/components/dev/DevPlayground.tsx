@@ -306,6 +306,13 @@ const DevPlayground: React.FC = () => {
                 showText
               />
             </Form.Item>
+            <Form.Item label="Ult Fully Charged Border Color (hex)" style={{ marginBottom: 30 }}>
+              <ColorPicker
+                value={appSettings.ultFullyChargedBorderColor || '#FFD700'}
+                onChangeComplete={(c) => dispatch(updateSettings({ ultFullyChargedBorderColor: (c as any).toHexString() }))}
+                showText
+              />
+            </Form.Item>
           </Form>
         )}
 
