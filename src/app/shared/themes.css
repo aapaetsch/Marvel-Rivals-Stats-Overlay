@@ -73,6 +73,19 @@
   --swapbar-enemy-color: #FF4D4F;
   --swapbar-enemy-border: var(--swapbar-enemy-color);
   --swapbar-enemy-bg: rgba(255, 77, 79, 0.45);
+
+  /* Status indicator colors */
+  --status-enabled-color: #52c41a;
+  --status-disabled-color: #ff4d4f;
+  --status-enabled-glow: rgba(82, 196, 26, 0.3);
+  --status-disabled-glow: rgba(255, 77, 79, 0.3);
+
+  /* Disabled input colors */
+  --text-on-disabled-input: var(--gray-6);
+  --disabled-input-bg: var(--gray-8);
+  --button-disabled-bg: var(--gray-8);
+  --button-disabled-border: var(--gray-6);
+  --button-disabled-text: var(--gray-6);
 }
 
 /* Dark Theme (Default) */
@@ -85,6 +98,7 @@ body.theme-dark {
   --primary-color-medium: #2980b9;
   --primary-color-dark: #1f618d;
   --primary-color-text: #ecf0f1;
+  --text-color: var(--primary-color-text);
   /* Strong darker borders (hex) */
   --tag-border-primary: #1a5278; /* darker than --primary-color-dark */
   --tag-border-success: #219452; /* darker victory color */
@@ -94,7 +108,7 @@ body.theme-dark {
   --tag-border-neutral: #1e1e1e;
   /* Text color to use on top of primary-colored backgrounds */
   --text-on-primary: #ffffff;
-  
+
   /* Secondary colors */
   --secondary-color: #e74c3c;
   --secondary-color-light: #ec7063;
@@ -132,6 +146,16 @@ body.theme-dark {
   --swapbar-enemy-color: #FF4D4F;
   --swapbar-enemy-border: var(--swapbar-enemy-color);
   --swapbar-enemy-bg: rgba(255,77,79,0.45);
+
+  /* Disabled input colors for dark theme */
+  --text-on-disabled-input: var(--gray-7);
+  --disabled-input-bg: var(--gray-9);
+  --button-disabled-bg: var(--gray-9);
+  --button-disabled-border: var(--gray-7);
+  --button-disabled-text: var(--gray-7);
+
+  /* Input background for dark theme */
+  --input-bg: var(--gray-10, #262626);
 }
 
 /* Light Theme */
@@ -143,6 +167,7 @@ body.theme-light {
   --primary-color-medium: #1f618d;
   --primary-color-dark: #154360;
   --primary-color-text: #383939;
+  --text-color: var(--primary-color-text);
   /* Strong darker borders (hex) */
   --tag-border-primary: #113951;
   --tag-border-success: #219452;
@@ -178,6 +203,12 @@ body.theme-light {
   /* Service colors */
   --discord-color: #7289da;
   
+  /* Status indicator colors for light theme */
+  --status-enabled-color: #389e0d;
+  --status-disabled-color: #cf1322;
+  --status-enabled-glow: rgba(56, 158, 13, 0.3);
+  --status-disabled-glow: rgba(207, 19, 34, 0.3);
+  
   /* Scrollbar colors for light theme */
   --scrollbar-track: rgba(0,0,0,0.04);
   --scrollbar-thumb: rgba(0,0,0,0.08);
@@ -190,6 +221,13 @@ body.theme-light {
   --swapbar-enemy-color: #c0392b;
   --swapbar-enemy-border: var(--swapbar-enemy-color);
   --swapbar-enemy-bg: rgba(192,57,43,0.28);
+
+  /* Disabled input colors for light theme */
+  --text-on-disabled-input: #bfbfbf;
+  --disabled-input-bg: #f5f5f5;
+
+  /* Input background for light theme */
+  --input-bg: var(--gray-3, #f5f5f5);
 }
 
 /* Minimalistic Black Theme */
@@ -202,6 +240,7 @@ body.theme-minimalistic-black {
   --primary-color-medium: #e0e0e0;
   --primary-color-dark: #d0d0d0;
   --primary-color-text: #ffffff;
+  --text-color: var(--gray-2);
   --text-on-primary: #000000;
   /* Strong darker borders for minimal black */
   --tag-border-primary: #b9b9b9;
@@ -220,6 +259,12 @@ body.theme-minimalistic-black {
   /* Background colors */
   --background-color: #000000;
   --header-dark: #080808;
+  
+  /* Status indicator colors for minimalistic black theme */
+  --status-enabled-color: #52c41a;
+  --status-disabled-color: #ff4d4f;
+  --status-enabled-glow: rgba(82, 196, 26, 0.4);
+  --status-disabled-glow: rgba(255, 77, 79, 0.4);
   
   /* Neutral colors */
   --neutral-0: #181818;
@@ -255,7 +300,16 @@ body.theme-minimalistic-black {
   --swapbar-enemy-color: #ffffff;
   --swapbar-enemy-border: var(--swapbar-enemy-color);
   --swapbar-enemy-bg: rgba(255,255,255,0.08);
-  
+
+  /* Disabled input colors for minimalistic black theme */
+  --text-on-disabled-input: #a0a0a0;
+  --disabled-input-bg: #0a0a0a;
+
+  /* Input background for minimalistic black theme */
+  --input-bg: var(--neutral-1, #0a0a0a);
+  --button-disabled-bg: var(--gray-10);
+  --button-disabled-border: var(--gray-8);
+  --button-disabled-text: var(--gray-8);
   
   /* Override specific components for minimalistic look */
   --ant-primary-color: #ffffff;
