@@ -376,6 +376,10 @@
   border: 1px solid #ff4d4f !important;
   color: #ff4d4f !important;
 }
+.delete-outline:hover {
+  background-color: #ff4d4f !important;
+  color: #ffffff !important;
+}
 .collapse-chevron {
   background: transparent;
   border: none;
