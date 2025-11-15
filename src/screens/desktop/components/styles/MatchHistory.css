@@ -3,6 +3,7 @@
 .match-history-container {
   width: 100%;
   padding: 16px 0;
+  height: 84vh;
 }
 
 /* List Section Styling */
@@ -331,7 +332,12 @@
 }
 
 .empty-match-list {
-  padding: 40px 0;
+  height: 760px; /* Match the height of scrollable-match-list */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
 }
 
 /* Performance chart */
