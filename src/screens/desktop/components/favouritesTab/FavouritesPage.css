@@ -74,8 +74,7 @@
 }
 
 .favourites-content-grid {
-  display: grid;
-  grid-template-columns: 1fr 300px;
+  display: flex;
   gap: 1rem;
   flex: 1 1 0; /* allow grid to take the remaining vertical space */
   min-height: 0; /* allow children to shrink and allow internal scrolling */
@@ -99,7 +98,7 @@
 
 .favourites-players-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(350px, 100%), 1fr));
   gap: 1rem;
   width: 100%;
   align-content: start; /* keep items at the top of the scrollable area */
@@ -281,12 +280,14 @@
   justify-content: flex-start; /* keep items left-aligned so pct, icon, name flow naturally */
 }
 .role-pct-small {
-  width: 36px;
+  width: 48px;
+  min-width: 48px;
   text-align: right;
   color: var(--primary-color-medium);
   font-weight: 700;
   margin-right: 6px;
   flex: 0 0 auto;
+  white-space: nowrap;
 }
 .stat-col {
   display: flex;
@@ -339,13 +340,12 @@
 
 .favourites-ad-right {
   min-height: 600px;
-  /* keep the right ad visible while the left column scrolls */
-  position: fixed;
-  top: 12.5rem;
-  right: 3rem;
-  height: 70vh;
-  width: 20%;
-  align-self: start;
+  /* Use flexbox positioning for proper flow */
+  flex: 0 0 300px;
+  position: sticky;
+  top: 0;
+  height: calc(100vh - 12.5rem - 4rem);
+  width: 300px;
 }
 
 /* favourites-ad-bottom removed */
@@ -373,7 +373,7 @@
 /* Responsive Design */
 @media (max-width: 1200px) {
   .favourites-content-grid {
-    grid-template-columns: 1fr;
+    flex-direction: column;
   }
 
   .favourites-ad-right {

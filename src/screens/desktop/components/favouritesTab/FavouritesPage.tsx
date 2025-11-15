@@ -60,7 +60,7 @@ const FavouritesPage: React.FC = () => {
                 <Title level={4} style={{ margin: 0 }}>
                   {t('components.desktop.favourites.title', 'Favourite Players')}
                 </Title>
-                <Text type="secondary" style={{ fontSize: '0.875rem' }}  className="has-text-primary-color">
+                <Text type="secondary" style={{ fontSize: '0.875rem' }}  className="has-text-default-color">
                   {t('components.desktop.favourites.count', {
                     count: aggregateStats.totalFavorites,
                     defaultValue: `${aggregateStats.totalFavorites} Players`,

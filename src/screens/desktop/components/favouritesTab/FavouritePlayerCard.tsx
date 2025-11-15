@@ -156,7 +156,7 @@ const FavouritePlayerCard: React.FC<FavouritePlayerCardProps> = ({ player }) => 
 
         {/* Total Encounters - title above the numeric counter */}
         <div style={{ textAlign: 'right', minWidth: 120 }}>
-          <Text className="total-encounters-title has-text-primary-color" type="secondary" style={{ display: 'block', marginBottom: 6 }}>
+          <Text className="total-encounters-title has-text-default-color" type="secondary" style={{ display: 'block', marginBottom: 6 }}>
             {t('components.desktop.favourites.total-encounters', 'Total Encounters')}
           </Text>
           <Statistic

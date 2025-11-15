@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Fixed layout issue where favorite cards would overlap with the right ad space when the screen is widened enough to fit 3 cards side by side. Changed from CSS Grid to Flexbox layout for proper content flow and ad positioning without creating whitespace gaps.
+
 ### Added
 - FavouritesPage Component: Main page component displaying all favourited players with a sticky header, aggregated statistics section, and scrollable content area [Favourites Page: New dedicated page].
 - FavouritePlayerCard Component: Reusable card component for displaying individual favourited players with their avatar (most used character), name, and detailed statistics [Favourites Page: New dedicated page].
