@@ -89,6 +89,7 @@
   overflow-y: visible;
   min-height: 0; /* allow proper flex child scrolling */
   flex: 1 1 0; /* take remaining vertical space within the grid cell */
+  height: 100%; /* Ensure column takes full height */
 }
 
 /* Ensure the players grid inside the column can shrink and scroll correctly */
@@ -109,10 +110,11 @@
   background-color: var(--neutral-2) !important;
   border: 1px solid var(--primary-color-medium) !important;
   border-radius: var(--border-radius) !important;
-  min-height: 300px;
+  height: 100%; /* Extend to full height */
   display: flex;
   align-items: center;
   justify-content: center;
+  flex: 1; /* Allow empty card to fill remaining space */
 }
 
 .favourites-empty-card .ant-card-body {
@@ -124,6 +126,14 @@
 }
 
 .favourites-empty-card .ant-empty-description {
+  color: var(--primary-color-text) !important;
+}
+
+.favourites-empty-card .empty-text {
+  color: var(--primary-color-text) !important;
+}
+
+.favourites-empty-card .text-base {
   color: var(--primary-color-text) !important;
 }
 
@@ -187,6 +197,20 @@
 }
 .favourite-player-meta .meta-most-played {
   opacity: 0.9;
+}
+
+.favourite-player-meta .meta-total-encounters {
+  opacity: 0.9;
+}
+
+/* Rank placeholder styling */
+.rank-image-placeholder {
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.rank-image-placeholder:hover {
+  background-color: var(--neutral-4) !important;
+  border-color: var(--primary-color-light) !important;
 }
 
 /* Top picks and role distribution styles */
