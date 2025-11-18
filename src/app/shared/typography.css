@@ -1,5 +1,16 @@
+/* Register Refrigerator Deluxe Heavy if installed locally
+   To bundle a webfont file, place it under src/assets/fonts and update URLs accordingly.
+   Using only local() here avoids build errors when the files are not present. */
+@font-face {
+  font-family: 'Refrigerator Deluxe Heavy';
+  src: local('Refrigerator Deluxe Heavy'), local('RefrigeratorDeluxe-Heavy');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
-  --font-family: 'Big Noodle Titling', sans-serif;
+  --font-family: 'Refrigerator Deluxe Heavy', 'Big Noodle Titling', 'Roboto', sans-serif;
   --font-size: 16px;
   --font-weight: 400;
 }
@@ -10,7 +21,12 @@
 }
 
 .has-font-family-default {
-  font-family: 'Big Noodle Titling', sans-serif;
+  font-family: var(--font-family);
+}
+
+/* Apply default font globally */
+body {
+  font-family: var(--font-family);
 }
 
 /* Margin utility classes commonly used with typography */
@@ -46,8 +62,4 @@
 
 .font-bold {
   font-weight: bold;
-}
-
-.has-text-primary-color {
-  color: var(--primary-color-text);
 }

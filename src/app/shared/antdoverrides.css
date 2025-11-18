@@ -88,12 +88,12 @@
 }
 
 /* Button Section */
-.ant-btn-variant-outlined.ant-btn-background-ghost:hover {
+.ant-btn-variant-outlined.ant-btn-background-ghost:hover:not(:disabled) {
   background-color: var(--primary-color) !important;
   color: var(--primary-color-text) !important;
 }
 
-.ant-btn-color-primary.ant-btn-background-ghost {
+.ant-btn-color-primary.ant-btn-background-ghost:not(:disabled) {
   color: var(--primary-color) !important;
   border-color: var(--primary-color) !important;
 }

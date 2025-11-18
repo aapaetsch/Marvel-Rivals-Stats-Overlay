@@ -1,0 +1,29 @@
+/* Switch/Toggle Styles for Modern Tabbed Settings */
+
+/* Disabled switch styles for all themes */
+.ant-switch:disabled,
+.ant-switch[disabled] {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+}
+
+.ant-switch:disabled:hover,
+.ant-switch[disabled]:hover {
+  cursor: not-allowed !important;
+}
+
+/* Theme-aware disabled switch styles */
+[data-theme="light"] .ant-switch:disabled,
+[data-theme="light"] .ant-switch[disabled] {
+  background-color: var(--gray-3, #f5f5f5) !important;
+}
+
+[data-theme="dark"] .ant-switch:disabled,
+[data-theme="dark"] .ant-switch[disabled] {
+  background-color: var(--gray-9, #434343) !important;
+}
+
+[data-theme="minimalistic-black"] .ant-switch:disabled,
+[data-theme="minimalistic-black"] .ant-switch[disabled] {
+  background-color: var(--neutral-0, #181818) !important;
+}
