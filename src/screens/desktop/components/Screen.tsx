@@ -22,6 +22,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { MatchOutcome } from "../../background/types/matchStatsTypes";
 import React, { useEffect } from "react";
 import { isDev } from "lib/utils"; // Import isDev utility
+import { HorizontalAdPlaceholder } from "./HorizontalAdPlaceholder";
 
 // Import Ant Design styles
 import 'antd/dist/reset.css';
@@ -30,7 +31,7 @@ import PlayerStatsTab from "./playerStatsTab/PlayerStatsTab";
 import { Form, Button } from 'antd'; // Import Form and Button
 import { updateSettings, OverlaySettings } from 'features/appSettings/appSettingsSlice'; // Import updateSettings and OverlaySettings type
 import { defaultOverlayWindowPositions } from './settings/OverlaySettings'; // Import defaults if needed for reset
-import Layout, { Content } from "antd/es/layout/layout";
+import Layout, { Content, Footer } from "antd/es/layout/layout";
 import DevPlayground from "./dev/DevPlayground";
 import Sider from "antd/es/layout/Sider";
 
@@ -193,62 +194,69 @@ const Screen = () => {
   return (
   <div>
     <DesktopHeader />
-    <Layout style={{ minHeight: '100vh', paddingTop: '2.5rem' }}>
+    <Layout style={{ minHeight: 'calc(100vh - 2.5rem)', paddingTop: '2.5rem' }}>
       <Sider collapsible collapsed={isCollapsed} onCollapse={(value) => setCollapsed(value)} >
         <Menu />
       </Sider>
-      <Content>
-        <Form 
-            form={settingsForm} 
-            onValuesChange={(changedValues, allValues) => {
-              // Log what changed for debugging
-              const changedKeys = Object.keys(changedValues);
-              console.log('Form value changed:', changedKeys);
-              
-              // Update Redux immediately when any value changes
-              dispatch(updateSettings(allValues));
-              
-              // Skip notification for color values (they'll be handled by the color picker component)
-              const colorPickerFields = [
-                'playerStatsFontColor', 'teammateBorderColor', 'playerStatsBackgroundColor', 'ultFullyChargedBorderColor',
-                'allySwapColor', 'enemySwapColor', 'swapScreenBackgroundColor',
-                'yourFinalHitsColor', 'opponentFinalHitsColor', 'finalHitsBackgroundColor'
-              ];
-              
-              const isColorChange = changedKeys.some(key => colorPickerFields.includes(key));
-              
-              // Show a subtle notification for better UX, but not for color changes
-              if (selectedKeys.includes(MenuKeys.SETTINGS) && !isColorChange) {
-                // Only show notification if we're on settings page
-                overwolf.notifications.showToastNotification({
-                  header: t("components.desktop.settings.saved-title", "Setting Updated"),
-                  texts: [t("components.desktop.settings.auto-save-message", "Your changes have been automatically saved")],
-                  attribution: "Rivals Overlay"
-                }, (result) => {
-                  if (!result.success) {
-                    console.error("Failed to show notification:", result.error);
-                  }
-                });
-              }
-            }}
-            className="desktop__main-form"
-            initialValues={appSettings} // Set initial values from Redux state
-          >
-            <div className="desktop__main-scroller">
-              {renderContent()}
-            </div>
-            
-            {/* Only show reset button since settings save automatically */}
-            {selectedKeys.includes(MenuKeys.SETTINGS) && (
-              <div className="desktop__main-footer settings-actions">
-                <Button type="default" danger onClick={handleResetOverlay}>
-                  {t("components.desktop.settings.reset", "Reset to Default")}
-                </Button>
+      <Layout>
+        <Content> {/* 120px for ad + 8px gap */}
+          <Form 
+              form={settingsForm} 
+              onValuesChange={(changedValues, allValues) => {
+                // Log what changed for debugging
+                const changedKeys = Object.keys(changedValues);
+                console.log('Form value changed:', changedKeys);
+                
+                // Update Redux immediately when any value changes
+                dispatch(updateSettings(allValues));
+                
+                // Skip notification for color values (they'll be handled by the color picker component)
+                const colorPickerFields = [
+                  'playerStatsFontColor', 'teammateBorderColor', 'playerStatsBackgroundColor', 'ultFullyChargedBorderColor',
+                  'allySwapColor', 'enemySwapColor', 'swapScreenBackgroundColor',
+                  'yourFinalHitsColor', 'opponentFinalHitsColor', 'finalHitsBackgroundColor'
+                ];
+                
+                const isColorChange = changedKeys.some(key => colorPickerFields.includes(key));
+                
+                // Show a subtle notification for better UX, but not for color changes
+                if (selectedKeys.includes(MenuKeys.SETTINGS) && !isColorChange) {
+                  // Only show notification if we're on settings page
+                  overwolf.notifications.showToastNotification({
+                    header: t("components.desktop.settings.saved-title", "Setting Updated"),
+                    texts: [t("components.desktop.settings.auto-save-message", "Your changes have been automatically saved")],
+                    attribution: "Rivals Overlay"
+                  }, (result) => {
+                    if (!result.success) {
+                      console.error("Failed to show notification:", result.error);
+                    }
+                  });
+                }
+              }}
+              className="desktop__main-form"
+              initialValues={appSettings} // Set initial values from Redux state
+            >
+              <div className="desktop__main-scroller">
+                {renderContent()}
               </div>
-            )}
-          </Form>
-          {/* Developer tools moved to separate window (Dev Window) */}
-      </Content>
+              
+              {/* Only show reset button since settings save automatically */}
+              {selectedKeys.includes(MenuKeys.SETTINGS) && (
+                <div className="desktop__main-footer settings-actions">
+                  <Button type="default" danger onClick={handleResetOverlay}>
+                    {t("components.desktop.settings.reset", "Reset to Default")}
+                  </Button>
+                </div>
+              )}
+            </Form>
+            {/* Developer tools moved to separate window (Dev Window) */}
+        </Content>
+        <Footer style={{ padding: 0, margin: 0, height: 'auto', marginLeft: '15px', paddingRight: '15px', background: 'transparent' }}>
+          <div style={{ marginBottom: '8px' }}>
+            <HorizontalAdPlaceholder height={120} />
+          </div>
+        </Footer>
+      </Layout>
     </Layout>                                                                                         
     </div>
   );

@@ -5,23 +5,23 @@
 }
 
 .match-history-filters .ant-form-item {
-  margin-bottom: 28px; /* increased spacing to avoid label overlap */
+  margin-bottom: 16px !important; /* Reduced from 28px for more compact layout */
 }
 
 .match-history-filters .ant-form-item-label {
-  padding-top: 8px !important;
-  padding-bottom: 0px !important; /* more room between label and control */
+  padding-top: 4px !important;
+  padding-bottom: 0px !important;
 }
 
 .match-history-filters .ant-form-item-label > label {
   color: var(--primary-color-text);
-  font-size: 13px;
+  font-size: 12px; /* Reduced from 13px */
   font-weight: 600;
 }
 
 /* Ensure the control area has a bit of breathing room from the label */
 .match-history-filters .ant-form-item-control {
-  margin-top: 6px;
+  margin-top: 4px; /* Reduced from 6px */
 }
 
 /* Increase vertical spacing for multi-line labels or controls to prevent overlap */
@@ -78,6 +78,7 @@
   background: transparent !important;
   color: var(--primary-color-text) !important;
   font-weight: 600;
+  margin-top: 0px !important; /* Reduced top margin */
 }
 
 .reset-button-outlined:hover {

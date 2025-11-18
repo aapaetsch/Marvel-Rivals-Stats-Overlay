@@ -358,76 +358,78 @@ const MatchHistory: React.FC = () => {
   
   return (
     <div className="match-history-container">
-      <Row gutter={16}>
-        <Col span={16} className="match-list-container">
-          <Card 
-            title={<Title level={4}>{t('components.desktop.match-history.title', 'Match History')}</Title>}
-            className="match-list-card"
-          >
-            {filteredMatches.length > 0 ? (
-              <div
-                id="scrollableDiv"
-                className="scrollable-match-list"
-              >
-                <InfiniteScroll
-                  dataLength={visibleMatches.length}
-                  next={loadMoreMatches}
-                  hasMore={hasMore}
-                  loader={
-                    <div className="loading-more">
-                      {t('components.desktop.match-history.loading', 'Loading more matches...')}
-                    </div>
-                  }
-                  endMessage={
-                    <div className="end-message">
-                      {t('components.desktop.match-history.end', 'No more matches to load')}
-                    </div>
-                  }
-                  scrollableTarget="scrollableDiv"
+      {/* Main Content Area */}
+      <div className="match-history-content">
+        {/* Header Card - moved to top of content grid */}
+        <div className="match-history-content-grid">
+          {/* Matches Column - takes up main space */}
+          <div className="match-history-matches-column">
+            <Card title={<Title level={4}>{t('components.desktop.match-history.title', 'Match History')}</Title>} className="match-list-card">
+              {filteredMatches.length > 0 ? (
+                <div
+                  id="scrollableDiv"
+                  className="scrollable-match-list"
                 >
-                  <List
-                    itemLayout="vertical"
-                    dataSource={visibleMatches}
-                    renderItem={match => (
-                      <List.Item className="match-list-item" key={match.matchId}>
-                        <MatchHistoryItem 
-                          match={match} 
-                          onClick={() => match.matchId ? handleMatchClick(match.matchId) : undefined} 
-                          expanded={expandedMatchId === match.matchId}
-                        />
-                      </List.Item>
-                    )}
+                  <InfiniteScroll
+                    dataLength={visibleMatches.length}
+                    next={loadMoreMatches}
+                    hasMore={hasMore}
+                    loader={
+                      <div className="loading-more">
+                        {t('components.desktop.match-history.loading', 'Loading more matches...')}
+                      </div>
+                    }
+                    endMessage={
+                      <div className="end-message">
+                        {t('components.desktop.match-history.end', 'No more matches to load')}
+                      </div>
+                    }
+                    scrollableTarget="scrollableDiv"
+                  >
+                    <List
+                      itemLayout="vertical"
+                      dataSource={visibleMatches}
+                      renderItem={match => (
+                        <List.Item className="match-list-item" key={match.matchId}>
+                          <MatchHistoryItem 
+                            match={match} 
+                            onClick={() => match.matchId ? handleMatchClick(match.matchId) : undefined} 
+                            expanded={expandedMatchId === match.matchId}
+                          />
+                        </List.Item>
+                      )}
+                    />
+                  </InfiniteScroll>
+                </div>
+              ) : (
+                <div className="empty-match-list">
+                  <Empty 
+                    description={t('components.desktop.match-history.no-matches', 'No matches found')} 
                   />
-                </InfiniteScroll>
-              </div>
-            ) : (
-              <div className="empty-match-list">
-                <Empty 
-                  description={t('components.desktop.match-history.no-matches', 'No matches found')} 
-                />
-              </div>
-            )}
-          </Card>
-        </Col>
-        
-        <Col span={8} className="sidebar-container">
-          <Card 
-            title={<Title level={4}>{t('components.desktop.match-history.filtersLabel', 'Filters')}</Title>}
-            className="filters-card"
-          >
-            <MatchHistoryFilters onFilterChange={handleFilterChange} />
-          </Card>
-          
-          <Card 
-            title={<Title level={4}>{t('components.desktop.match-history.ad', 'Advertisement')}</Title>}
-            className="ad-card"
-          >
-            <div className="ad-placeholder">
-              <Text>Ad Placeholder</Text>
+                </div>
+              )}
+            </Card>
+          </div>
+
+          {/* Right Ad Space - fixed width */}
+          <div className="match-history-sidebar">
+            <Card 
+              title={<Title level={4}>{t('components.desktop.match-history.filtersLabel', 'Filters')}</Title>}
+              className="filters-card"
+            >
+              <MatchHistoryFilters onFilterChange={handleFilterChange} />
+            </Card>
+            
+            <div className="match-history-ad-right">
+              <Card className="ad-placeholder" bordered={false}>
+                <Text type="secondary" className="text-center block">
+                  {t('components.desktop.match-history.ad', 'Advertisement')}
+                </Text>
+              </Card>
             </div>
-          </Card>
-        </Col>
-      </Row>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

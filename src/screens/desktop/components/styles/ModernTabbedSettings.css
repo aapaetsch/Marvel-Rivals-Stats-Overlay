@@ -5,7 +5,9 @@
   padding: 1rem;
   background: var(--background-color, #1a1a1a);
   color: var(--text-color, #ffffff);
-  min-height: 100vh;
+  height: calc(100vh - 120px); /* Fixed height to prevent full page scrolling */
+  display: flex;
+  flex-direction: column;
 }
 
 .modern-general-settings {
@@ -152,6 +154,10 @@
 .modern-settings-tabs {
   background: transparent;
   width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 /* Inherit the same styles as the original settings-tabs-sticky */
@@ -204,8 +210,15 @@
   padding: 0;
 }
 
+.modern-settings-tabs .ant-tabs-content-holder {
+  flex: 1;
+  overflow: hidden;
+}
+
 .modern-settings-tabs .ant-tabs-content {
+  height: 100%;
   overflow-y: auto;
+  padding-bottom: 60px; /* Space for ad at bottom */
 }
 
 .modern-settings-tabs .ant-tabs-tabpane {
@@ -259,6 +272,9 @@
 
 .settings-tab-content {
   max-width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  padding-bottom: 40px; /* Additional padding for scrolling */
 }
 
 .settings-section {
@@ -385,4 +401,30 @@
 
 .appearance-column {
   overflow-y: visible;
+}
+
+/* Settings-specific screen styles to prevent page-level scrolling */
+.desktop__main.has-settings .modern-tabbed-settings {
+  height: calc(100vh - 160px); /* Increased to account for navigation and header */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.desktop__main.has-settings .modern-settings-tabs {
+  height: 100%;
+  flex: 1;
+  overflow: hidden;
+}
+
+.desktop__main.has-settings .modern-settings-tabs .ant-tabs-content-holder {
+  flex: 1;
+  overflow: hidden;
+}
+
+.desktop__main.has-settings .modern-settings-tabs .ant-tabs-content {
+  height: calc(100vh - 320px); /* Fixed calculation for tab content scrolling */
+  overflow-y: auto;
+  padding-bottom: 160px; /* Increased space for ad at bottom and scrolling */
 }
