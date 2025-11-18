@@ -112,6 +112,11 @@
 
 .live-match-header .ant-segmented-item:hover {
   background: var(--neutral-4);
+  color: var(--text-on-primary) !important; 
+}
+
+.ant-segmented-item:hover .ant-segmented-item-icon {
+  color: var(--text-on-primary) !important;
 }
 
 /* When hovering an unselected segmented option, use the primary dark color for text and icons */
@@ -143,13 +148,20 @@
 
 /* The grid of cards should wrap but not cause the outer container to reposition; allow internal scroll */
 .match-card-grid {
+  /* Stack team sections vertically in the live match card view so teams appear one
+    above the other rather than side-by-side. */
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 12px;
-  justify-content: center; /* center cards within their container */
-  align-items: flex-start;
+  align-items: stretch; /* make team sections fill available width */
+  /* Let the grid grow to fill the available vertical space provided by parent
+    container (live-match-content / live-match-inner). Avoid hard-coded viewport
+    heights so cards reach the bottom of the area. Allow internal scrolling when
+    content overflows. */
+  flex: 1 1 auto;
+  min-height: 0; /* allow flex children to shrink properly
+             (prevents children from overflowing the parent) */
   overflow: auto;
-  max-height: 60vh;
 }
 
 /* Ensure team-section containers stretch so cards are visible */

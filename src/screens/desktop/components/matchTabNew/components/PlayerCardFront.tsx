@@ -1,7 +1,8 @@
-﻿import React from 'react';
+import React from 'react';
 import { PlayerCardData } from '../types/MatchCardTypes';
 import CharacterAvatar from './CharacterAvatar';
 import KDADisplay from './KDADisplay';
+import { isDev } from 'lib/utils';
 
 interface PlayerCardFrontProps {
   player: PlayerCardData;
@@ -93,7 +94,14 @@ const PlayerCardFront: React.FC<PlayerCardFrontProps> = ({ player }) => {
               </div>
             ))}
           </div>
-        </div>
+          </div>
+
+          {/* Dev-only: show character UID at the very bottom of the card face */}
+          {isDev && (
+            <div className="card-uid" title={`characterId: ${player.characterId}`}>
+              {player.characterId}
+            </div>
+          )}
       </div>
     </div>
   );

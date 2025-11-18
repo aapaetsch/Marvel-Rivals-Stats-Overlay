@@ -86,11 +86,11 @@ const LiveMatchCover: React.FC<LiveMatchCoverProps> = ({ hasAnyMatchData, onRefr
           )}
         </Empty>
       </div>
-      {hasAnyMatchData && (
+      {/* {hasAnyMatchData && (
         <div className="cover-notice">
           <p>{t('components.desktop.match-tab-new.cover-notice', 'Cards below show the final match statistics')}</p>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

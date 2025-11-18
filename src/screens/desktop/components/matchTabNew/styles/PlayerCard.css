@@ -548,3 +548,14 @@
   margin: 0;
   font-size: 10px;
 }
+
+/* Dev-only character UID shown at the bottom of card faces */
+.card-uid {
+  font-size: 8pt; /* user requested 8pt */
+  color: var(--neutral-text);
+  text-align: center;
+  padding-top: 6px;
+  /* push to bottom in the card's column layout */
+  margin-top: auto;
+  opacity: 0.95;
+}
