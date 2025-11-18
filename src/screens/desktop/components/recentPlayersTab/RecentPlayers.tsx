@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { List, Avatar, Card, Typography, Space, Button, Dropdown, Menu, Input, Tooltip, message, Badge, Alert, Switch } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -265,6 +265,7 @@ const RecentPlayerItem: React.FC<RecentPlayerItemProps> = ({ player, censor = fa
 const RecentPlayers: React.FC = () => {
   const { t } = useTranslation();
   const { players } = useSelector((state: RootReducer) => state.recentPlayersReducer);
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filter, setFilter] = useState<RecentPlayerTeamFilter>(RecentPlayerTeamFilter.All);
@@ -273,6 +274,17 @@ const RecentPlayers: React.FC = () => {
   // Infinite scroll visible item count
   const [visibleCount, setVisibleCount] = useState(30);
   const batchSize = 30;
+
+  // Control parent scroller to prevent full page scrolling
+  useEffect(() => {
+    const scroller = document.querySelector('.desktop__main-scroller');
+    if (scroller) {
+      scroller.classList.add('has-recent-players');
+      return () => {
+        scroller.classList.remove('has-recent-players');
+      };
+    }
+  }, []);
 
   const playersList = Object.values(players).map(p => p);
 
@@ -298,21 +310,96 @@ const RecentPlayers: React.FC = () => {
   });
 
   // Reset visible items on filter/sort/search changes
-  useEffect(() => { setVisibleCount(batchSize); }, [searchTerm, filter, sortBy]);
+  useEffect(() => { 
+    setVisibleCount(batchSize); 
+  }, [searchTerm, filter, sortBy]);
+  
   const visiblePlayers = sortedPlayers.slice(0, visibleCount);
 
-  // Simple window-based infinite scroll
+  // Simple scroll observer with debug logging
   useEffect(() => {
-    const onScroll = () => {
-      if (visibleCount >= sortedPlayers.length) return;
-      const nearBottom = window.innerHeight + window.scrollY >= (document.body.offsetHeight - 200);
-      if (nearBottom) {
+    if (visibleCount >= sortedPlayers.length) return;
+    
+    const container = scrollContainerRef.current;
+    if (!container) {
+      console.log('Scroll container not found');
+      return;
+    }
+    
+    console.log('Setting up scroll listener, container:', container);
+    console.log('Has scrollHeight:', container.scrollHeight, 'clientHeight:', container.clientHeight);
+    
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = container;
+      const scrollBottom = scrollHeight - (scrollTop + clientHeight);
+      
+      console.log('Scroll event:', { scrollTop, scrollHeight, clientHeight, scrollBottom, visibleCount });
+      
+      // Load more when within 150px of bottom
+      if (scrollBottom <= 150) {
+        console.log('Loading more players...');
         setVisibleCount(v => Math.min(v + batchSize, sortedPlayers.length));
       }
     };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [visibleCount, sortedPlayers.length]);
+    
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    
+    // Initial check
+    setTimeout(handleScroll, 100);
+    
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+    };
+  }, [visibleCount, sortedPlayers.length, batchSize]);
+
+  // Container-based infinite scroll for recent players
+  useEffect(() => {
+    if (visibleCount >= sortedPlayers.length) return;
+    
+    const onScroll = () => {
+      const container = scrollContainerRef.current;
+      if (!container) return;
+      
+      const { scrollTop, scrollHeight, clientHeight } = container;
+      
+      // Debug log to check scroll detection
+      console.log('Recent Players scroll:', { scrollTop, scrollHeight, clientHeight, visibleCount, totalPlayers: sortedPlayers.length });
+      
+      // Load more when we're within 200px of the bottom
+      if (scrollTop + clientHeight >= scrollHeight - 200) {
+        console.log('Loading more players...');
+        setVisibleCount(v => Math.min(v + batchSize, sortedPlayers.length));
+      }
+    };
+    
+    // Throttle scroll events to prevent performance issues
+    let timeoutId: number | null = null;
+    const throttledOnScroll = () => {
+      if (timeoutId) return;
+      timeoutId = window.setTimeout(() => {
+        onScroll();
+        timeoutId = null;
+      }, 16); // ~60fps
+    };
+    
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.addEventListener('scroll', throttledOnScroll, { passive: true });
+      
+      // Check initial scroll position
+      setTimeout(() => {
+        onScroll();
+        console.log('Initial scroll check completed');
+      }, 100);
+      
+      return () => {
+        container.removeEventListener('scroll', throttledOnScroll);
+        if (timeoutId) clearTimeout(timeoutId);
+      };
+    } else {
+      console.error('Recent players scroll container not found');
+    }
+  }, [visibleCount, sortedPlayers.length, batchSize]);
 
   const filterMenu = (
     <Menu onClick={(e) => setFilter(Number(e.key) as RecentPlayerTeamFilter)} selectedKeys={[filter.toString()]}>
@@ -375,7 +462,7 @@ const RecentPlayers: React.FC = () => {
         )}
         {sortedPlayers.length > 0 ? (
           /* Replace Ant List grid with a 3-column round-robin layout so each column grows independently */
-          <div className="recent-players-columns">
+          <div className="recent-players-columns" ref={scrollContainerRef}>
             {(() => {
               const cols: RecentPlayer[][] = [[], [], []];
               for (let i = 0; i < visiblePlayers.length; i++) {

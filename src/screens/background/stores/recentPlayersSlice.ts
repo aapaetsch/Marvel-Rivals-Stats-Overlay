@@ -2,6 +2,21 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { logger } from "lib/log";
 
 // Type definitions
+
+/**
+ * Character history entry for tracking individual character sessions
+ */
+export interface CharacterHistoryEntry {
+  characterName: string;
+  timeSpentMs: number;
+  kills: number;
+  deaths: number;
+  assists: number;
+  timestamp: number;
+  isAlly: boolean;
+  matchId: string | null;
+}
+
 export interface RecentPlayer {
   uid: string;
   name: string;
@@ -12,17 +27,25 @@ export interface RecentPlayer {
   teamsAgainstCount: number;
   teamsAgainstWins: number;
   teamsAgainstLosses: number;
-  charactersAsAlly: string[]; // Characters played as teammate
-  charactersAsOpponent: string[]; // Characters played as opponent
-  // Per-character W/L tracking
+  charactersAsAlly: string[]; // Characters played as teammate (legacy - for backwards compatibility)
+  charactersAsOpponent: string[]; // Characters played as opponent (legacy - for backwards compatibility)
+  // Per-character W/L tracking (legacy - for backwards compatibility)
   allyCharacterStats?: Record<string, { count: number; wins: number; losses: number }>;
   opponentCharacterStats?: Record<string, { count: number; wins: number; losses: number }>;
+  // New detailed character history with time-based tracking and per-character KDA
+  characterHistory?: CharacterHistoryEntry[];
   isFavorited: boolean;
   favoriteOrder: number; // For custom ordering of favorites (lower = higher priority)
 }
 
 export interface RecentPlayersState {
   players: Record<string, RecentPlayer>;
+}
+
+// Helper function to check if player should be filtered out
+function shouldFilterPlayer(name: string): boolean {
+  const filteredNames = ['Monster', 'ZombieAbilitySourceCharacter'];
+  return filteredNames.includes(name);
 }
 
 // Initial state
@@ -44,6 +67,12 @@ const recentPlayersSlice = createSlice({
       matchOutcome: string;
     }>) {
       const { uid, name, characterName, isTeammate, matchOutcome } = action.payload;
+      
+      // Skip tracking for filtered player names
+      if (shouldFilterPlayer(name)) {
+        return;
+      }
+      
       const now = Date.now();
       const isVictory = matchOutcome === "Victory";
       const isDefeat = matchOutcome === "Defeat";
@@ -156,16 +185,25 @@ const recentPlayersSlice = createSlice({
         name: string;
         characterName: string;
         isTeammate: boolean;
+        characterHistory?: CharacterHistoryEntry[];
       }>;
       matchOutcome: string;
+      matchId?: string | null;
     }>) {
-      const { players, matchOutcome } = action.payload;
+      const { players, matchOutcome, matchId } = action.payload;
       const isVictory = matchOutcome === "Victory";
       const isDefeat = matchOutcome === "Defeat";
+      const MAX_CHARACTER_HISTORY = 50; // Maximum number of character history entries per player
       
       // Process each player
       players.forEach(player => {
-        const { uid, name, characterName, isTeammate } = player;
+        const { uid, name, characterName, isTeammate, characterHistory } = player;
+        
+        // Skip tracking for filtered player names
+        if (shouldFilterPlayer(name)) {
+          return;
+        }
+        
         const now = Date.now();
         
         if (state.players[uid]) {
@@ -177,6 +215,7 @@ const recentPlayersSlice = createSlice({
           existingPlayer.charactersAsOpponent = existingPlayer.charactersAsOpponent || [];
           existingPlayer.allyCharacterStats = existingPlayer.allyCharacterStats || {};
           existingPlayer.opponentCharacterStats = existingPlayer.opponentCharacterStats || {};
+          existingPlayer.characterHistory = existingPlayer.characterHistory || [];
           
           // Update team counts and win/loss records
           if (isTeammate) {
@@ -189,14 +228,14 @@ const recentPlayersSlice = createSlice({
               existingPlayer.teamsWithLosses += 1;
             }
             
-            // Update characters played as teammate
+            // Update characters played as teammate (legacy)
             if (characterName && !existingPlayer.charactersAsAlly.includes(characterName)) {
               if (existingPlayer.charactersAsAlly.length >= 5) {
                 existingPlayer.charactersAsAlly.pop();
               }
               existingPlayer.charactersAsAlly.unshift(characterName);
             }
-            // Update per-character ally W/L stats
+            // Update per-character ally W/L stats (legacy)
             if (characterName) {
               const s = existingPlayer.allyCharacterStats![characterName] || { count: 0, wins: 0, losses: 0 };
               s.count += 1;
@@ -213,19 +252,30 @@ const recentPlayersSlice = createSlice({
               existingPlayer.teamsAgainstWins += 1; // We lost, they won
             }
             
-            // Update characters played as opponent
+            // Update characters played as opponent (legacy)
             if (characterName && !existingPlayer.charactersAsOpponent.includes(characterName)) {
               if (existingPlayer.charactersAsOpponent.length >= 5) {
                 existingPlayer.charactersAsOpponent.pop();
               }
               existingPlayer.charactersAsOpponent.unshift(characterName);
             }
-            // Update per-character opponent W/L stats (invert local outcome)
+            // Update per-character opponent W/L stats (legacy - invert local outcome)
             if (characterName) {
               const s = existingPlayer.opponentCharacterStats![characterName] || { count: 0, wins: 0, losses: 0 };
               s.count += 1;
               if (isVictory) s.losses += 1; else if (isDefeat) s.wins += 1;
               existingPlayer.opponentCharacterStats![characterName] = s;
+            }
+          }
+          
+          // Merge character history entries if provided
+          if (characterHistory && characterHistory.length > 0) {
+            existingPlayer.characterHistory.push(...characterHistory);
+            // Sort by timestamp descending (newest first)
+            existingPlayer.characterHistory.sort((a, b) => b.timestamp - a.timestamp);
+            // Trim to max length
+            if (existingPlayer.characterHistory.length > MAX_CHARACTER_HISTORY) {
+              existingPlayer.characterHistory = existingPlayer.characterHistory.slice(0, MAX_CHARACTER_HISTORY);
             }
           }
 
@@ -247,6 +297,7 @@ const recentPlayersSlice = createSlice({
             charactersAsOpponent: !isTeammate && characterName ? [characterName] : [],
             allyCharacterStats: isTeammate && characterName ? { [characterName]: { count: 1, wins: isVictory ? 1 : 0, losses: isDefeat ? 1 : 0 } } : {},
             opponentCharacterStats: !isTeammate && characterName ? { [characterName]: { count: 1, wins: isDefeat ? 1 : 0, losses: isVictory ? 1 : 0 } } : {},
+            characterHistory: characterHistory ? [...characterHistory].sort((a, b) => b.timestamp - a.timestamp).slice(0, MAX_CHARACTER_HISTORY) : [],
             isFavorited: false,
             favoriteOrder: 0,
           };
@@ -257,6 +308,7 @@ const recentPlayersSlice = createSlice({
         {
           event: "add_recent_players_from_match",
           count: players.length,
+          matchId: matchId,
           timestamp: Date.now()
         },
         "recentPlayersSlice.ts",
@@ -343,7 +395,12 @@ const recentPlayersSlice = createSlice({
       }
     },
     
-    // Trim players to max limit (keeping favorites)
+    /**
+     * Trim the players list to a maximum number, prioritizing keeping favorited players
+     * @param state The current RecentPlayersState
+     * @param action The action payload containing maxPlayers
+     * @returns 
+     */
     trimToMaxPlayers(state, action: PayloadAction<{ maxPlayers: number }>) {
       const { maxPlayers } = action.payload;
       const allPlayers = Object.values(state.players);
@@ -390,6 +447,7 @@ const recentPlayersSlice = createSlice({
         p.charactersAsOpponent = p.charactersAsOpponent || [];
         p.allyCharacterStats = p.allyCharacterStats || {};
         p.opponentCharacterStats = p.opponentCharacterStats || {};
+        p.characterHistory = p.characterHistory || []; // Initialize new field
         p.teamsWithCount = Number(p.teamsWithCount || 0);
         p.teamsWithWins = Number(p.teamsWithWins || 0);
         p.teamsWithLosses = Number(p.teamsWithLosses || 0);
