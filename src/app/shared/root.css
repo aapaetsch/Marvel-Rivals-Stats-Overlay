@@ -48,14 +48,17 @@
   --status-disabled-color: #ff4d4f;
   --status-enabled-glow: rgba(82, 196, 26, 0.3);
   --status-disabled-glow: rgba(255, 77, 79, 0.3);
-  
+
+  /* Border radii */
   --border-radius-small: 4px;
   --border-radius: 6px;
   --border-radius-large: 8px;
 
+  /* Match table colors */
   --match-table-row-team: 136, 167, 254;
   --match-table-row-oponent: 138, 68, 51;
 
+  /* Switch colors */
   --ant-switch-handle: #ffffff;
   --ant-switch-handle-checked: #ffffff;
 
@@ -72,6 +75,23 @@
 
   /* Input background */
   --input-bg: #2a2a2a;
+}
+
+/* Global styles to prevent page-level scrolling */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  overflow: hidden; /* Prevent html/body from scrolling */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+main, #root {
+  height: 100vh;
+  overflow: hidden;
 }
 
 @import url('./themes.css');

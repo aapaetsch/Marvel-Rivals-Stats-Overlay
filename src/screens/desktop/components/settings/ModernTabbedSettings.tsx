@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Tabs, Form, FormInstance, Alert, Typography, Badge } from 'antd';
+// ... existing imports ...
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from 'app/shared/store';
@@ -44,6 +45,26 @@ const ModernTabbedSettings: React.FC<ModernTabbedSettingsProps> = ({ form: paren
       ...appSettings,
     });
   }, [appSettings, form]);
+
+  // Control settings page scrolling
+  useEffect(() => {
+    const mainElement = document.querySelector('.desktop__main');
+    const scroller = document.querySelector('.desktop__main-scroller');
+    if (mainElement) {
+      mainElement.classList.add('has-settings');
+    }
+    if (scroller) {
+      scroller.classList.add('has-settings');
+    }
+    return () => {
+      if (mainElement) {
+        mainElement.classList.remove('has-settings');
+      }
+      if (scroller) {
+        scroller.classList.remove('has-settings');
+      }
+    };
+  }, []);
 
   // Helper function to enable drag mode for a window
   const enableDragMode = async (windowName: string) => {

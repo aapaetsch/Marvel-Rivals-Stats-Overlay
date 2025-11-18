@@ -1,0 +1,64 @@
+/* HorizontalAdPlaceholder.css - Styles for the horizontal advertisement placeholder */
+
+.horizontal-ad-placeholder {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  background-color: var(--background-color);
+  border-top: 1px solid var(--neutral-3);
+}
+
+.horizontal-ad-placeholder .ad-placeholder {
+  background-color: var(--neutral-3) !important;
+  border: 2px dashed var(--primary-color-medium) !important;
+  border-radius: var(--border-radius) !important;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  opacity: 0.6;
+  transition: opacity 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.horizontal-ad-placeholder .ad-placeholder:hover {
+  opacity: 0.8;
+  background-color: var(--neutral-4) !important;
+  border-color: var(--primary-color-light) !important;
+}
+
+.horizontal-ad-placeholder .ad-placeholder .ant-card-body {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem !important;
+}
+
+.horizontal-ad-placeholder .text-center {
+  text-align: center;
+}
+
+.horizontal-ad-placeholder .block {
+  display: block;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .horizontal-ad-placeholder {
+    padding: 0.75rem 0;
+  }
+  
+  .horizontal-ad-placeholder .ad-placeholder .ant-card-body {
+    padding: 1.5rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .horizontal-ad-placeholder {
+    padding: 0.5rem 0;
+  }
+  
+  .horizontal-ad-placeholder .ad-placeholder .ant-card-body {
+    padding: 1rem !important;
+  }
+}

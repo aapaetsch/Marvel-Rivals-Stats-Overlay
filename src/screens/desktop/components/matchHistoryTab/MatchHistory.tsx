@@ -1,19 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { List, Avatar, Row, Col, Card, Typography, Tag, Badge, Space, Collapse, Empty, Divider } from 'antd';
+import React, { useState, useEffect, useMemo } from 'react';
+import { List, Avatar, Row, Col, Card, Typography, Empty, Tooltip } from 'antd';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { RootReducer } from 'app/shared/rootReducer';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { getCharacterIconPath, CharacterName } from 'lib/characterIcons';
+import { getCharacterDefaultIconPath } from 'lib/characterIcons';
+import Tag from 'components/Tag';
+import { TagType } from 'components/Tag/TagTypes';
 import { icons } from 'components';
-import { MatchStatsState, MatchOutcome, PlayerStats } from '../../../background/types/matchStatsTypes';
+import { MatchStatsState } from '../../../background/types/matchStatsTypes';
 import MatchHistoryFilters from './MatchHistoryFilters';
 import MatchDetailView from './MatchDetailView';
+import { matchHistoryTestData } from './matchHistoryTestData';
 import '../styles/MatchHistory.css';
 
 const { Title, Text } = Typography;
-const { Panel } = Collapse;
-
 interface MatchHistoryItemProps {
   match: MatchStatsState;
   onClick: () => void;
@@ -21,7 +22,6 @@ interface MatchHistoryItemProps {
 }
 
 const MatchHistoryItem: React.FC<MatchHistoryItemProps> = ({ match, onClick, expanded }) => {
-  const { t } = useTranslation();
   
   // Format match duration
   const formatDuration = (start: number | undefined | null, end: number | undefined | null) => {
@@ -31,7 +31,6 @@ const MatchHistoryItem: React.FC<MatchHistoryItemProps> = ({ match, onClick, exp
     const seconds = duration % 60;
     return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
-
   // Find local player in the match
   const localPlayer = match.players ? Object.values(match.players).find((player: any) => player.isLocal) : null;
   
@@ -43,7 +42,101 @@ const MatchHistoryItem: React.FC<MatchHistoryItemProps> = ({ match, onClick, exp
   const kda = ((kills + assists) / (deaths || 1)).toFixed(2);
   
   // Get character icon for the local player
-  const characterIcon = localPlayer?.characterName ? getCharacterIconPath(localPlayer.characterName) : null;
+  const characterIcon = localPlayer?.characterName ? getCharacterDefaultIconPath(localPlayer.characterName) : null;
+  
+  // Render the performance chart component
+  const renderPerformanceChart = () => {
+    const damageDealt = localPlayer?.damageDealt || 0;
+    const damageBlocked = localPlayer?.damageBlocked || 0;
+    const totalHeal = localPlayer?.totalHeal || 0;
+    
+    const maxValue = Math.max(damageDealt, damageBlocked, totalHeal);
+    const scale = maxValue > 0 ? 100 / maxValue : 0;
+    
+    return (
+      <div className="performance-chart">
+        <div className="chart-bar">
+          <div className="bar-label">DMG</div>
+          <div className="bar-container">
+            <div 
+              className="bar damage" 
+              style={{ width: `${damageDealt * scale}%` }}
+              title={`Damage: ${damageDealt.toLocaleString()}`}
+            ></div>
+          </div>
+        </div>
+        <div className="chart-bar">
+          <div className="bar-label">BLK</div>
+          <div className="bar-container">
+            <div 
+              className="bar block" 
+              style={{ width: `${damageBlocked * scale}%` }}
+              title={`Blocked: ${damageBlocked.toLocaleString()}`}
+            ></div>
+          </div>
+        </div>
+        <div className="chart-bar">
+          <div className="bar-label">HEAL</div>
+          <div className="bar-container">
+            <div 
+              className="bar heal" 
+              style={{ width: `${totalHeal * scale}%` }}
+              title={`Healing: ${totalHeal.toLocaleString()}`}
+            ></div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+  
+  // Render team composition for the match
+  const renderTeamComposition = () => {
+    const teammates = Object.values(match.players || {})
+      .filter(p => p.isTeammate)
+      .map(p => ({
+        name: p.name,
+        character: p.characterName,
+        icon: getCharacterDefaultIconPath(p.characterName)
+      }));
+      
+    const opponents = Object.values(match.players || {})
+      .filter(p => !p.isTeammate)
+      .map(p => ({
+        name: p.name,
+        character: p.characterName,
+        icon: getCharacterDefaultIconPath(p.characterName)
+      }));
+      
+    return (
+      <div className="team-composition">
+        <div className="team allies">
+          {teammates.map((player, idx) => (
+            <Tooltip key={idx} title={`${player.name} (${player.character})`}>
+              <Avatar
+                size={40}
+                shape="square"
+                src={player.icon}
+                className={`team-avatar team-avatar--ally`}
+              />
+            </Tooltip>
+          ))}
+        </div>
+        <div className="team-separator">VS</div>
+        <div className="team opponents">
+          {opponents.map((player, idx) => (
+            <Tooltip key={idx} title={`${player.name} (${player.character})`}>
+              <Avatar
+                size={40}
+                shape="square"
+                src={player.icon}
+                className={`team-avatar team-avatar--opponent`}
+              />
+            </Tooltip>
+          ))}
+        </div>
+      </div>
+    );
+  };
   
   return (
     <div className={`match-history-item ${expanded ? 'expanded' : ''}`} onClick={onClick}>
@@ -94,61 +187,73 @@ const MatchHistoryItem: React.FC<MatchHistoryItemProps> = ({ match, onClick, exp
         </Col>
         
         <Col span={4} className="rank-change">
-          <Tag color={match.outcome === 'Victory' ? 'green' : match.outcome === 'Defeat' ? 'red' : 'blue'}>
-            +25
-          </Tag>
+          {/* rank-change intentionally left blank (no +25 display) */}
         </Col>
         
         <Col span={4} className="match-outcome">
-          <Badge 
-            status={match.outcome === 'Victory' ? 'success' : match.outcome === 'Defeat' ? 'error' : 'processing'} 
-            text={<Text className={`outcome-text ${match.outcome?.toLowerCase()}`}>{match.outcome || 'Unknown'}</Text>}
-          />
+          <Tag
+            size="small"
+            type={match.outcome === 'Victory' ? TagType.Success : match.outcome === 'Defeat' ? TagType.Danger : TagType.Info}
+            aria-label={`Match outcome: ${match.outcome || 'Unknown'}`}
+            icon={match.outcome === 'Victory' ? icons.successTag : match.outcome === 'Defeat' ? icons.crossMark : undefined}
+          >
+            {match.outcome || 'Unknown'}
+          </Tag>
         </Col>
       </Row>
-
       <Row className="match-history-item-stats">
+        {/* Inline stats group: K / D / A / FH */}
         <Col span={3} className="stat-item">
-          <div className="stat-icon icon-header">
-            <span className="icon-wrapper">{icons.finalHits}</span>
-          </div>
-          <Text className="stat-value">{localPlayer?.finalHits || 0}</Text>
-        </Col>
-        
-        <Col span={3} className="stat-item">
-          <div className="stat-icon icon-header">
-            <span className="icon-wrapper">{icons.kill}</span>
-          </div>
+          <div className="stat-label-text">Kills</div>
           <Text className="stat-value">{kills}</Text>
         </Col>
-        
+
         <Col span={3} className="stat-item">
-          <div className="stat-icon icon-header">
-            <span className="icon-wrapper">{icons.death}</span>
-          </div>
+          <div className="stat-label-text">Deaths</div>
           <Text className="stat-value">{deaths}</Text>
         </Col>
-        
+
         <Col span={3} className="stat-item">
-          <div className="stat-icon icon-header">
-            <span className="icon-wrapper">{icons.assist}</span>
-          </div>
+          <div className="stat-label-text">Assists</div>
           <Text className="stat-value">{assists}</Text>
         </Col>
-        
-        <Col span={6} className="stat-item">
-          <Text className="stat-label">KDR:</Text>
-          <Text className="stat-value">{kdr}</Text>
+
+        <Col span={3} className="stat-item">
+          <div className="stat-label-text">Final Hits</div>
+          <Text className="stat-value">{localPlayer?.finalHits || 0}</Text>
         </Col>
-        
-        <Col span={6} className="stat-item">
-          <Text className="stat-label">KDA:</Text>
-          <Text className="stat-value">{kda}</Text>
+
+        {/* KD/KDA stacked column on the right of the above stats */}
+        <Col span={4} className="kd-column">
+          <div className="kd-row">
+            <span className="icon-wrapper icon-kd">{icons.kd}</span>
+            <span className="kd-value">{kdr}</span>
+          </div>
+          <div className="kda-row">
+            <span className="icon-wrapper icon-kda">{icons.kda}</span>
+            <span className="kda-value">{kda}</span>
+          </div>
+        </Col>
+      </Row>
+      
+      {/* Performance Chart - show only when expanded to hide DMG/BLK/HEAL on list items */}
+      {false && (
+        <Row>
+          <Col span={24}>
+            {renderPerformanceChart()}
+          </Col>
+        </Row>
+      )}
+      
+      {/* Team Composition */}
+      <Row>
+        <Col span={24}>
+          {renderTeamComposition()}
         </Col>
       </Row>
       
       {expanded && (
-        <div className="match-details-container">
+        <div className="match-details-container" onClick={(e) => e.stopPropagation()}>
           <MatchDetailView matchData={match} />
         </div>
       )}
@@ -159,6 +264,13 @@ const MatchHistoryItem: React.FC<MatchHistoryItemProps> = ({ match, onClick, exp
 const MatchHistory: React.FC = () => {
   const { t } = useTranslation();
   const { matchHistory } = useSelector((state: RootReducer) => state.matchStatsReducer);
+  const shouldUseTestData = useSelector((state: RootReducer) => state.appSettingsReducer.settings.useMatchHistoryTestData);
+  const activeMatches = useMemo<MatchStatsState[]>(() => {
+    if (shouldUseTestData) {
+      return matchHistoryTestData;
+    }
+    return matchHistory || [];
+  }, [shouldUseTestData, matchHistory]);
   
   // State for managing match list and UI
   const [filteredMatches, setFilteredMatches] = useState<MatchStatsState[]>([]);
@@ -188,7 +300,7 @@ const MatchHistory: React.FC = () => {
   
   // Apply filters to match history
   useEffect(() => {
-    let results = [...matchHistory];
+    let results = [...activeMatches];
     
     // Apply filters
     if (filters.gameType) {
@@ -218,7 +330,7 @@ const MatchHistory: React.FC = () => {
     setFilteredMatches(results);
     setVisibleMatches(results.slice(0, PAGE_SIZE));
     setHasMore(results.length > PAGE_SIZE);
-  }, [matchHistory, filters]);
+  }, [activeMatches, filters]);
   
   // Load more matches for infinite scroll
   const loadMoreMatches = () => {
@@ -246,77 +358,79 @@ const MatchHistory: React.FC = () => {
   
   return (
     <div className="match-history-container">
-      <Row gutter={16}>
-        <Col span={16} className="match-list-container">
-          <Card 
-            title={<Title level={4}>{t('components.desktop.match-history.title', 'Match History')}</Title>}
-            className="match-list-card"
-          >
-            {filteredMatches.length > 0 ? (
-              <div
-                id="scrollableDiv"
-                className="scrollable-match-list"
-              >
-                <InfiniteScroll
-                  dataLength={visibleMatches.length}
-                  next={loadMoreMatches}
-                  hasMore={hasMore}
-                  loader={
-                    <div className="loading-more">
-                      {t('components.desktop.match-history.loading', 'Loading more matches...')}
-                    </div>
-                  }
-                  endMessage={
-                    <div className="end-message">
-                      {t('components.desktop.match-history.end', 'No more matches to load')}
-                    </div>
-                  }
-                  scrollableTarget="scrollableDiv"
+      {/* Main Content Area */}
+      <div className="match-history-content">
+        {/* Header Card - moved to top of content grid */}
+        <div className="match-history-content-grid">
+          {/* Matches Column - takes up main space */}
+          <div className="match-history-matches-column">
+            <Card title={<Title level={4}>{t('components.desktop.match-history.title', 'Match History')}</Title>} className="match-list-card">
+              {filteredMatches.length > 0 ? (
+                <div
+                  id="scrollableDiv"
+                  className="scrollable-match-list"
                 >
-                  <List
-                    itemLayout="vertical"
-                    dataSource={visibleMatches}
-                    renderItem={match => (
-                      <List.Item className="match-list-item" key={match.matchId}>
-                        <MatchHistoryItem 
-                          match={match} 
-                          onClick={() => match.matchId ? handleMatchClick(match.matchId) : undefined} 
-                          expanded={expandedMatchId === match.matchId}
-                        />
-                      </List.Item>
-                    )}
+                  <InfiniteScroll
+                    dataLength={visibleMatches.length}
+                    next={loadMoreMatches}
+                    hasMore={hasMore}
+                    loader={
+                      <div className="loading-more">
+                        {t('components.desktop.match-history.loading', 'Loading more matches...')}
+                      </div>
+                    }
+                    endMessage={
+                      <div className="end-message">
+                        {t('components.desktop.match-history.end', 'No more matches to load')}
+                      </div>
+                    }
+                    scrollableTarget="scrollableDiv"
+                  >
+                    <List
+                      itemLayout="vertical"
+                      dataSource={visibleMatches}
+                      renderItem={match => (
+                        <List.Item className="match-list-item" key={match.matchId}>
+                          <MatchHistoryItem 
+                            match={match} 
+                            onClick={() => match.matchId ? handleMatchClick(match.matchId) : undefined} 
+                            expanded={expandedMatchId === match.matchId}
+                          />
+                        </List.Item>
+                      )}
+                    />
+                  </InfiniteScroll>
+                </div>
+              ) : (
+                <div className="empty-match-list">
+                  <Empty 
+                    description={t('components.desktop.match-history.no-matches', 'No matches found')} 
                   />
-                </InfiniteScroll>
-              </div>
-            ) : (
-              <Empty 
-                description={t('components.desktop.match-history.no-matches', 'No matches found')} 
-                className="empty-match-list"
-              />
-            )}
-          </Card>
-        </Col>
-        
-        <Col span={8} className="sidebar-container">
-          <Card 
-            title={<Title level={4}>{t('components.desktop.match-history.filters', 'Filters')}</Title>}
-            className="filters-card"
-          >
-            <MatchHistoryFilters onFilterChange={handleFilterChange} />
-          </Card>
-          
-          <Card 
-            title={<Title level={4}>{t('components.desktop.match-history.ad', 'Advertisement')}</Title>}
-            className="ad-card"
-          >
-            <div className="ad-placeholder">
-              <Text>Ad Placeholder</Text>
+                </div>
+              )}
+            </Card>
+          </div>
+
+          {/* Right Ad Space - fixed width */}
+          <div className="match-history-sidebar">
+            <Card 
+              title={<Title level={4}>{t('components.desktop.match-history.filtersLabel', 'Filters')}</Title>}
+              className="filters-card"
+            >
+              <MatchHistoryFilters onFilterChange={handleFilterChange} />
+            </Card>
+            
+            <div className="match-history-ad-right">
+              <Card className="ad-placeholder" bordered={false}>
+                <Text type="secondary" className="text-center block">
+                  {t('components.desktop.match-history.ad', 'Advertisement')}
+                </Text>
+              </Card>
             </div>
-          </Card>
-        </Col>
-      </Row>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
-
 export default MatchHistory;

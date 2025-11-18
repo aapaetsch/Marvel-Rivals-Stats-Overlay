@@ -1,5 +1,22 @@
 /* Desktop application themes */
 
+/* Global styles to prevent page-level scrolling */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  overflow: hidden; /* Prevent html/body from scrolling */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+main, #root {
+  height: 100vh;
+  overflow: hidden;
+}
+
 /* Base variables for all themes */
 :root {
   /* Common border radius */

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { Card, Typography, Empty, Space, Statistic, Row, Col } from 'antd';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +9,7 @@ import FavouritePlayerCard from './FavouritePlayerCard';
 import './FavouritesPage.css';
 
 const { Title, Text } = Typography;
+
 /**
  * FavouritesPage displays all favourited players with their stats,
  * including a sticky header, aggregated stats at the top, and space for ads
@@ -16,6 +17,17 @@ const { Title, Text } = Typography;
 const FavouritesPage: React.FC = () => {
   const { t } = useTranslation();
   const { players } = useSelector((state: RootReducer) => state.recentPlayersReducer);
+
+  // Control parent scroller to prevent full page scrolling
+  useEffect(() => {
+    const scroller = document.querySelector('.desktop__main-scroller');
+    if (scroller) {
+      scroller.classList.add('has-favorites');
+      return () => {
+        scroller.classList.remove('has-favorites');
+      };
+    }
+  }, []);
 
   // Filter for only favorited players and sort by favoriteOrder (newest first)
   const favoritedPlayers = useMemo(() => {

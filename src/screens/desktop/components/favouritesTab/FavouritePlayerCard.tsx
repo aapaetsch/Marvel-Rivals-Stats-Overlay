@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import {
   UserOutlined,
   TrophyOutlined,
-  TeamOutlined,
 } from '@ant-design/icons';
 import { getCharacterClass, CharacterClass, getClassImagePath } from 'lib/characterClassIcons';
 import type { RecentPlayer } from '../../../background/stores/recentPlayersSlice';
@@ -125,7 +124,7 @@ const FavouritePlayerCard: React.FC<FavouritePlayerCardProps> = ({ player }) => 
 
   return (
     <Card className="favourite-player-card" bordered={false}>
-      {/* Header: Avatar, Player Name, and Total Encounters (aligned to same y) */}
+      {/* Header: Avatar, Player Name, and Rank Image placeholder */}
       <div className="favourite-player-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <Avatar
@@ -150,20 +149,30 @@ const FavouritePlayerCard: React.FC<FavouritePlayerCardProps> = ({ player }) => 
                   {t('components.desktop.favourites.most-played', 'Most played')}: {mostUsedCharacter}
                 </Text>
               )}
+              <Text className="meta-text meta-total-encounters">
+                {t('components.desktop.favourites.total-encounters', 'Total Encounters')}: {totalGames}
+              </Text>
             </div>
           </div>
         </div>
 
-        {/* Total Encounters - title above the numeric counter */}
-        <div style={{ textAlign: 'right', minWidth: 120 }}>
-          <Text className="total-encounters-title has-text-default-color" type="secondary" style={{ display: 'block', marginBottom: 6 }}>
-            {t('components.desktop.favourites.total-encounters', 'Total Encounters')}
-          </Text>
-          <Statistic
-            value={totalGames}
-            prefix={<TeamOutlined />}
-            valueStyle={{ fontSize: '1.25rem' }}
-          />
+        {/* Rank image placeholder */}
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <div 
+            className="rank-image-placeholder"
+            style={{
+              width: 50,
+              height: 50,
+              backgroundColor: 'var(--neutral-3)',
+              border: '2px dashed var(--primary-color-medium)',
+              borderRadius: '6px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <UserOutlined style={{ color: 'var(--primary-color-medium)', fontSize: 20 }} />
+          </div>
         </div>
       </div>
 

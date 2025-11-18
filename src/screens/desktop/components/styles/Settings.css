@@ -1,10 +1,9 @@
 /* Settings General */
 .settings-container {
   width: 100%;
-  /* Removed min/max height, using flexbox now */
-  display: flex; /* Use flexbox */
-  flex-direction: column; /* Stack children vertically */
-  height: calc(100vh - 100px); /* Adjust height based on header/other elements, example value */
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   padding-top: 20px;
   padding-bottom: 20px;
   padding-left: 20px;
@@ -165,6 +164,7 @@
   display: flex;
   gap: 24px;
   margin-top: 20px;
+  margin-bottom: 40px; /* Add bottom margin for scrolling */
 }
 
 .settings-column {

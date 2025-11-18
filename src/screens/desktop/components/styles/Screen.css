@@ -18,7 +18,7 @@
   flex-direction: column;
   flex: 1;
   overflow: hidden;
-  height: calc(100vh - 2.5rem); /* Subtract header height */
+  min-height: 0;
 }
 
 .desktop__nav {
@@ -38,21 +38,46 @@
 
 .desktop__main {
   flex: 1;
-  overflow-y: hidden;
+  overflow: hidden; /* Prevent main from scrolling */
   padding: 16px;
-  padding-top: 2.5rem;
-  height: 100%;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .desktop__main-form {
   padding-left: 2rem;
   padding-right: 2rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .desktop__main-scroller {
-  max-height: 85vh;
+  flex: 1;
   overflow-y: auto;
+  min-height: 0;
+}
+
+/* Prevent parent scrolling on recent players page */
+.desktop__main-scroller.has-recent-players {
+  overflow-y: hidden;
+}
+
+/* Prevent parent scrolling on favorites page */
+.desktop__main-scroller.has-favorites {
+  overflow-y: hidden;
+}
+
+/* Prevent parent scrolling on settings page */
+.desktop__main.has-settings {
+  overflow: hidden;
+}
+
+.desktop__main-scroller.has-settings {
+  overflow-y: hidden;
 }
 
 .desktop__footer {
@@ -106,4 +131,26 @@
 .settings-form .ant-select-arrow,
 .settings-form .ant-input-number-handler {
   color: var(--primary-color-text) !important;
+}
+
+/* Footer styles for horizontal ad placeholder - positioned under main content only */
+.ant-layout-footer {
+  background-color: var(--background-color) !important;
+  border-top: none; /* No border since this is now part of the content area */
+}
+
+/* Ensure footer respects sidebar width and stays under main content */
+.ant-layout-sider + .ant-layout .ant-layout-footer {
+  margin-left: 80px; /* Default sidebar width when expanded */
+}
+
+.ant-layout-sider-collapsed + .ant-layout .ant-layout-footer {
+  margin-left: 80px; /* Default collapsed sidebar width */
+}
+
+/* Ensure content area has proper scrolling behavior */
+.ant-layout-content {
+  overflow-y: hidden;
+  max-height: 85vh;
+  margin-bottom: 0.25rem;
 }

@@ -324,6 +324,7 @@ const PlayerStatsSettings: React.FC<PlayerStatsSettingsProps> = ({ form }) => {
             </div>
           ))}
         </div>
+        <div style={{ height: '60px' }}></div> {/* Extra space for scrolling */}
       </div>
     </>
   );

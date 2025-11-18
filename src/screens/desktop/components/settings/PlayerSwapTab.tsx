@@ -43,11 +43,6 @@ const PlayerSwapTab: React.FC<PlayerSwapTabProps> = ({ form, onEditPositions, on
       }
     }
   };
-
-  const handleResetToDefaults = () => {
-    dispatch(updateSettings(playerSwapDefaults));
-    form.setFieldsValue(playerSwapDefaults);
-  };
   
   // Use positioning mode state from the Redux store
   const positioningModeOverlay = appSettings.positioningModeWindows?.[WINDOW_NAMES.CHARSWAPBAR] 
@@ -73,18 +68,6 @@ const PlayerSwapTab: React.FC<PlayerSwapTabProps> = ({ form, onEditPositions, on
           label="Enable Character Swap Window"
           formName="enableCharSwapWindow"
         />
-        
-        {/* Reset to Default Button */}
-        <Space style={{ marginTop: '12px' }}>
-          <Button 
-            type="default" 
-            icon={<ReloadOutlined />}
-            onClick={handleResetToDefaults}
-            size="small"
-          >
-            {t('components.desktop.settings.reset-to-default', 'Reset to Default')}
-          </Button>
-        </Space>
       </div>
       
       {!isPlayerSwapEnabled && (

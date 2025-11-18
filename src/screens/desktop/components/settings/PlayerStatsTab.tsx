@@ -63,11 +63,6 @@ const PlayerStatsTab: React.FC<PlayerStatsTabProps> = ({ form, onEditPositions, 
       }
     }
   };
-
-  const handleResetToDefaults = () => {
-    dispatch(updateSettings(playerStatsDefaults));
-    form.setFieldsValue(playerStatsDefaults);
-  };
   
   // Use positioning mode state from the Redux store
   const positioningModeOverlay = appSettings.positioningModeWindows?.[WINDOW_NAMES.INGAME] 
@@ -93,18 +88,6 @@ const PlayerStatsTab: React.FC<PlayerStatsTabProps> = ({ form, onEditPositions, 
           label="Enable Player Stats Window"
           formName="enablePlayerStatsWindow"
         />
-        
-        {/* Reset to Default Button */}
-        <Space style={{ marginTop: '12px' }}>
-          <Button 
-            type="default" 
-            icon={<ReloadOutlined />}
-            onClick={handleResetToDefaults}
-            size="small"
-          >
-            {t('components.desktop.settings.reset-to-default', 'Reset to Default')}
-          </Button>
-        </Space>
       </div>
       
       {!isPlayerStatsEnabled && (

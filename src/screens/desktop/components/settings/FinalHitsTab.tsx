@@ -43,11 +43,6 @@ const FinalHitsTab: React.FC<FinalHitsTabProps> = ({ form, onEditPositions, onSa
       }
     }
   };
-
-  const handleResetToDefaults = () => {
-    dispatch(updateSettings(finalHitsDefaults));
-    form.setFieldsValue(finalHitsDefaults);
-  };
   
   // Use positioning mode state from the Redux store
   const positioningModeOverlay = appSettings.positioningModeWindows?.[WINDOW_NAMES.FINALHITSBAR] 
@@ -73,18 +68,6 @@ const FinalHitsTab: React.FC<FinalHitsTabProps> = ({ form, onEditPositions, onSa
           label="Enable Final Hits Window"
           formName="enableFinalHitsWindow"
         />
-        
-        {/* Reset to Default Button */}
-        <Space style={{ marginTop: '12px' }}>
-          <Button 
-            type="default" 
-            icon={<ReloadOutlined />}
-            onClick={handleResetToDefaults}
-            size="small"
-          >
-            {t('components.desktop.settings.reset-to-default', 'Reset to Default')}
-          </Button>
-        </Space>
       </div>
       
       {!isFinalHitsEnabled && (

@@ -2,21 +2,34 @@
 
 .recent-players-container {
   width: 100%;
-  padding: 16px 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Prevent container from scrolling */
 }
 
 .recent-players-card {
   background-color: var(--neutral-2) !important;
   border: none !important; /* [#36] remove border around main page */
   border-radius: var(--border-radius) !important;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 600px;
+}
+
+.recent-players-card .ant-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* Allow flex child to shrink/grow */
+  overflow: hidden; /* Prevent body from scrolling */
 }
 
 .recent-players-card .ant-card-head {
   background-color: var(--header-dark);
   border-bottom: 1px solid var(--primary-color-medium);
-  position: sticky;
-  top: 0;
-  z-index: 5;
+  flex: 0 0 auto; /* Prevent header from shrinking */
 }
 
 .recent-players-card .ant-card-head-title {
@@ -27,13 +40,18 @@
   margin-top: 8px;
 }
 
-/* New 3-column vertical layout: render three independent columns that grow vertically.
-   Columns are left-to-right by row because we distribute players round-robin across columns. */
+/* New 3-column vertical layout with internal scrolling */
 .recent-players-columns {
   display: flex;
   gap: 12px;
   align-items: flex-start;
+  height: 100%;
+  max-height: calc(100vh - 250px); /* Constrain height to trigger scrolling */
+  overflow-y: auto; /* Only the columns container scrolls */
+  overflow-x: hidden; /* Prevent horizontal scroll */
+  padding-right: 8px; /* Space for scrollbar */
 }
+
 .recent-players-column {
   flex: 1 1 0;
   display: flex;
@@ -639,6 +657,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  height: 100%; /* Extend to full height */
+  flex: 1; /* Allow empty state to fill remaining space */
   padding: 48px 0;
 }
 
