@@ -199,9 +199,10 @@ const Screen = () => {
         <Menu />
       </Sider>
       <Layout>
-        <Content> {/* 120px for ad + 8px gap */}
+        <Content>
           <Form 
               form={settingsForm} 
+              className="desktop__main-form"
               onValuesChange={(changedValues, allValues) => {
                 // Log what changed for debugging
                 const changedKeys = Object.keys(changedValues);
@@ -232,15 +233,14 @@ const Screen = () => {
                     }
                   });
                 }
-              }}
-              className="desktop__main-form"
+                }}
               initialValues={appSettings} // Set initial values from Redux state
             >
-              <div className="desktop__main-scroller">
+              <div className={`desktop__main-scroller ${selectedKeys.includes(MenuKeys.SETTINGS) ? 'has-settings' : ''}`}>
                 {renderContent()}
               </div>
               
-              {/* Only show reset button since settings save automatically */}
+              {/* Only show reset button since settings save automatically - positioned within form */}
               {selectedKeys.includes(MenuKeys.SETTINGS) && (
                 <div className="desktop__main-footer settings-actions">
                   <Button type="default" danger onClick={handleResetOverlay}>
@@ -250,11 +250,14 @@ const Screen = () => {
               )}
             </Form>
             {/* Developer tools moved to separate window (Dev Window) */}
+            
+            {/* Horizontal ad positioned OUTSIDE form but with form context for styling */}
+            <div className="desktop__main-ad">
+                <HorizontalAdPlaceholder height={130} />
+            </div>
         </Content>
-        <Footer style={{ padding: 0, margin: 0, height: 'auto', marginLeft: '15px', paddingRight: '15px', background: 'transparent' }}>
-          <div style={{ marginBottom: '8px' }}>
-            <HorizontalAdPlaceholder height={120} />
-          </div>
+        <Footer style={{ padding: 0, margin: 0, height: '0', background: 'transparent' }}>
+          {/* Footer now empty - ad moved to main content area */}
         </Footer>
       </Layout>
     </Layout>                                                                                         

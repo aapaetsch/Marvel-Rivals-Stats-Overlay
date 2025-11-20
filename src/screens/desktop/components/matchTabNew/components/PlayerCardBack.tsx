@@ -2,6 +2,7 @@ import React from 'react';
 import { PlayerCardData } from '../types/MatchCardTypes';
 import CharacterAvatar from './CharacterAvatar';
 import KDADisplay from './KDADisplay';
+import { isDev } from 'lib/utils';
 
 interface PlayerCardBackProps {
   player: PlayerCardData;
@@ -90,6 +91,12 @@ const PlayerCardBack: React.FC<PlayerCardBackProps> = ({ player, allPlayers = []
       <div className="card-back-content">
         {renderFinalHitsBreakdown()}
       </div>
+      {/* Dev-only: show character UID at the bottom of the back face */}
+      {isDev && (
+        <div className="card-uid" title={`characterId: ${player.characterId}`}>
+          {player.characterId}
+        </div>
+      )}
     </div>
   );
 };

@@ -144,7 +144,7 @@
   display: flex;
   gap: 10px;
   margin-top: auto; /* Pushes actions to the bottom in flex column */
-  padding-top: 20px; /* Add space above the buttons */
+  padding: 20px 0 0.25rem 0; /* Add space above the buttons and 0.25rem below */
   justify-content: flex-end;
   flex-shrink: 0; /* Prevent actions area from shrinking */
 }

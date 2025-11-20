@@ -255,7 +255,20 @@
         "vs-opponent": "Vs Opponent",
         "top-picks": "Top Picks",
         "no-picks": "No character picks recorded",
-        "role-distribution": "Role Distribution"
+        "role-distribution": "Role Distribution",
+        "components": {
+          "ads": {
+            "house": {
+              "title": "Rivals Stats Pro",
+              "subtitle": "Track Your Performance & Improve Your Game",
+              "button": "Learn More",
+              "dev": "DEV",
+              "feature1": "Real-time Match Analytics",
+              "feature2": "Player Performance Tracking",
+              "feature3": "Strategic Insights"
+            }
+          }
+        }
       }
     }
   }

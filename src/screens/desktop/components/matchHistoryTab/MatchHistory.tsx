@@ -12,6 +12,7 @@ import { MatchStatsState } from '../../../background/types/matchStatsTypes';
 import MatchHistoryFilters from './MatchHistoryFilters';
 import MatchDetailView from './MatchDetailView';
 import { matchHistoryTestData } from './matchHistoryTestData';
+import { VerticalAdPlaceholder } from './VerticalAdPlaceholder';
 import '../styles/MatchHistory.css';
 
 const { Title, Text } = Typography;
@@ -421,11 +422,7 @@ const MatchHistory: React.FC = () => {
             </Card>
             
             <div className="match-history-ad-right">
-              <Card className="ad-placeholder" bordered={false}>
-                <Text type="secondary" className="text-center block">
-                  {t('components.desktop.match-history.ad', 'Advertisement')}
-                </Text>
-              </Card>
+              <VerticalAdPlaceholder containerId="rivalsOverlay_300x600_matchHistory_right" />
             </div>
           </div>
         </div>

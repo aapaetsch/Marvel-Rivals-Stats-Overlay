@@ -6,6 +6,7 @@ import { StarFilled, TeamOutlined, TrophyOutlined } from '@ant-design/icons';
 import icons from 'components/Icons';
 import { RootReducer } from 'app/shared/rootReducer';
 import FavouritePlayerCard from './FavouritePlayerCard';
+import { VerticalAdPlaceholder } from './VerticalAdPlaceholder';
 import './FavouritesPage.css';
 
 const { Title, Text } = Typography;
@@ -156,11 +157,7 @@ const FavouritesPage: React.FC = () => {
 
           {/* Right Ad Space - fixed width */}
           <div className="favourites-ad-right">
-            <Card className="ad-placeholder" bordered={false}>
-              <Text type="secondary" className="text-center block">
-                {t('components.desktop.favourites.ad-space', 'Ad Space')}
-              </Text>
-            </Card>
+            <VerticalAdPlaceholder containerId="rivalsOverlay_300x600_favourites_right" />
           </div>
         </div>
 

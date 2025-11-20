@@ -48,6 +48,8 @@ const initialState: MatchStoreState = {
   currentMatch: initialMatchStatsState,
   matchHistory: [],
   clearMatchTimeout: null,
+  characterSessions: {},
+  completedSessions: [],
 };
 
 // Build a deep snapshot of the current match suitable for per-round storage
@@ -105,6 +107,72 @@ const hasRoundActivity = (match: MatchStatsState): boolean => {
     (p.kills || 0) > 0 || (p.deaths || 0) > 0 || (p.assists || 0) > 0 ||
     (p.finalHits || 0) > 0 || (p.damageDealt || 0) > 0 || (p.damageBlocked || 0) > 0 || (p.totalHeal || 0) > 0
   );
+};
+
+/**
+ * Process character session tracking when a player's character changes
+ * Completes the previous session and starts a new one
+ */
+const processCharacterSession = (
+  state: MatchStoreState,
+  uid: string,
+  newCharacterName: string,
+  currentKills: number,
+  currentDeaths: number,
+  currentAssists: number,
+  isAlly: boolean,
+  timestamp: number
+): void => {
+  // If there's an existing session for this player, complete it
+  const existingSession = state.characterSessions[uid];
+  if (existingSession && existingSession.characterName && existingSession.characterName !== newCharacterName) {
+    const timeSpentMs = timestamp - existingSession.startTime;
+    const killsDelta = Math.max(0, currentKills - existingSession.startKills);
+    const deathsDelta = Math.max(0, currentDeaths - existingSession.startDeaths);
+    const assistsDelta = Math.max(0, currentAssists - existingSession.startAssists);
+    
+    // Only add to completed sessions if there was meaningful time spent
+    if (timeSpentMs > 1000) { // At least 1 second
+      state.completedSessions.push({
+        uid,
+        characterName: existingSession.characterName,
+        timeSpentMs,
+        kills: killsDelta,
+        deaths: deathsDelta,
+        assists: assistsDelta,
+        timestamp: existingSession.startTime,
+        isAlly: existingSession.isAlly,
+      });
+      
+      logger.logMatchStats(
+        {
+          event: "character_session_completed",
+          uid,
+          characterName: existingSession.characterName,
+          timeSpentMs,
+          kills: killsDelta,
+          deaths: deathsDelta,
+          assists: assistsDelta,
+          isAlly: existingSession.isAlly,
+        },
+        "matchStatsSlice.ts",
+        "processCharacterSession"
+      );
+    }
+  }
+  
+  // Start new session (only if character name is non-empty)
+  if (newCharacterName) {
+    state.characterSessions[uid] = {
+      uid,
+      characterName: newCharacterName,
+      startTime: timestamp,
+      startKills: currentKills,
+      startDeaths: currentDeaths,
+      startAssists: currentAssists,
+      isAlly,
+    };
+  }
 };
 
 const completeMatchHandler = (state: MatchStoreState) => {
@@ -246,6 +314,10 @@ const matchStatsSlice = createSlice({
         },
         rounds: [],
       };
+      
+      // Reset character session tracking
+      state.characterSessions = {};
+      state.completedSessions = [];
     },
 
     processInfoUpdate(state, action: PayloadAction<any>) {
@@ -271,6 +343,27 @@ const matchStatsSlice = createSlice({
           const existing = state.currentMatch.players[uid] || {};
 
           if (timestamp > existing?.lastUpdated || !existing || existing?.lastUpdated == null) {
+            // Track character session if character name is changing or this is first seen
+            const oldCharacterName = existing.characterName;
+            const newCharacterName = data.character_name;
+            const currentKills = data.kills ?? existing.kills ?? 0;
+            const currentDeaths = data.deaths ?? existing.deaths ?? 0;
+            const currentAssists = data.assists ?? existing.assists ?? 0;
+            
+            // Process character session if we have a non-empty character name
+            if (newCharacterName && (oldCharacterName !== newCharacterName)) {
+              processCharacterSession(
+                state,
+                uid,
+                newCharacterName,
+                currentKills,
+                currentDeaths,
+                currentAssists,
+                data.is_teammate,
+                timestamp
+              );
+            }
+            
             // Merge new roster data with any existing player state
             state.currentMatch.players[uid] = {
               ...existing,
@@ -284,9 +377,9 @@ const matchStatsSlice = createSlice({
               isAlive: data.is_alive,
 
               // KDA stats come from the roster, so just store them here
-              kills: data.kills ?? existing.kills ?? 0,
-              deaths: data.deaths ?? existing.deaths ?? 0,
-              assists: data.assists ?? existing.assists ?? 0,
+              kills: currentKills,
+              deaths: currentDeaths,
+              assists: currentAssists,
 
               // Only for teammates
               ultCharge: data.is_teammate ? data.ult_charge ?? 0 : null,
@@ -595,6 +688,10 @@ const matchStatsSlice = createSlice({
               rounds: [],
             };
             
+            // Reset character session tracking
+            state.characterSessions = {};
+            state.completedSessions = [];
+            
             logger.logInfo(
               {
                 event: "match_start",
@@ -657,7 +754,37 @@ const matchStatsSlice = createSlice({
             } catch (e) {
               logger.logError(e as Error, "matchStatsSlice.ts", "match_end_snapshot");
             }
-            state.currentMatch.timestamps.matchEnd = Date.now();
+            
+            const matchEndTime = Date.now();
+            state.currentMatch.timestamps.matchEnd = matchEndTime;
+            
+            // Finalize all active character sessions
+            for (const [uid, session] of Object.entries(state.characterSessions)) {
+              if (session && session.characterName) {
+                const player = state.currentMatch.players[uid];
+                if (player) {
+                  const timeSpentMs = matchEndTime - session.startTime;
+                  const killsDelta = Math.max(0, player.kills - session.startKills);
+                  const deathsDelta = Math.max(0, player.deaths - session.startDeaths);
+                  const assistsDelta = Math.max(0, player.assists - session.startAssists);
+                  
+                  // Only add if meaningful time spent
+                  if (timeSpentMs > 1000) {
+                    state.completedSessions.push({
+                      uid,
+                      characterName: session.characterName,
+                      timeSpentMs,
+                      kills: killsDelta,
+                      deaths: deathsDelta,
+                      assists: assistsDelta,
+                      timestamp: session.startTime,
+                      isAlly: session.isAlly,
+                    });
+                  }
+                }
+              }
+            }
+            
             logger.logInfo(
               {
                 event: "match_end",
@@ -669,6 +796,7 @@ const matchStatsSlice = createSlice({
                 duration: state.currentMatch.timestamps.matchStart 
                   ? state.currentMatch.timestamps.matchEnd - state.currentMatch.timestamps.matchStart
                   : null,
+                completedSessions: state.completedSessions.length,
                 timestamp: state.currentMatch.timestamps.matchEnd
               },
               "matchStatsSlice.ts",
@@ -730,6 +858,10 @@ const matchStatsSlice = createSlice({
         rounds: [],
       };
       
+      // Reset character session tracking
+      state.characterSessions = {};
+      state.completedSessions = [];
+      
       logger.logInfo(
         {
           event: "match_stats_cleared_by_timeout",
@@ -763,6 +895,10 @@ const matchStatsSlice = createSlice({
         },
         rounds: [],
       };
+      
+      // Reset character session tracking
+      state.characterSessions = {};
+      state.completedSessions = [];
       
       logger.logInfo(
         {
