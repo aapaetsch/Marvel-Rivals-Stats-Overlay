@@ -39,11 +39,12 @@
 .desktop__main {
   flex: 1;
   overflow: hidden; /* Prevent main from scrolling */
-  padding: 16px;
+  padding: 0; /* Remove padding from here, handle in form */
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   min-height: 0;
+  max-height: calc(100vh - 2.5rem); /* Ensure it fits within viewport */
 }
 
 .desktop__main-form {
@@ -53,12 +54,44 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
+  overflow: hidden; /* Form should not scroll */
 }
 
 .desktop__main-scroller {
   flex: 1;
   overflow-y: auto;
   min-height: 0;
+}
+
+/* Horizontal ad container - stick to bottom of content area */
+.desktop__main-ad {
+  flex: 0 0 auto;
+  padding: 8px 2rem;
+  background-color: var(--background-color);
+  min-height: 145px;
+  position: sticky;
+  bottom: 0;
+  z-index: 100;
+}
+
+/* Ensure form doesn't overflow and hide the ad */
+Form.desktop__main-form {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 2.5rem - 145px); /* Account for ad height */
+}
+
+/* Settings specific adjustments */
+.desktop__main .desktop__main-form .desktop__main-scroller {
+  max-height: calc(100vh - 2.5rem - 200px); /* Leave room for reset button and ad */
+  overflow-y: auto;
+}
+
+/* Horizontal ad container styling */
+.desktop__main-ad .ad-container-horizontal {
+  border: 1px solid var(--primary-color-light);
+  border-radius: var(--border-radius);
+  background-color: var(--neutral-2);
 }
 
 /* Prevent parent scrolling on recent players page */
@@ -71,18 +104,24 @@
   overflow-y: hidden;
 }
 
-/* Prevent parent scrolling on settings page */
+/* Settings page should allow scrolling for form content while keeping ad visible */
 .desktop__main.has-settings {
-  overflow: hidden;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 2.5rem); /* Ensure it fits within viewport */
 }
 
 .desktop__main-scroller.has-settings {
-  overflow-y: hidden;
+  flex: 1;
+  overflow-y: scroll; /* Settings form should scroll */
+  min-height: 0;
 }
 
 .desktop__footer {
-  padding: 10px;
+  padding: 10px 16px; /* Add horizontal padding to match form */
   background-color: var(--footer-background, transparent);
+  border-top: 1px solid var(--primary-color-light); /* Add border to separate from ad */
 }
 
 /* Make scrollbars look nicer */
@@ -150,7 +189,11 @@
 
 /* Ensure content area has proper scrolling behavior */
 .ant-layout-content {
-  overflow-y: hidden;
-  max-height: 85vh;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  min-height: 0;
+  max-height: calc(100vh - 2.5rem); /* Match the layout height constraint */
   margin-bottom: 0.25rem;
 }

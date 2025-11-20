@@ -1,0 +1,413 @@
+/* House Ad Styling - Development Only */
+
+/* Positioning for house ad overlay - sits on top of failed ad space */
+.development-house-ad {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 10;
+  border: 1px solid var(--primary-color-light);
+  border-radius: var(--border-radius);
+}
+
+/* Background styling */
+.development-house-ad .house-ad-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  opacity: 0.3;
+}
+
+.development-house-ad .house-ad-bg-icon {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 50%;
+  filter: blur(2px);
+  transition: transform 0.3s ease;
+}
+
+/* Horizontal ad positioning */
+.development-house-ad:not(.vertical) .house-ad-bg-icon-1 {
+  top: 10%;
+  left: 5%;
+  width: 60px;
+  height: 60px;
+}
+
+.development-house-ad:not(.vertical) .house-ad-bg-icon-2 {
+  top: 15%;
+  right: 5%;
+  width: 55px;
+  height: 55px;
+}
+
+.development-house-ad:not(.vertical) .house-ad-bg-icon-3 {
+  bottom: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70px;
+  height: 70px;
+}
+
+/* Vertical ad positioning */
+.development-house-ad.vertical .house-ad-bg-icon-1 {
+  top: 5%;
+  left: 20%;
+  width: 70px;
+  height: 70px;
+}
+
+.development-house-ad.vertical .house-ad-bg-icon-2 {
+  top: 20%;
+  right: 15%;
+  width: 65px;
+  height: 65px;
+}
+
+.development-house-ad.vertical .house-ad-bg-icon-3 {
+  top: 45%;
+  left: 10%;
+  width: 75px;
+  height: 75px;
+}
+
+.development-house-ad.vertical .house-ad-bg-icon-4 {
+  top: 60%;
+  right: 20%;
+  width: 60px;
+  height: 60px;
+}
+
+.development-house-ad.vertical .house-ad-bg-icon-5 {
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 80px;
+}
+
+/* In-game ad positioning */
+.development-house-ad.in-game .house-ad-bg-icon-1 {
+  top: 50%;
+  left: 10%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+}
+
+.development-house-ad.in-game .house-ad-bg-icon-2 {
+  top: 50%;
+  right: 10%;
+  transform: translateY(-50%);
+  width: 45px;
+  height: 45px;
+}
+
+/* Overlay to darken background */
+.development-house-ad .house-ad-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, 
+    rgba(0, 0, 0, 0.7) 0%, 
+    rgba(0, 0, 0, 0.4) 50%, 
+    rgba(0, 0, 0, 0.6) 100%
+  );
+  z-index: 1;
+}
+
+/* Content positioning */
+.development-house-ad .house-ad-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 0.75rem 1rem;
+  text-align: center;
+  color: white;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+/* Horizontal ad content */
+.development-house-ad:not(.vertical) .house-ad-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+  color: var(--primary-color-light);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.development-house-ad:not(.vertical) .house-ad-subtitle {
+  font-size: 0.75rem;
+  margin-bottom: 0.4rem;
+  opacity: 0.9;
+  line-height: 1.2;
+}
+
+.development-house-ad:not(.vertical) .house-ad-button {
+  background: var(--primary-color) !important;
+  color: var(--text-on-primary, #ffffff) !important;
+  border: 1px solid var(--primary-color-medium) !important;
+  padding: 0.25rem 1rem;
+  border-radius: var(--border-radius) !important;
+  font-weight: 600;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  font-family: inherit !important;
+  line-height: 1.4 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.development-house-ad:not(.vertical) .house-ad-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  background: var(--primary-color-medium) !important;
+  border-color: var(--primary-color-dark) !important;
+}
+
+.development-house-ad:not(.vertical) .house-ad-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.development-house-ad:not(.vertical) .house-ad-button:focus {
+  outline: 2px solid var(--primary-color-light) !important;
+  outline-offset: 2px !important;
+}
+
+.development-house-ad:not(.vertical) .house-ad-button:focus:not(:focus-visible) {
+  outline: none !important;
+}
+
+.development-house-ad:not(.vertical) .house-ad-button:focus-visible {
+  outline: 2px solid var(--primary-color-light) !important;
+  outline-offset: 2px !important;
+}
+
+/* Vertical ad content */
+.development-house-ad.vertical .house-ad-content.vertical {
+  padding: 2rem 1.5rem;
+}
+
+.development-house-ad.vertical .house-ad-title.vertical {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--primary-color-light);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.development-house-ad.vertical .house-ad-subtitle.vertical {
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.9;
+  line-height: 1.4;
+  max-width: 220px;
+}
+
+.development-house-ad.vertical .house-ad-features {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.development-house-ad.vertical .house-ad-feature {
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.8;
+  font-weight: 500;
+}
+
+.development-house-ad.vertical .house-ad-button.vertical {
+  background: var(--primary-color) !important;
+  color: var(--text-on-primary, #ffffff) !important;
+  border: 1px solid var(--primary-color-medium) !important;
+  padding: 0.6rem 1.5rem;
+  border-radius: var(--border-radius) !important;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+  margin-top: auto;
+  font-family: inherit !important;
+  line-height: 1.4 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.development-house-ad.vertical .house-ad-button.vertical:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+  background: var(--primary-color-medium) !important;
+  border-color: var(--primary-color-dark) !important;
+}
+
+.development-house-ad.vertical .house-ad-button.vertical:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.development-house-ad.vertical .house-ad-button.vertical:focus {
+  outline: 2px solid var(--primary-color-light) !important;
+  outline-offset: 2px !important;
+}
+
+.development-house-ad.vertical .house-ad-button.vertical:focus:not(:focus-visible) {
+  outline: none !important;
+}
+
+.development-house-ad.vertical .house-ad-button.vertical:focus-visible {
+  outline: 2px solid var(--primary-color-light) !important;
+  outline-offset: 2px !important;
+}
+
+/* In-game button styling */
+.development-house-ad.in-game .house-ad-button.in-game {
+  background: var(--primary-color) !important;
+  color: var(--text-on-primary, #ffffff) !important;
+  border: 1px solid var(--primary-color-medium) !important;
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--border-radius) !important;
+  font-weight: 600;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  font-family: inherit !important;
+  line-height: 1.4 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.development-house-ad.in-game .house-ad-button.in-game:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+  background: var(--primary-color-medium) !important;
+  border-color: var(--primary-color-dark) !important;
+}
+
+.development-house-ad.in-game .house-ad-button.in-game:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.development-house-ad.in-game .house-ad-button.in-game:focus {
+  outline: 2px solid var(--primary-color-light) !important;
+  outline-offset: 2px !important;
+}
+
+.development-house-ad.in-game .house-ad-button.in-game:focus:not(:focus-visible) {
+  outline: none !important;
+}
+
+.development-house-ad.in-game .house-ad-button.in-game:focus-visible {
+  outline: 2px solid var(--primary-color-light) !important;
+  outline-offset: 2px !important;
+}
+
+/* In-game content */
+.development-house-ad.in-game .house-ad-content.in-game {
+  flex-direction: row;
+  padding: 0.5rem 1rem;
+}
+
+.development-house-ad.in-game .house-ad-title.in-game {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--primary-color-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-right: 1rem;
+}
+
+.development-house-ad.in-game .house-ad-subtitle.in-game {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+/* Dev badge */
+.development-house-ad .house-ad-dev-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255, 77, 79, 0.8);
+  color: white;
+  font-size: 0.6rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 3;
+  backdrop-filter: blur(4px);
+}
+
+/* Hover effects */
+.development-house-ad:hover .house-ad-bg-icon {
+  transform: scale(1.05) rotate(2deg);
+}
+
+.development-house-ad:hover .house-ad-dev-badge {
+  background: rgba(255, 77, 79, 1);
+}
+
+/* Animation for loading */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.development-house-ad {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .development-house-ad.vertical .house-ad-title.vertical {
+    font-size: 1.3rem;
+  }
+  
+  .development-house-ad.vertical .house-ad-subtitle.vertical {
+    font-size: 0.85rem;
+  }
+  
+  .development-house-ad.in-game .house-ad-title.in-game {
+    font-size: 0.9rem;
+  }
+  
+  .development-house-ad.in-game .house-ad-subtitle.in-game {
+    font-size: 0.7rem;
+  }
+}
