@@ -36,6 +36,10 @@ export interface RecentPlayer {
   characterHistory?: CharacterHistoryEntry[];
   isFavorited: boolean;
   favoriteOrder: number; // For custom ordering of favorites (lower = higher priority)
+  // ELO tracking
+  elo_score?: number; // Most recent ELO score seen for this player
+  elo_gameMode?: string; // Optional game mode associated with recent ELO
+  elo_scores_by_mode?: Record<string, number>; // ELO score per game mode (e.g., "Ranked", "Quick Match")
 }
 
 export interface RecentPlayersState {
@@ -65,8 +69,10 @@ const recentPlayersSlice = createSlice({
       characterName: string;
       isTeammate: boolean;
       matchOutcome: string;
+      elo_score?: number;
+      elo_gameMode?: string;
     }>) {
-      const { uid, name, characterName, isTeammate, matchOutcome } = action.payload;
+      const { uid, name, characterName, isTeammate, matchOutcome, elo_score, elo_gameMode } = action.payload;
       
       // Skip tracking for filtered player names
       if (shouldFilterPlayer(name)) {
@@ -144,6 +150,19 @@ const recentPlayersSlice = createSlice({
         // Sanity: enforce losses = count - wins to avoid drift
         player.teamsWithLosses = Math.max(0, player.teamsWithCount - player.teamsWithWins);
         player.teamsAgainstLosses = Math.max(0, player.teamsAgainstCount - player.teamsAgainstWins);
+        
+        // Update recent ELO if provided
+        if (typeof elo_score === 'number' && !isNaN(elo_score)) {
+          player.elo_score = elo_score;
+          player.elo_gameMode = elo_gameMode || undefined;
+          // Also record per-mode
+          if (elo_gameMode) {
+            player.elo_scores_by_mode = {
+              ...(player.elo_scores_by_mode || {}),
+              [elo_gameMode]: elo_score,
+            };
+          }
+        }
       } 
       // Otherwise create a new record
       else {
@@ -163,6 +182,11 @@ const recentPlayersSlice = createSlice({
           opponentCharacterStats: !isTeammate && characterName ? { [characterName]: { count: 1, wins: isDefeat ? 1 : 0, losses: isVictory ? 1 : 0 } } : {},
           isFavorited: false,
           favoriteOrder: 0,
+          elo_score: typeof elo_score === 'number' && !isNaN(elo_score) ? elo_score : undefined,
+          elo_gameMode: elo_gameMode || undefined,
+          elo_scores_by_mode: (elo_gameMode && typeof elo_score === 'number' && !isNaN(elo_score))
+            ? { [elo_gameMode]: elo_score }
+            : {},
         };
       }
       
@@ -186,6 +210,8 @@ const recentPlayersSlice = createSlice({
         characterName: string;
         isTeammate: boolean;
         characterHistory?: CharacterHistoryEntry[];
+        elo_score?: number;
+        elo_gameMode?: string;
       }>;
       matchOutcome: string;
       matchId?: string | null;
@@ -197,7 +223,7 @@ const recentPlayersSlice = createSlice({
       
       // Process each player
       players.forEach(player => {
-        const { uid, name, characterName, isTeammate, characterHistory } = player;
+        const { uid, name, characterName, isTeammate, characterHistory, elo_score, elo_gameMode } = player;
         
         // Skip tracking for filtered player names
         if (shouldFilterPlayer(name)) {
@@ -282,6 +308,19 @@ const recentPlayersSlice = createSlice({
           // Sanity: enforce losses = count - wins to avoid drift
           existingPlayer.teamsWithLosses = Math.max(0, existingPlayer.teamsWithCount - existingPlayer.teamsWithWins);
           existingPlayer.teamsAgainstLosses = Math.max(0, existingPlayer.teamsAgainstCount - existingPlayer.teamsAgainstWins);
+          
+          // Update recent ELO if provided
+          if (typeof elo_score === 'number' && !isNaN(elo_score)) {
+            existingPlayer.elo_score = elo_score;
+            existingPlayer.elo_gameMode = elo_gameMode || undefined;
+            // Record per-mode
+            if (elo_gameMode) {
+              existingPlayer.elo_scores_by_mode = {
+                ...(existingPlayer.elo_scores_by_mode || {}),
+                [elo_gameMode]: elo_score,
+              };
+            }
+          }
         } else {
           state.players[uid] = {
             uid,
@@ -300,6 +339,11 @@ const recentPlayersSlice = createSlice({
             characterHistory: characterHistory ? [...characterHistory].sort((a, b) => b.timestamp - a.timestamp).slice(0, MAX_CHARACTER_HISTORY) : [],
             isFavorited: false,
             favoriteOrder: 0,
+            elo_score: typeof elo_score === 'number' && !isNaN(elo_score) ? elo_score : undefined,
+            elo_gameMode: elo_gameMode || undefined,
+            elo_scores_by_mode: (elo_gameMode && typeof elo_score === 'number' && !isNaN(elo_score))
+              ? { [elo_gameMode]: elo_score }
+              : {},
           };
         }
       });
@@ -456,6 +500,10 @@ const recentPlayersSlice = createSlice({
         p.teamsAgainstLosses = Number(p.teamsAgainstLosses || 0);
         p.favoriteOrder = Number(p.favoriteOrder || 0);
         p.isFavorited = Boolean(p.isFavorited);
+        // Sanitize Elo fields
+        p.elo_score = typeof p.elo_score === 'number' && !isNaN(p.elo_score) ? p.elo_score : undefined;
+        p.elo_gameMode = p.elo_gameMode || undefined;
+        p.elo_scores_by_mode = p.elo_scores_by_mode || {};
         // Coerce nested stats just in case
         for (const [k, v] of Object.entries(p.allyCharacterStats)) {
           p.allyCharacterStats[k] = {

@@ -124,9 +124,9 @@ const FavouritePlayerCard: React.FC<FavouritePlayerCardProps> = ({ player }) => 
 
   return (
     <Card className="favourite-player-card" bordered={false}>
-      {/* Header: Avatar, Player Name, and Rank Image placeholder */}
-      <div className="favourite-player-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+      <div className="favourite-player-header" style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+        {/* Avatar + Name + Last Seen */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1, minWidth: 0 }}>
           <Avatar
             shape="square"
             size={64}
@@ -135,30 +135,28 @@ const FavouritePlayerCard: React.FC<FavouritePlayerCardProps> = ({ player }) => 
             className="favourite-player-avatar"
           />
           <div className="favourite-player-meta">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems:'baseline', gap: 8 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8 }}>
               <Text className="favourite-player-name meta-name">
                 {player.name}
               </Text>
-            </div>
-            <div className="meta-stack">
               <Text className="meta-text meta-last-seen">
                 {t('components.desktop.favourites.last-seen', 'Last seen')}: {lastSeenFormatted}
               </Text>
-              {mostUsedCharacter && (
-                <Text className="meta-text meta-most-played">
-                  {t('components.desktop.favourites.most-played', 'Most played')}: {mostUsedCharacter}
-                </Text>
-              )}
-              <Text className="meta-text meta-total-encounters">
-                {t('components.desktop.favourites.total-encounters', 'Total Encounters')}: {totalGames}
-              </Text>
             </div>
+            {mostUsedCharacter && (
+              <Text className="meta-text meta-most-played" style={{ marginTop: 2 }}>
+                {t('components.desktop.favourites.most-played', 'Most played')}: {mostUsedCharacter}
+              </Text>
+            )}
+            <Text className="meta-text meta-total-encounters" style={{ marginTop: 2 }}>
+              {t('components.desktop.favourites.total-encounters', 'Total Encounters')}: {totalGames}
+            </Text>
           </div>
         </div>
 
-        {/* Rank image placeholder */}
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <div 
+        {/* Rank Icon + ELO aligned right */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+          <div
             className="rank-image-placeholder"
             style={{
               width: 50,
@@ -172,6 +170,11 @@ const FavouritePlayerCard: React.FC<FavouritePlayerCardProps> = ({ player }) => 
             }}
           >
             <UserOutlined style={{ color: 'var(--primary-color-medium)', fontSize: 20 }} />
+          </div>
+          <div className="fpc-elo-under-rankicon">
+            <Text style={{ color: 'var(--text-color)', fontWeight: 600 }}>
+              {player.elo_scores_by_mode?.Competitive ?? player.elo_scores_by_mode?.Ranked ?? player.elo_score ?? '-'}
+            </Text>
           </div>
         </div>
       </div>

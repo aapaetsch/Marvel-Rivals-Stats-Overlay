@@ -384,6 +384,9 @@ const matchStatsSlice = createSlice({
               // Only for teammates
               ultCharge: data.is_teammate ? data.ult_charge ?? 0 : null,
 
+              // ELO tracking (most recent from match_info roster events)
+              elo_score: data.elo_score,
+
               // Additional stats
               damageDealt: existing.damageDealt ?? 0,
               damageBlocked: existing.damageBlocked ?? 0,
@@ -704,6 +707,13 @@ const matchStatsSlice = createSlice({
             break;
 
           case "round_start":
+            // If the match hasn't officially started yet (no matchStart timestamp), set it now
+            // This ensures the UI treats the match as live even if match_start was delayed
+            if (state.currentMatch.timestamps.matchStart === null) {
+              state.currentMatch.timestamps.matchStart = Date.now();
+              // Ensure matchEnd is null when we set matchStart
+              state.currentMatch.timestamps.matchEnd = null;
+            }
             // On round start, snapshot previous round stats if there was any activity
             try {
               if (hasRoundActivity(state.currentMatch)) {

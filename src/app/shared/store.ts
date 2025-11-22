@@ -62,6 +62,8 @@ const matchCompletionMiddleware: Middleware<{}, RootReducer> =
           characterName: player.characterName,
           isTeammate: player.isTeammate,
           characterHistory: enrichedHistory,
+          elo_score: player.elo_score,
+          elo_gameMode: currentMatch.gameMode || undefined, // Attach match's game mode to ELO
         };
       });
       
