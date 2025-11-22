@@ -191,6 +191,14 @@
   gap: 2px;
   margin-top: 4px;
 }
+.fpc-elo-under-name {
+  margin-top: 4px;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+.fpc-elo-under-name .meta-text {
+  color: var(--primary-color-text) !important;
+}
 .favourite-player-meta .meta-text {
   color: var(--primary-color-text) !important;
   font-size: 0.875rem;

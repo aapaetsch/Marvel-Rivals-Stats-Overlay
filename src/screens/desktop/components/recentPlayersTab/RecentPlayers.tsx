@@ -199,6 +199,10 @@ const RecentPlayerItem: React.FC<RecentPlayerItemProps> = ({ player, censor = fa
               <div className="overall-wl-under-name">
                 <Text className="has-text-default-color" style={{ marginRight: 8 }}>{overallWinRate}%</Text>
                 <Text className="has-text-default-color">{overallWins}W - {overallLosses}L</Text>
+                <span style={{ display: 'inline-block', width: 24 }}></span>
+                <Text className="has-text-default-color" style={{ fontWeight: 600 }}>
+                  {player.elo_scores_by_mode?.Competitive ?? player.elo_scores_by_mode?.Ranked ?? player.elo_score ?? '-'}
+                </Text>
               </div>
             </div>
           </div>
