@@ -24,6 +24,7 @@ const DevPlayground: React.FC = () => {
   const [sampleTeamPlayers, setSampleTeamPlayers] = useState<IngamePlayerStatsProps[]>([
     {
       rosterId: 'user',
+      slotIndex: 0,
       playerName: 'You',
       characterName: 'IRON MAN',
       ultCharge: 72,
@@ -37,6 +38,7 @@ const DevPlayground: React.FC = () => {
     },
     {
       rosterId: 'ally1',
+      slotIndex: 1,
       playerName: 'AllyOne',
       characterName: 'SPIDER-MAN',
       ultCharge: 35,
