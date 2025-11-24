@@ -32,6 +32,9 @@ export interface GeneralSettings {
   recentPlayersCleanupDays: number;
   // Tracks whether specific declared windows are currently in positioning/drag mode
   positioningModeWindows: { [windowName: string]: boolean };
+  // Ad auto-refresh settings
+  enableAdAutoRefresh: boolean;
+  adRefreshIntervalMinutes: number;
 }
 
 export interface OverlaySettings {
@@ -122,6 +125,9 @@ const initialState: AppSettingsState = {
     recentPlayersCleanupDays: 30,
   // Window positioning mode tracking (which declared windows are in 'positioning'/'drag' mode)
   positioningModeWindows: {},
+    // Ad auto-refresh defaults
+    enableAdAutoRefresh: true,
+    adRefreshIntervalMinutes: 5,
     showTeamStats: true,
     showKillFeed: true,
     opacity: 80,

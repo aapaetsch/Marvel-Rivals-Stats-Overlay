@@ -122,6 +122,7 @@ export const VerticalAdPlaceholder: React.FC<VerticalAdPlaceholderProps> = ({
           containerId={containerId}
           width={300}
           height={600}
+          enableAutoSwitch={true}
           onAdLoaded={() => {
             console.log(`${containerId} ad loaded`);
             setAdAttempted(true);
