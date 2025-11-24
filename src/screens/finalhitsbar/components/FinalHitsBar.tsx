@@ -7,6 +7,7 @@ import { FinalHitsBarProps, FinalHitsPlayerProps } from '../types/finalHitsBarTy
 import { getCharacterDefaultIconPath } from 'lib/characterIcons';
 import DragHandle from '../../shared/DragHandle';
 import { WINDOW_NAMES } from 'app/shared/constants';
+import { FinalHitsAdOverlay } from './FinalHitsAdOverlay';
 import "./styles/FinalHitsBar.css";
 
 const FinalHitsPlayer = (props: FinalHitsPlayerProps) => {
@@ -185,6 +186,7 @@ const Screen = () => {
   return (
     <div className={`final-hits-bar-screen`} style={finalHitsScreenStyle}>
       <div className="final-hits-bar-background" style={backgroundStyle}></div>
+      <FinalHitsAdOverlay adWidth={780} adHeight={90} />
       <DragHandle windowName={WINDOW_NAMES.FINALHITSBAR} />
       <FinalHitsBar players={finalHitsPlayers.length ? finalHitsPlayers : pdummy}/>
     </div>
