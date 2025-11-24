@@ -6,12 +6,12 @@ import { RootReducer } from 'app/shared/rootReducer';
 import LogReplayer from './LogReplayer';
 import DevStoreViewer from 'screens/desktop/components/DevStoreViewer';
 import DevWindowHeader from './DevWindowHeader';
-// DevControls removed; controls moved to App Status
-import 'screens/desktop/components/styles/themes.css';
+import '../../../app/shared/themes.css';
 import './styles/DevScreen.css';
 import AppStatus from './appStatus/AppStatus';
 import OverridesTab from './OverridesTab';
 import PayloadsTab from './PayloadsTab';
+import AdManagerTab from './AdManagerTab';
 
 const DevScreen: React.FC = () => {
   const { theme } = useSelector((state: RootReducer) => state.appSettingsReducer.settings);
@@ -31,6 +31,7 @@ const DevScreen: React.FC = () => {
         className="dev-tabs"
         items={[
           { key: 'appstatus', label: 'App Status', children: <AppStatus /> },
+          { key: 'ads', label: 'Ad Manager', children: <AdManagerTab /> },
           { key: 'payloads', label: 'Payloads', children: <PayloadsTab /> },
           { key: 'overrides', label: 'Overrides', children: <OverridesTab /> },
           { key: 'replay', label: 'Log Replayer', children: <LogReplayer /> },
