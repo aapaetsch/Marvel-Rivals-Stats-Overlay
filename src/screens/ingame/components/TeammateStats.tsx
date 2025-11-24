@@ -160,22 +160,32 @@ const TeammateCard = ({ player, index }: { player: PlayerStatsProps; index: numb
     ultra: [ultraCompactOwnPlayerCard, ultraCompactTeammate1, ultraCompactTeammate2, ultraCompactTeammate3, ultraCompactTeammate4, ultraCompactTeammate5],
   };
   
+  // Calculate the settings array index
+  // For the user's own card: use index 0
+  // For teammates: slotIndex maps to array index (slotIndex + 1)
+  //   - slotIndex 0 → array index 1 (teammate1)
+  //   - slotIndex 1 → array index 2 (teammate2), etc.
+  const getSettingsIndex = () => {
+    if (player.isUser) return 0;
+    const slot = player.slotIndex ?? index;
+    return slot + 1; // Offset by 1 because array[0] is for own player
+  };
+  
+  const settingsIndex = getSettingsIndex();
+  
   const isTeammateVisible = () => {
-    if (player.isUser) return !showOwnPlayerCard;
-    if (index < 1 || index > 5) return false;
-    return !teamateArrays.show[index];
+    if (settingsIndex < 0 || settingsIndex > 5) return false;
+    return !teamateArrays.show[settingsIndex];
   };
 
   const isTeamateCollapsed = () => {
-    if (player.isUser) return compactOwnPlayerCard;
-    if (index < 1 || index > 5) return false;
-    return teamateArrays.compact[index];
+    if (settingsIndex < 0 || settingsIndex > 5) return false;
+    return teamateArrays.compact[settingsIndex];
   };
 
   const isTeammateUltra = () => {
-    if (player.isUser) return ultraCompactOwnPlayerCard;
-    if (index < 1 || index > 5) return false;
-    return teamateArrays.ultra[index];
+    if (settingsIndex < 0 || settingsIndex > 5) return false;
+    return teamateArrays.ultra[settingsIndex];
   };
 
   // Ultimate charge percentage
@@ -355,14 +365,9 @@ const TeammateCard = ({ player, index }: { player: PlayerStatsProps; index: numb
 const TeammateStats = (props: TeamStatProps) => {
   const { players } = props;
 
-  // Sort players by rosterId and put user first
-  const sortedPlayers = [...players]
-    .sort((a, b) => {
-      const rosterIdA = a.rosterId ?? '';
-      const rosterIdB = b.rosterId ?? '';
-      return rosterIdA.localeCompare(rosterIdB);
-    });
-  
+  // Players are already sorted by slotIndex in Screen.tsx
+  // Just ensure the user is first if present
+  const sortedPlayers = [...players];
   const userIndex = sortedPlayers.findIndex(player => player.isUser);
   if (userIndex > 0) {
     const userPlayer = sortedPlayers.splice(userIndex, 1)[0];
