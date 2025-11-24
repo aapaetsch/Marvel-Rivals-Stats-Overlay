@@ -253,7 +253,7 @@ const Screen = () => {
             
             {/* Horizontal ad positioned OUTSIDE form but with form context for styling */}
             <div className="desktop__main-ad">
-                <HorizontalAdPlaceholder height={130} />
+                <HorizontalAdPlaceholder height={130} enableAutoSwitch={true} />
             </div>
         </Content>
         <Footer style={{ padding: 0, margin: 0, height: '0', background: 'transparent' }}>

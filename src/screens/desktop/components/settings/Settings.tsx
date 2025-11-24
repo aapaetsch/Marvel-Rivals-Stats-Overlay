@@ -27,6 +27,8 @@ export const GeneralSettingsComponent: React.FC<GeneralSettingsProps> = ({ form:
       language: appSettings.language,
       theme: appSettings.theme,
       showDevWindow: appSettings.showDevWindow,
+      enableAdAutoRefresh: appSettings.enableAdAutoRefresh,
+      adRefreshIntervalMinutes: appSettings.adRefreshIntervalMinutes,
     });
   }, [appSettings, form]);
   
