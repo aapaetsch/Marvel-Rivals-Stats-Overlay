@@ -6,6 +6,7 @@ import './styles/HouseAd.css';
 
 interface HorizontalAdPlaceholderProps {
   height?: number;
+  enableAutoSwitch?: boolean;
 }
 
 // Development house ad component
@@ -71,7 +72,8 @@ const DevelopmentHouseAd: React.FC<{ width: number; height: number }> = ({ width
 };
 
 export const HorizontalAdPlaceholder: React.FC<HorizontalAdPlaceholderProps> = ({ 
-  height = 120 
+  height = 120,
+  enableAutoSwitch = false
 }) => {
   const { isSubscribed } = useAdRemoval();
   const [showHouseAd, setShowHouseAd] = useState(false);
@@ -99,6 +101,7 @@ export const HorizontalAdPlaceholder: React.FC<HorizontalAdPlaceholderProps> = (
           containerId="rivalsOverlay_780x90_desktop_bottom"
           width={780}
           height={90}
+          enableAutoSwitch={enableAutoSwitch}
           onAdLoaded={() => {
             console.log('Desktop horizontal ad loaded');
             setAdAttempted(true);

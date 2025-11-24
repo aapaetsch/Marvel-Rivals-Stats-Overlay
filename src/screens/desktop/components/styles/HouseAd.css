@@ -368,6 +368,23 @@
   backdrop-filter: blur(4px);
 }
 
+/* In-house ad type badge */
+.development-house-ad .house-ad-type-badge {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(24, 144, 255, 0.8);
+  color: white;
+  font-size: 0.55rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 3;
+  backdrop-filter: blur(4px);
+}
+
 /* Hover effects */
 .development-house-ad:hover .house-ad-bg-icon {
   transform: scale(1.05) rotate(2deg);
@@ -375,6 +392,10 @@
 
 .development-house-ad:hover .house-ad-dev-badge {
   background: rgba(255, 77, 79, 1);
+}
+
+.development-house-ad:hover .house-ad-type-badge {
+  background: rgba(24, 144, 255, 1);
 }
 
 /* Animation for loading */
@@ -391,6 +412,119 @@
 
 .development-house-ad {
   animation: fadeIn 0.3s ease-out;
+}
+
+/* ==================================================== */
+/* DEV WINDOW SPECIFIC STYLING FOR IN-HOUSE ADS */
+/* ==================================================== */
+
+/* Dev window container styling for in-house ads */
+.dev-window-root .house-ad-type-badge {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(24, 144, 255, 0.9) !important;
+  color: white;
+  font-size: 0.55rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 3;
+  backdrop-filter: blur(4px);
+}
+
+/* Ensure ad content is readable on all themes in dev window */
+.dev-window-root .house-ad-title,
+.dev-window-root .house-ad-subtitle {
+  color: white !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9) !important;
+}
+
+/* Button styling for all themes in dev window */
+.dev-window-root .house-ad-button {
+  background: var(--primary-color, #3498db);
+  border: 1px solid var(--primary-color-light);
+  color: white;
+  padding: 8px 16px;
+  border-radius: var(--border-radius, 4px);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dev-window-root .house-ad-button:hover {
+  background: var(--primary-color-light);
+  border-color: var(--primary-color-light);
+  transform: translateY(-1px);
+}
+
+/* Character icons in background should have consistent opacity */
+.dev-window-root .house-ad-bg-icon {
+  opacity: 0.25 !important;
+}
+
+/* Ensure overlay provides sufficient contrast */
+.dev-window-root .house-ad-overlay {
+  background: linear-gradient(135deg, 
+    rgba(0, 0, 0, 0.8) 0%, 
+    rgba(0, 0, 0, 0.5) 50%, 
+    rgba(0, 0, 0, 0.7) 100%
+  ) !important;
+}
+
+/* Light theme specific adjustments in dev window */
+body.theme-light .dev-window-root .house-ad-title,
+body.theme-light .dev-window-root .house-ad-subtitle {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 1) !important;
+}
+
+body.theme-light .dev-window-root .house-ad-bg-icon {
+  opacity: 0.15 !important;
+}
+
+/* Animation states for ad refresh in dev window */
+.dev-window-root .development-house-ad {
+  transition: all 0.3s ease;
+}
+
+.dev-window-root .development-house-ad:hover {
+  transform: scale(1.02);
+}
+
+/* Responsive scaling for smaller containers in dev window */
+@media (max-width: 400px) {
+  .dev-window-root .house-ad-title {
+    font-size: 0.9rem !important;
+  }
+  .dev-window-root .house-ad-subtitle {
+    font-size: 0.8rem !important;
+  }
+  .dev-window-root .house-ad-button {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Ensure badges stay readable on all backgrounds */
+body.theme-dark .dev-window-root .house-ad-type-badge,
+body.theme-minimalistic-black .dev-window-root .house-ad-type-badge {
+  background: rgba(24, 144, 255, 0.95) !important;
+}
+
+body.theme-light .dev-window-root .house-ad-type-badge {
+  background: rgb(24, 144, 255) !important;
+}
+
+/* Ad container styling in dev preview */
+.ad-preview-container .development-house-ad {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-radius: var(--border-radius, 6px);
+}
+
+body.theme-light .ad-preview-container .development-house-ad {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 /* Responsive adjustments */
