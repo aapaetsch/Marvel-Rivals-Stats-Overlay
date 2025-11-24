@@ -135,20 +135,21 @@ const FavouritePlayerCard: React.FC<FavouritePlayerCardProps> = ({ player }) => 
             className="favourite-player-avatar"
           />
           <div className="favourite-player-meta">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8 }}>
-              <Text className="favourite-player-name meta-name">
-                {player.name}
-              </Text>
-              <Text className="meta-text meta-last-seen">
-                {t('components.desktop.favourites.last-seen', 'Last seen')}: {lastSeenFormatted}
-              </Text>
-            </div>
+            <Text className="favourite-player-name meta-name" style={{ display: 'block' }}>
+              {player.name}
+            </Text>
+
+            <Text className="meta-text meta-last-seen" style={{ marginTop: 6, display: 'block' }}>
+              {t('components.desktop.favourites.last-seen', 'Last seen')}: {lastSeenFormatted}
+            </Text>
+
             {mostUsedCharacter && (
-              <Text className="meta-text meta-most-played" style={{ marginTop: 2 }}>
+              <Text className="meta-text meta-most-played" style={{ marginTop: 6, display: 'block' }}>
                 {t('components.desktop.favourites.most-played', 'Most played')}: {mostUsedCharacter}
               </Text>
             )}
-            <Text className="meta-text meta-total-encounters" style={{ marginTop: 2 }}>
+
+            <Text className="meta-text meta-total-encounters" style={{ marginTop: 6, display: 'block' }}>
               {t('components.desktop.favourites.total-encounters', 'Total Encounters')}: {totalGames}
             </Text>
           </div>
