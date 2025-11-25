@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed layout issue where favorite cards would overlap with the right ad space when the screen is widened enough to fit 3 cards side by side. Changed from CSS Grid to Flexbox layout for proper content flow and ad positioning without creating whitespace gaps.
 
 ### Added
+- Rank Display on Player Cards [Rank Display System]:
+  - Large rank icon (80x80px) with text overlay showing rank name and step number
+  - Exact ELO score displayed underneath rank icon
+  - Visual rank indicator replaces generic placeholder
+  - Graceful fallback to placeholder when no ELO data available
+  - References Rank Display System feature in root CHANGELOG.md
 - FavouritesPage Component: Main page component displaying all favourited players with a sticky header, aggregated statistics section, and scrollable content area [Favourites Page: New dedicated page].
 - FavouritePlayerCard Component: Reusable card component for displaying individual favourited players with their avatar (most used character), name, and detailed statistics [Favourites Page: New dedicated page].
 - Aggregate Stats Display: Overview section at the top showing total encounters, teammate/opponent encounters, and wins with teammates across all favourited players [Favourites Page: New dedicated page].

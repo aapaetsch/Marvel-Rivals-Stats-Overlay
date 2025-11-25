@@ -117,6 +117,7 @@
   display: flex;
   align-items: flex-start; /* top of name aligns with top of avatar */
   gap: 10px;
+  width: 75%;
 }
 .rpc-right {
   display: inline-flex;
@@ -152,6 +153,7 @@
   color: var(--primary-color-text, rgba(255,255,255,0.9));
   transition: color 0.15s ease, transform 0.15s ease;
 }
+
 .favorite-card-star:hover .anticon {
   color: #fadb14;
   transform: scale(1.05);
@@ -166,6 +168,11 @@
   padding: 0 6px;
   font-weight: 700;
 }
+
+.rpc-name {
+  width: 100%;
+}
+
 .rpc-name .player-name {
   font-weight: 800;
   color: var(--primary-color-text);

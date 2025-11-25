@@ -3,6 +3,7 @@ import { logger } from "lib/log";
 import { isDev } from "lib/utils";
 import { setApiKey, getPlayerByUsername, initializeApiService } from "lib/marvelRivalsApi";
 import { getPlayerStats } from "lib/recentPlayersService";
+import { recordElo } from "lib/eloTrackingService";
 import {
   MatchOutcome,
   MatchStatsState,
@@ -364,6 +365,36 @@ const matchStatsSlice = createSlice({
               );
             }
             
+            // Record ELO for local player at match start (once per match)
+            if (
+              data.is_local &&
+              typeof data.elo_score === "number" &&
+              !isNaN(data.elo_score) &&
+              state.currentMatch.gameMode &&
+              !state.hasRecordedEloForMatch
+            ) {
+              try {
+                recordElo(data.elo_score, state.currentMatch.gameMode, state.currentMatch.matchId);
+                state.hasRecordedEloForMatch = true;
+                logger.logInfo(
+                  {
+                    event: "elo_recorded_for_match",
+                    elo: data.elo_score,
+                    gameMode: state.currentMatch.gameMode,
+                    matchId: state.currentMatch.matchId,
+                  },
+                  "matchStatsSlice.ts",
+                  "processInfoUpdate"
+                );
+              } catch (error) {
+                logger.logError(
+                  error as Error,
+                  "matchStatsSlice.ts",
+                  "processInfoUpdate_recordElo"
+                );
+              }
+            }
+            
             // Merge new roster data with any existing player state
             state.currentMatch.players[uid] = {
               ...existing,
@@ -694,6 +725,9 @@ const matchStatsSlice = createSlice({
             // Reset character session tracking
             state.characterSessions = {};
             state.completedSessions = [];
+            
+            // Reset flag to track if we've recorded ELO for this match
+            state.hasRecordedEloForMatch = false;
             
             logger.logInfo(
               {

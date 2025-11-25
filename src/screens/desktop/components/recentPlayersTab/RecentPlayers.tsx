@@ -8,6 +8,7 @@ import MorphChevron from '../shared/MorphChevron';
 import PlayerEncounterSection from './components/PlayerEncounterSection';
 import { getCharacterDefaultIconPath } from 'lib/characterIcons';
 import { getCharacterClass, CharacterClass } from 'lib/characterClassIcons';
+import { getEloRankInfo } from 'lib/rankIcons';
 import type { RecentPlayer } from '../../../background/stores/recentPlayersSlice';
 import { togglePlayerFavorite, removePlayer } from '../../../background/stores/recentPlayersSlice';
 import { formatRelativeTime } from 'lib/utils';
@@ -88,6 +89,11 @@ const RecentPlayerItem: React.FC<RecentPlayerItemProps> = ({ player, censor = fa
   const overallWinRate = (overallWins + overallLosses) > 0
     ? Math.round((overallWins / (overallWins + overallLosses)) * 100)
     : 0;
+
+  // Get player's competitive ELO and rank information
+  const competitiveElo = player.elo_scores_by_mode?.Competitive ?? player.elo_scores_by_mode?.Ranked ?? player.elo_score;
+  const hasElo = competitiveElo != null && typeof competitiveElo === 'number';
+  const rankInfo = hasElo ? getEloRankInfo(competitiveElo) : null;
 
   // Aggregated role W/L for ally or opponent view
   type RoleAgg = Record<CharacterClass, { wins: number; losses: number }>;
@@ -197,12 +203,50 @@ const RecentPlayerItem: React.FC<RecentPlayerItemProps> = ({ player, censor = fa
             <div className="rpc-name">
               <Text className="player-name">{player.name}</Text>
               <div className="overall-wl-under-name">
-                <Text className="has-text-default-color" style={{ marginRight: 8 }}>{overallWinRate}%</Text>
-                <Text className="has-text-default-color">{overallWins}W - {overallLosses}L</Text>
-                <span style={{ display: 'inline-block', width: 24 }}></span>
-                <Text className="has-text-default-color" style={{ fontWeight: 600 }}>
-                  {player.elo_scores_by_mode?.Competitive ?? player.elo_scores_by_mode?.Ranked ?? player.elo_score ?? '-'}
-                </Text>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ flex: 1 }}>
+                    <Text className="has-text-default-color" style={{ marginRight: 8 }}>{overallWinRate}%</Text>
+                    <Text className="has-text-default-color">{overallWins}W - {overallLosses}L</Text>
+                  </div>
+                  {/* ELO with rank icon */}
+                  {hasElo && rankInfo ? (
+                    <>
+                      {/* Collapsed view: small rank icon next to ELO */}
+                      {collapsed && (
+                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                          <img 
+                            src={rankInfo.iconPath} 
+                            alt={rankInfo.rankName}
+                            style={{ width: 16, height: 16, objectFit: 'contain' }}
+                          />
+                          <Text className="has-text-default-color" style={{ fontWeight: 600 }}>
+                            {Math.round(competitiveElo)}
+                          </Text>
+                        </div>
+                      )}
+                      {/* Expanded view: rank icon with full rank name and step */}
+                      {!collapsed && (
+                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                          <img 
+                            src={rankInfo.iconPath} 
+                            alt={rankInfo.rankName}
+                            style={{ width: 20, height: 20, objectFit: 'contain' }}
+                          />
+                          <Text className="has-text-default-color" style={{ fontWeight: 600 }}>
+                            {Math.round(competitiveElo)}
+                          </Text>
+                          <Text className="has-text-default-color" style={{ fontSize: '0.85rem', marginLeft: 4 }}>
+                            ({rankInfo.rankName} {rankInfo.step})
+                          </Text>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <Text className="has-text-default-color" style={{ fontWeight: 600 }}>
+                      {hasElo ? Math.round(competitiveElo) : '-'}
+                    </Text>
+                  )}
+                </div>
               </div>
             </div>
           </div>

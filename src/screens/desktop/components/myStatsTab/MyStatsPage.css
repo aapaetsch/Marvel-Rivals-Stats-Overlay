@@ -1,0 +1,73 @@
+.my-stats-page {
+  padding: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.my-stats-header {
+  margin-bottom: 2rem;
+}
+
+.my-stats-header .ant-typography {
+  margin-bottom: 0.5rem;
+}
+
+.elo-table-card {
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+}
+
+.elo-table-card .ant-card-head {
+  background: var(--background-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.elo-table-card .ant-card-body {
+  padding: 1rem;
+}
+
+/* Table styling */
+.elo-table-card .ant-table {
+  background: transparent;
+}
+
+.elo-table-card .ant-table-thead > tr > th {
+  background: var(--background-secondary);
+  color: var(--text-color);
+  border-bottom: 2px solid var(--border-color);
+  font-weight: 600;
+}
+
+.elo-table-card .ant-table-tbody > tr > td {
+  border-bottom: 1px solid var(--border-color-subtle);
+}
+
+.elo-table-card .ant-table-tbody > tr:hover > td {
+  background: var(--hover-background);
+}
+
+/* Empty state */
+.elo-table-card .ant-empty {
+  padding: 2rem 0;
+}
+
+.elo-table-card .ant-empty-description {
+  color: var(--text-secondary);
+}
+
+/* Pagination */
+.elo-table-card .ant-pagination {
+  margin-top: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .my-stats-page {
+    padding: 1rem;
+  }
+  
+  .my-stats-header {
+    margin-bottom: 1rem;
+  }
+}

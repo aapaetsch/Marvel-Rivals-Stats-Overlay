@@ -9,6 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Player Stats Overlay: Fixed settings not applying correctly to teammate cards after implementing slot-based tracking. Settings now properly map to the correct teammate position.
 
 ### Added
+- ELO Tracking System:
+  - Created comprehensive ELO tracking service for monitoring player rating progression
+  - Automatically captures ELO scores from roster events at match start for both Competitive and Quick Match modes
+  - Maintains recent match history (last 100 matches per mode) with timestamp and match ID
+  - Implements data compression for long-term storage (keeps last ELO of each day beyond 100 matches)
+  - Added "My Stats" menu item under Players section in desktop navigation
+  - New My Stats page displaying separate tables for Competitive and Quick Match ELO history
+  - Tables show match number, ELO score, date/time, and change from previous match
+  - Color-coded ELO changes (green for gains, red for losses)
+  - All data stored in local storage for persistence across sessions
+- Rank Display System:
+  - ELO to rank conversion utilities with support for all 9 ranks (Bronze through One Above All)
+  - Each rank divided into 3 steps (3, 2, 1) with 100 ELO per step
+  - Reference point: Grandmaster 1 = 4700-4800 ELO
+  - Rank icons displayed alongside ELO scores throughout the application:
+    * Favourites page: Large rank icon with text overlay showing rank and step, exact ELO underneath
+    * Recent Players cards: Small rank icon in collapsed view, full rank name and step in expanded view
+    * My Stats tables: Rank column with icon and rank/step text for each match
+  - Helper functions for formatted rank display and icon path retrieval
 - In-House Ads System:
   - Created customizable in-house advertisement system that can be displayed alongside Overwolf ads
   - Configurable ad definitions in `lib/inHouseAds.ts` with support for horizontal, vertical, and in-game formats
