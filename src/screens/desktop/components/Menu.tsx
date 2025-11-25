@@ -76,6 +76,11 @@ const getMenuItems = (t: any, isLiveMatch: boolean = false, showHome: boolean = 
     label: t('components.desktop.menu.players'),
     children: [
       {
+        key: MenuKeys.MY_STATS,
+        icon: <IoStatsChartOutline />,
+        label: t('components.desktop.menu.my_stats'),
+      },
+      {
         key: MenuKeys.RECENT,
         icon: <LiaUserInjuredSolid />,
         label: t('components.desktop.menu.recent'),

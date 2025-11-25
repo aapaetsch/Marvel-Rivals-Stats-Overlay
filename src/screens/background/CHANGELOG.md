@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- ELO Tracking Integration (matchStatsSlice.ts): Integrated ELO tracking into roster update processing to automatically record local player's ELO score at match start [ELO Tracking System]. System captures elo_score from roster events, records it with game mode and match ID, and prevents duplicate recordings per match. See also root CHANGELOG.md and lib/CHANGELOG.md.
 - Character Session Tracking: Implemented in-match character session tracker in `matchStatsSlice.ts` that maintains per-player state including current character, session start time, and session start KDA. On each roster event, the system compares character names and calculates time-delta and KDA-delta when characters change.
 - Character History Storage: Added `characterHistory` array to `RecentPlayer` interface in `recentPlayersSlice.ts` storing detailed per-character session data including `characterName`, `timeSpentMs`, `kills`, `deaths`, `assists`, `timestamp`, `isAlly`, and `matchId`.
 - Match Completion Aggregation: Updated `matchCompletionMiddleware.ts` in `store.ts` to aggregate character sessions at match_end, extracting each player's session array, summing time/KDA per character, and merging with existing recent player character history (keeping last 50 entries per player).

@@ -13,6 +13,7 @@ export enum MenuKeys {
   PLAYERS = 'Players-Sub',
   FAVORITES = 'Players-Favorites',
   RECENT = 'Players-Recent',
+  MY_STATS = 'Players-MyStats',
   HEROS = 'Heros-Sub',
   HEROS_TIERLIST = 'Heros-Tierlist',
   SETTINGS = 'Settings',

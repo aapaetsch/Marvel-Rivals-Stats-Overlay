@@ -12,6 +12,7 @@ import LiveMatch from "./liveMatch/LiveMatch"; // Import the combined live match
 import MatchHistory from "./matchHistoryTab/MatchHistory"; // Import the Match History component
 import RecentPlayers from "./recentPlayersTab/RecentPlayers"; // Import the Recent Players component
 import FavouritesPage from "./favouritesTab/FavouritesPage"; // Import the Favourites Page component
+import MyStatsPage from "./myStatsTab/MyStatsPage"; // Import the My Stats Page component
 import HomeTab from "./homeTab/HomeTab"; // Import our new HomeTab component
 import '../../../app/shared/themes.css';
 import "./styles/Screen.css";
@@ -159,6 +160,11 @@ const Screen = () => {
 
     if (selectedKeys.includes(MenuKeys.PLAYER_STATS)) {
       return <PlayerStatsTab />;
+    }
+    
+    // My Stats (ELO tracking) option
+    if (selectedKeys.includes(MenuKeys.MY_STATS)) {
+      return <MyStatsPage />;
     }
     
     // Recent Players option

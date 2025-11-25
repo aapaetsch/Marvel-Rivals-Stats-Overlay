@@ -9,6 +9,7 @@ import { getCharacterClass, CharacterClass, getClassImagePath } from 'lib/charac
 import type { RecentPlayer } from '../../../background/stores/recentPlayersSlice';
 import { getCharacterDefaultIconPath } from 'lib/characterIcons';
 import { formatRelativeTime } from 'lib/utils';
+import { getEloRankInfo } from 'lib/rankIcons';
 import icons from 'components/Icons';
 
 const { Text } = Typography;
@@ -122,6 +123,10 @@ const FavouritePlayerCard: React.FC<FavouritePlayerCardProps> = ({ player }) => 
 
   const lastSeenFormatted = formatRelativeTime(player.lastSeen);
 
+  // Get player's competitive ELO and rank information
+  const competitiveElo = player.elo_scores_by_mode?.Competitive ?? player.elo_scores_by_mode?.Ranked ?? player.elo_score;
+  const rankInfo = competitiveElo ? getEloRankInfo(competitiveElo) : null;
+
   return (
     <Card className="favourite-player-card" bordered={false}>
       <div className="favourite-player-header" style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
@@ -157,26 +162,94 @@ const FavouritePlayerCard: React.FC<FavouritePlayerCardProps> = ({ player }) => 
 
         {/* Rank Icon + ELO aligned right */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-          <div
-            className="rank-image-placeholder"
-            style={{
-              width: 50,
-              height: 50,
-              backgroundColor: 'var(--neutral-3)',
-              border: '2px dashed var(--primary-color-medium)',
-              borderRadius: '6px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
-            <UserOutlined style={{ color: 'var(--primary-color-medium)', fontSize: 20 }} />
-          </div>
-          <div className="fpc-elo-under-rankicon">
-            <Text style={{ color: 'var(--text-color)', fontWeight: 600 }}>
-              {player.elo_scores_by_mode?.Competitive ?? player.elo_scores_by_mode?.Ranked ?? player.elo_score ?? '-'}
-            </Text>
-          </div>
+          {rankInfo ? (
+            <>
+              <div
+                className="rank-icon-container"
+                style={{
+                  position: 'relative',
+                  width: 80,
+                  height: 80,
+                }}
+              >
+                <img
+                  src={rankInfo.iconPath}
+                  alt={`${rankInfo.rankName} ${rankInfo.step}`}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain',
+                  }}
+                />
+                <div
+                  className="rank-text-overlay"
+                  style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    textAlign: 'center',
+                    background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)',
+                    padding: '4px 2px',
+                    borderRadius: '0 0 6px 6px',
+                  }}
+                >
+                  <Text 
+                    strong 
+                    style={{ 
+                      color: '#fff', 
+                      fontSize: '0.7rem',
+                      textShadow: '0 1px 3px rgba(0,0,0,0.8)',
+                      display: 'block',
+                      lineHeight: 1.2,
+                    }}
+                  >
+                    {rankInfo.rankName}
+                  </Text>
+                  <Text 
+                    strong 
+                    style={{ 
+                      color: '#fff', 
+                      fontSize: '0.9rem',
+                      textShadow: '0 1px 3px rgba(0,0,0,0.8)',
+                      display: 'block',
+                      lineHeight: 1,
+                    }}
+                  >
+                    {rankInfo.step}
+                  </Text>
+                </div>
+              </div>
+              <div className="fpc-elo-under-rankicon">
+                <Text style={{ color: 'var(--text-color)', fontWeight: 600, fontSize: '0.95rem' }}>
+                  {Math.round(competitiveElo!)} ELO
+                </Text>
+              </div>
+            </>
+          ) : (
+            <>
+              <div
+                className="rank-image-placeholder"
+                style={{
+                  width: 80,
+                  height: 80,
+                  backgroundColor: 'var(--neutral-3)',
+                  border: '2px dashed var(--primary-color-medium)',
+                  borderRadius: '6px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <UserOutlined style={{ color: 'var(--primary-color-medium)', fontSize: 24 }} />
+              </div>
+              <div className="fpc-elo-under-rankicon">
+                <Text className="has-text-default-color" style={{ fontSize: '0.85rem' }}>
+                  {t('components.desktop.favourites.no-rank', 'No Rank Data')}
+                </Text>
+              </div>
+            </>
+          )}
         </div>
       </div>
 

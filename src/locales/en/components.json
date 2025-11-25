@@ -21,6 +21,7 @@
         "player_stats": "Player Stats",
         "squad_stats": "Squad Stats",
         "players": "Players",
+        "my_stats": "My Stats",
         "favourites": "Favourites",
         "recent": "Recent",
         "heros": "Heros",
@@ -260,6 +261,7 @@
         "vs-opponent": "Vs Opponent",
         "top-picks": "Top Picks",
         "no-picks": "No character picks recorded",
+        "no-rank": "No Rank Data",
         "role-distribution": "Role Distribution",
         "components": {
           "ads": {
@@ -274,6 +276,20 @@
             }
           }
         }
+      },
+      "my_stats": {
+        "title": "My ELO Stats",
+        "subtitle": "Track your ELO rating progress across different game modes",
+        "competitive": "Competitive",
+        "quick_match": "Quick Match",
+        "match_number": "Match #",
+        "rank": "Rank",
+        "elo_score": "ELO Score",
+        "date": "Date",
+        "change": "Change",
+        "total_matches": "Total: {{count}} matches",
+        "no_comp_data": "No competitive matches recorded yet",
+        "no_quick_data": "No quick matches recorded yet"
       }
     }
   }
