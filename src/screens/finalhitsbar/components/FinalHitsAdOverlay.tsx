@@ -12,8 +12,8 @@ interface FinalHitsAdOverlayProps {
 }
 
 export const FinalHitsAdOverlay: React.FC<FinalHitsAdOverlayProps> = ({ 
-  adWidth = 780, 
-  adHeight = 90 
+  adWidth = 288, 
+  adHeight = 130 
 }) => {
   const { isSubscribed } = useAdRemoval();
   const [showAd, setShowAd] = useState(true);

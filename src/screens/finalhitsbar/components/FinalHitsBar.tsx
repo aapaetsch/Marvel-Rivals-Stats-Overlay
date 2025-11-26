@@ -186,9 +186,9 @@ const Screen = () => {
   return (
     <div className={`final-hits-bar-screen`} style={finalHitsScreenStyle}>
       <div className="final-hits-bar-background" style={backgroundStyle}></div>
-      <FinalHitsAdOverlay adWidth={780} adHeight={90} />
-      <DragHandle windowName={WINDOW_NAMES.FINALHITSBAR} />
       <FinalHitsBar players={finalHitsPlayers.length ? finalHitsPlayers : pdummy}/>
+      <FinalHitsAdOverlay adWidth={288} adHeight={130} />
+      <DragHandle windowName={WINDOW_NAMES.FINALHITSBAR} />
     </div>
   );
 }

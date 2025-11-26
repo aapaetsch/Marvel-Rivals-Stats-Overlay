@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
-- Player Stats Overlay: Fixed settings not applying correctly to teammate cards after implementing slot-based tracking. Settings now properly map to the correct teammate position.
+- Player Stats Overlay: Fixed settings not applying correctly to teammate cards (especially second card and newly joined players). The issue was caused by the local player being assigned slot 0 in the tracking system, which offset all teammate slot indices by 1. Local player is now handled separately, and teammates are correctly assigned slots 0-4 mapping to settings 1-5.
+- Player Stats Overlay: Fixed cards not being removed when players leave mid-match. Slots are now properly released and reassigned when roster changes occur.
 
 ### Added
 - ELO Tracking System:
