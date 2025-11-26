@@ -365,21 +365,14 @@ const TeammateCard = ({ player, index }: { player: PlayerStatsProps; index: numb
 const TeammateStats = (props: TeamStatProps) => {
   const { players } = props;
 
-  // Players are already sorted by slotIndex in Screen.tsx
-  // Just ensure the user is first if present
-  const sortedPlayers = [...players];
-  const userIndex = sortedPlayers.findIndex(player => player.isUser);
-  if (userIndex > 0) {
-    const userPlayer = sortedPlayers.splice(userIndex, 1)[0];
-    sortedPlayers.unshift(userPlayer);
-  }
-
+  // Players should already be sorted with user first (from Screen.tsx)
+  // No need to re-sort here since Screen.tsx handles the ordering
   return (
     <div className="teammates-container">
       <div className="teammates-grid">
-        {sortedPlayers.map((player, index) => (
+        {players.map((player, index) => (
           <TeammateCard 
-            key={player.rosterId || index.toString()} 
+            key={player.rosterId || `player_${index}`} 
             player={player}
             index={index}
           />

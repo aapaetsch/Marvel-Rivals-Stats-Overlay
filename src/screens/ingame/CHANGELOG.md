@@ -6,9 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
-- Player Stats Overlay: Fixed settings not responding correctly to changes after slot index implementation. The settings array index calculation now properly maps slotIndex to teammate settings (slotIndex + 1 offset for non-user players).
+- Player Stats Overlay: Fixed settings not responding correctly to teammate cards (especially the second card and new players joining). The root cause was the local player being assigned slot 0 in the slot tracking, causing all teammate slot indices to be offset by 1. Now the local player is handled separately (slotIndex -1) and non-local teammates are assigned slots 0-4, which correctly map to settings indices 1-5.
+- Player Stats Overlay: Fixed cards not being properly removed when players leave mid-match. The slot tracking now correctly releases slots for departed players and reassigns them to new players who join.
 
 ### Changed
-- Player Stats Overlay: Implemented slot-based player tracking system in Screen.tsx to maintain stable roster positions when players leave and are replaced during a match.
-- Player Stats Overlay: Updated TeammateStats.tsx to use slotIndex instead of array index for determining card settings, ensuring replacement players inherit the style of the player they replaced.
+- Player Stats Overlay: Refactored slot assignment in Screen.tsx to separate local player handling from teammate slot assignment. Local player always uses settings index 0, while teammates use slots 0-4 mapping to settings 1-5.
+- Player Stats Overlay: Simplified TeammateStats.tsx by removing redundant re-sorting logic since Screen.tsx now handles player ordering correctly.
 - Player Stats Types: Added optional slotIndex property to PlayerStatsProps interface to track stable roster slot assignments independently of player uid.
